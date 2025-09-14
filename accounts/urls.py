@@ -1,14 +1,11 @@
+# account/urls.py
 from django.urls import path
-from . import views
-
-app_name = 'accounts'
+from .views import AllUsersView, CreateUserView, RetrieveUserView, LoginView, LogoutView
 
 urlpatterns = [
-    # Class-based views (DRF UI)
-    path('AllUser/', views.AllUsersView.as_view(), name='all_users_cbv'),
-    path('CreateUser/', views.CreateUserView.as_view(), name='create_user_cbv'),
-    
-    # Legacy function-based views
-    path('AllUserFBV/', views.all_users, name='all_users'),
-    path('CreateUserFBV/', views.create_user, name='create_user'),
+    path('users/', AllUsersView.as_view(), name='all_users'),          # GET /api/users/
+    path('users/create/', CreateUserView.as_view(), name='create_user'), # POST /api/users/create/
+    path('users/<int:user_id>/', RetrieveUserView.as_view(), name='retrieve_user'), # GET /api/users/1/
+    path('login/', LoginView.as_view(), name='login'),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]
