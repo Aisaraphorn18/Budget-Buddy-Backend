@@ -61,6 +61,7 @@ export class TransactionController {
       
       const totalPages = Math.ceil(result.total / result.limit);
 
+      context.set.status = 200;
       return {
         success: true,
         message: "Transactions retrieved successfully",
@@ -74,11 +75,29 @@ export class TransactionController {
       };
     } catch (error) {
       console.error("Get all transactions error:", error);
+      
+      // Handle different error types with appropriate status codes
+      if (error instanceof Error) {
+        if (error.message.includes("Valid user ID is required") || 
+            error.message.includes("must be greater than 0") ||
+            error.message.includes("must be between 1 and 100") ||
+            error.message.includes("must be 'income' or 'expense'") ||
+            error.message.includes("must be a positive integer") ||
+            error.message.includes("must be a valid date format")) {
+          context.set.status = 400;
+          return {
+            success: false,
+            message: error.message,
+            data: null
+          };
+        }
+      }
+      
       context.set.status = 500;
       return {
         success: false,
         message: "Failed to get transactions",
-        error: error instanceof Error ? error.message : "Unknown error"
+        data: null
       };
     }
   }
@@ -117,10 +136,12 @@ export class TransactionController {
         context.set.status = 404;
         return {
           success: false,
-          message: "Transaction not found"
+          message: "Transaction not found",
+          data: null
         };
       }
 
+      context.set.status = 200;
       return {
         success: true,
         message: "Transaction retrieved successfully",
@@ -128,11 +149,25 @@ export class TransactionController {
       };
     } catch (error) {
       console.error("Get transaction by ID error:", error);
+      
+      // Handle different error types with appropriate status codes
+      if (error instanceof Error) {
+        if (error.message.includes("Valid transaction ID is required") || 
+            error.message.includes("Valid user ID is required")) {
+          context.set.status = 400;
+          return {
+            success: false,
+            message: error.message,
+            data: null
+          };
+        }
+      }
+      
       context.set.status = 500;
       return {
         success: false,
         message: "Failed to get transaction",
-        error: error instanceof Error ? error.message : "Unknown error"
+        data: null
       };
     }
   }
@@ -176,11 +211,38 @@ export class TransactionController {
       };
     } catch (error) {
       console.error("Create transaction error:", error);
+      
+      // Handle different error types with appropriate status codes
+      if (error instanceof Error) {
+        if (error.message.includes("Category ID is required") || 
+            error.message.includes("Transaction type must be") ||
+            error.message.includes("Amount must be a positive number") ||
+            error.message.includes("Invalid category ID") ||
+            error.message.includes("Invalid user ID") ||
+            error.message.includes("Invalid data - check constraint violation")) {
+          context.set.status = 400;
+          return {
+            success: false,
+            message: error.message,
+            data: null
+          };
+        }
+        
+        if (error.message.includes("Duplicate transaction")) {
+          context.set.status = 409; // Conflict
+          return {
+            success: false,
+            message: error.message,
+            data: null
+          };
+        }
+      }
+      
       context.set.status = 500;
       return {
         success: false,
         message: "Failed to create transaction",
-        error: error instanceof Error ? error.message : "Unknown error"
+        data: null
       };
     }
   }

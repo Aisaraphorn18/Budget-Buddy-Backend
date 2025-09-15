@@ -36,6 +36,7 @@ export class CategoryController {
     try {
       const categories = await this.categoryService.getAllCategories();
 
+      context.set.status = 200;
       return {
         success: true,
         message: "Categories retrieved successfully",
@@ -47,7 +48,7 @@ export class CategoryController {
       return {
         success: false,
         message: "Failed to get categories",
-        error: error instanceof Error ? error.message : "Unknown error"
+        data: null
       };
     }
   }

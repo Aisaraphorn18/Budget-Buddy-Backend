@@ -163,19 +163,39 @@ export class BudgetController {
     } catch (error) {
       console.error("❌ Budget - Create budget error:", error);
       
-      if (error instanceof Error && error.message.includes('already exists')) {
-        context.set.status = 409;
-        return {
-          success: false,
-          message: "Budget already exists for this category and month"
-        };
+      // Handle different error types with appropriate status codes
+      if (error instanceof Error) {
+        if (error.message.includes("Category ID is required") || 
+            error.message.includes("Budget amount must be a positive number") ||
+            error.message.includes("Budget cycle month is required") ||
+            error.message.includes("Budget cycle month must be in YYYY-MM format") ||
+            error.message.includes("Invalid category ID") ||
+            error.message.includes("Invalid user ID") ||
+            error.message.includes("Invalid data - check constraint violation")) {
+          context.set.status = 400;
+          return {
+            success: false,
+            message: error.message,
+            data: null
+          };
+        }
+        
+        if (error.message.includes('already exists') || 
+            error.message.includes('Duplicate budget')) {
+          context.set.status = 409; // Conflict
+          return {
+            success: false,
+            message: error.message,
+            data: null
+          };
+        }
       }
 
       context.set.status = 500;
       return {
         success: false,
         message: "Failed to create budget",
-        error: error instanceof Error ? error.message : "Unknown error"
+        data: null
       };
     }
   }
