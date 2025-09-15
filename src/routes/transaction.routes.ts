@@ -39,7 +39,18 @@ const transactionController = new TransactionController();
 export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
   // Create new transaction endpoint
   .post("/",
-    async (context) => await transactionController.createTransaction(context),
+    async (context) => {
+      try {
+        return await transactionController.createTransaction(context);
+      } catch (error) {
+        console.error("Error in transaction creation route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to create transaction",
+          data: null
+        };
+      }
+    },
     {
       body: CreateTransactionSchema,
       detail: {
@@ -119,7 +130,7 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
                   type: "object",
                   properties: {
                     success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Invalid category ID" },
+                    message: { type: "string", example: "Invalid category ID or validation error" },
                     data: { type: "object", nullable: true, example: null }
                   }
                 }
@@ -140,6 +151,21 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
                 }
               }
             }
+          },
+          500: {
+            description: "Internal server error",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Internal server error" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -148,7 +174,18 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
   
   // Get all transactions with filtering endpoint
   .get("/",
-    async (context) => await transactionController.getAllTransactions(context),
+    async (context) => {
+      try {
+        return await transactionController.getAllTransactions(context);
+      } catch (error) {
+        console.error("Error in get all transactions route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve transactions",
+          data: null
+        };
+      }
+    },
     {
       query: t.Object({
         type: t.Optional(t.Union([t.Literal('income'), t.Literal('expense')])),
@@ -281,7 +318,27 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
   
   // Get specific transaction by ID endpoint
   .get("/:id",
-    async (context) => await transactionController.getTransactionById(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid transaction ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await transactionController.getTransactionById(context);
+      } catch (error) {
+        console.error("Error in get transaction by ID route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve transaction",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Transactions"],
@@ -381,7 +438,27 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
   
   // Update existing transaction endpoint
   .patch("/:id",
-    async (context) => await transactionController.updateTransaction(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid transaction ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await transactionController.updateTransaction(context);
+      } catch (error) {
+        console.error("Error in update transaction route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to update transaction",
+          data: null
+        };
+      }
+    },
     {
       body: UpdateTransactionSchema,
       detail: {
@@ -532,7 +609,27 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
   
   // Delete transaction endpoint
   .delete("/:id",
-    async (context) => await transactionController.deleteTransaction(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid transaction ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await transactionController.deleteTransaction(context);
+      } catch (error) {
+        console.error("Error in delete transaction route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to delete transaction",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Transactions"],
@@ -620,7 +717,27 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
 
   // Get transactions by user ID endpoint (admin only)
   .get("/user/:user_id",
-    async (context) => await transactionController.getTransactionsByUserId(context),
+    async (context) => {
+      try {
+        // Validate user_id parameter
+        const userId = context.params.user_id;
+        if (!userId || userId.trim() === '') {
+          return {
+            success: false,
+            message: "Invalid user ID. User ID is required.",
+            data: null
+          };
+        }
+        return await transactionController.getTransactionsByUserId(context);
+      } catch (error) {
+        console.error("Error in get transactions by user ID route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve transactions",
+          data: null
+        };
+      }
+    },
     {
       params: t.Object({
         user_id: t.String({ description: "User ID to get transactions for" })

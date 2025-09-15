@@ -45,7 +45,18 @@ const budgetController = new BudgetController();
 export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
   // Create new budget endpoint
   .post("/",
-    async (context) => await budgetController.createBudget(context),
+    async (context) => {
+      try {
+        return await budgetController.createBudget(context);
+      } catch (error) {
+        console.error("Error in budget creation route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to create budget",
+          data: null
+        };
+      }
+    },
     {
       body: CreateBudgetSchema,
       detail: {
@@ -148,7 +159,18 @@ export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
   
   // Get all budgets with filtering endpoint
   .get("/",
-    async (context) => await budgetController.getAllBudgets(context),
+    async (context) => {
+      try {
+        return await budgetController.getAllBudgets(context);
+      } catch (error) {
+        console.error("Error in get all budgets route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve budgets",
+          data: null
+        };
+      }
+    },
     {
       query: t.Object({
         cycle_month: t.Optional(t.String()),
@@ -235,7 +257,27 @@ export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
   
   // Get specific budget by ID endpoint
   .get("/:id",
-    async (context) => await budgetController.getBudgetById(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid budget ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await budgetController.getBudgetById(context);
+      } catch (error) {
+        console.error("Error in get budget by ID route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve budget",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Budgets"],
@@ -335,7 +377,27 @@ export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
   
   // Update existing budget endpoint
   .patch("/:id",
-    async (context) => await budgetController.updateBudget(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid budget ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await budgetController.updateBudget(context);
+      } catch (error) {
+        console.error("Error in update budget route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to update budget",
+          data: null
+        };
+      }
+    },
     {
       body: UpdateBudgetSchema,
       detail: {
@@ -480,7 +542,27 @@ export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
   
   // Delete budget endpoint
   .delete("/:id",
-    async (context) => await budgetController.deleteBudget(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid budget ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await budgetController.deleteBudget(context);
+      } catch (error) {
+        console.error("Error in delete budget route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to delete budget",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Budgets"],
@@ -568,7 +650,27 @@ export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
 
   // Get budgets by user ID endpoint (admin only)
   .get("/user/:user_id",
-    async (context) => await budgetController.getBudgetsByUserId(context),
+    async (context) => {
+      try {
+        // Validate user_id parameter
+        const userId = context.params.user_id;
+        if (!userId || userId.trim() === '') {
+          return {
+            success: false,
+            message: "Invalid user ID. User ID is required.",
+            data: null
+          };
+        }
+        return await budgetController.getBudgetsByUserId(context);
+      } catch (error) {
+        console.error("Error in get budgets by user ID route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve budgets",
+          data: null
+        };
+      }
+    },
     {
       params: t.Object({
         user_id: t.String({ description: "User ID to get budgets for" })

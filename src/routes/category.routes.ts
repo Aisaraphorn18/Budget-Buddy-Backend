@@ -32,7 +32,18 @@ const categoryController = new CategoryController();
 export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
   // Get all categories endpoint (protected)
   .get("/", 
-    async (context) => await categoryController.getAllCategories(context),
+    async (context) => {
+      try {
+        return await categoryController.getAllCategories(context);
+      } catch (error) {
+        console.error("Error in get all categories route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve categories",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Categories"],
@@ -86,7 +97,27 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
   
   // Get category by ID endpoint (protected)
   .get("/:id", 
-    async (context) => await categoryController.getCategoryById(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid category ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await categoryController.getCategoryById(context);
+      } catch (error) {
+        console.error("Error in get category by ID route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to retrieve category",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Categories"],
@@ -165,7 +196,18 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
 
   // Create new category endpoint (protected)
   .post("/", 
-    async (context) => await categoryController.createCategory(context),
+    async (context) => {
+      try {
+        return await categoryController.createCategory(context);
+      } catch (error) {
+        console.error("Error in create category route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to create category",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Categories"],
@@ -251,7 +293,27 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
 
   // Update category endpoint (protected)
   .patch("/:id", 
-    async (context) => await categoryController.updateCategory(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid category ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await categoryController.updateCategory(context);
+      } catch (error) {
+        console.error("Error in update category route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to update category",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Categories"],
@@ -364,7 +426,27 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
 
   // Delete category endpoint (protected)
   .delete("/:id", 
-    async (context) => await categoryController.deleteCategory(context),
+    async (context) => {
+      try {
+        // Validate ID parameter
+        const id = parseInt(context.params.id);
+        if (isNaN(id) || id <= 0) {
+          return {
+            success: false,
+            message: "Invalid category ID. Must be a positive integer.",
+            data: null
+          };
+        }
+        return await categoryController.deleteCategory(context);
+      } catch (error) {
+        console.error("Error in delete category route:", error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : "Failed to delete category",
+          data: null
+        };
+      }
+    },
     {
       detail: {
         tags: ["Categories"],

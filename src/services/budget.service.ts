@@ -293,4 +293,65 @@ export class BudgetService {
       throw error;
     }
   }
+
+  async getBudgetOverview(userId: number): Promise<{
+    total_budgets: number;
+    total_budget_amount: number;
+    budgets_over_limit: number;
+    average_utilization: number;
+  }> {
+    try {
+      const { data: budgets, error } = await supabase
+        .from("budgets")
+        .select(`
+          *,
+          transactions!inner(amount)
+        `)
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("Error getting budget overview:", error);
+        throw new Error(`Failed to get budget overview: ${error.message}`);
+      }
+
+      if (!budgets || budgets.length === 0) {
+        return {
+          total_budgets: 0,
+          total_budget_amount: 0,
+          budgets_over_limit: 0,
+          average_utilization: 0
+        };
+      }
+
+      // Calculate spending for each budget
+      const budgetOverview = budgets.map(budget => {
+        const spending = budget.transactions
+          ?.filter((t: any) => t.amount < 0) // Only expense transactions
+          .reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0) || 0;
+        
+        return {
+          ...budget,
+          spending,
+          utilization: budget.amount > 0 ? (spending / budget.amount) * 100 : 0
+        };
+      });
+
+      const totalBudgets = budgetOverview.length;
+      const totalBudgetAmount = budgetOverview.reduce((sum, b) => sum + b.amount, 0);
+      const budgetsOverLimit = budgetOverview.filter(b => b.utilization > 100).length;
+      const averageUtilization = totalBudgets > 0 
+        ? budgetOverview.reduce((sum, b) => sum + b.utilization, 0) / totalBudgets 
+        : 0;
+
+      return {
+        total_budgets: totalBudgets,
+        total_budget_amount: totalBudgetAmount,
+        budgets_over_limit: budgetsOverLimit,
+        average_utilization: Math.round(averageUtilization * 100) / 100
+      };
+    } catch (error) {
+      console.error("Error getting budget overview:", error);
+      throw error;
+    }
+  }
 }

@@ -290,4 +290,120 @@ export class TransactionService {
       throw error;
     }
   }
+
+  /**
+   * Get financial summary for user
+   * Calculates total income, expense, and balance with optional date filtering
+   */
+  async getFinancialSummary(userId: number, startDate?: string, endDate?: string): Promise<{
+    total_income: number,
+    total_expense: number,
+    balance: number
+  }> {
+    try {
+      let query = supabase
+        .from('Transaction')
+        .select('type, amount')
+        .eq('user_id', userId);
+
+      if (startDate) {
+        query = query.gte('created_at', startDate);
+      }
+      if (endDate) {
+        query = query.lte('created_at', endDate);
+      }
+
+      const { data: transactions, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      const summary = transactions?.reduce(
+        (acc, transaction) => {
+          if (transaction.type === 'income') {
+            acc.total_income += transaction.amount;
+          } else if (transaction.type === 'expense') {
+            acc.total_expense += transaction.amount;
+          }
+          return acc;
+        },
+        { total_income: 0, total_expense: 0, balance: 0 }
+      ) || { total_income: 0, total_expense: 0, balance: 0 };
+
+      summary.balance = summary.total_income - summary.total_expense;
+
+      return summary;
+    } catch (error) {
+      console.error("Error getting financial summary:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get analytics breakdown by category
+   * Returns spending and income analysis grouped by categories
+   */
+  async getAnalyticsByCategory(userId: number, startDate?: string, endDate?: string): Promise<Array<{
+    category_id: number,
+    category_name: string,
+    total_income: number,
+    total_expense: number
+  }>> {
+    try {
+      let query = supabase
+        .from('Transaction')
+        .select(`
+          category_id,
+          type,
+          amount,
+          Category (
+            category_name
+          )
+        `)
+        .eq('user_id', userId);
+
+      if (startDate) {
+        query = query.gte('created_at', startDate);
+      }
+      if (endDate) {
+        query = query.lte('created_at', endDate);
+      }
+
+      const { data: transactions, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      // Group by category and calculate totals
+      const categoryMap = new Map();
+
+      transactions?.forEach(transaction => {
+        const categoryId = transaction.category_id;
+        const categoryName = (transaction as any).Category?.category_name || 'Unknown';
+
+        if (!categoryMap.has(categoryId)) {
+          categoryMap.set(categoryId, {
+            category_id: categoryId,
+            category_name: categoryName,
+            total_income: 0,
+            total_expense: 0
+          });
+        }
+
+        const category = categoryMap.get(categoryId);
+        if (transaction.type === 'income') {
+          category.total_income += transaction.amount;
+        } else if (transaction.type === 'expense') {
+          category.total_expense += transaction.amount;
+        }
+      });
+
+      return Array.from(categoryMap.values());
+    } catch (error) {
+      console.error("Error getting analytics by category:", error);
+      throw error;
+    }
+  }
 }
