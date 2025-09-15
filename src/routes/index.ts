@@ -1,7 +1,7 @@
-import { userRoutes } from "./user.routes";
 import { healthRoutes } from "./health.routes";
+import { authRoutes } from "./auth.routes";
 
 export {
-  userRoutes,
+  authRoutes,
   healthRoutes
 };

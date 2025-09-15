@@ -1,21 +1,39 @@
 import { Elysia } from "elysia";
 import { openapi } from "@elysiajs/openapi";
 import { cors } from "@elysiajs/cors";
-import { userRoutes, healthRoutes } from "./routes";
+import { jwt } from "@elysiajs/jwt";
+import { bearer } from "@elysiajs/bearer";
+import { authRoutes, healthRoutes } from "./routes";
 
 const app = new Elysia()
+  .use(
+    jwt({
+      name: 'jwt',
+      secret: process.env.JWT_SECRET || 'budget-buddy-secret-key-2024'
+    })
+  )
+  .use(bearer())
   .use(
     openapi({
       documentation: {
         info: {
           title: "Budget Buddy Backend API",
           version: "1.0.0",
-          description: "RESTful API for Budget Buddy application"
+          description: "RESTful API for Budget Buddy application with JWT Authentication"
         },
         tags: [
           { name: "Health", description: "Health check operations" },
-          { name: "Users", description: "User management operations" }
-        ]
+          { name: "Authentication", description: "User authentication and authorization" }
+        ],
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: 'http',
+              scheme: 'bearer',
+              bearerFormat: 'JWT'
+            }
+          }
+        }
       }
     })
   )
@@ -30,7 +48,7 @@ const app = new Elysia()
 
   // Register Routes
   .use(healthRoutes)
-  .use(userRoutes)
+  .use(authRoutes)
 
   // Error Handling
   .onError(({ error, code, set }) => {
@@ -69,11 +87,10 @@ console.log(
 );
 
 console.log("📚 Available API Endpoints:");
-console.log("  GET    /api/v1/account/GetAllUser    - Get all users");
-console.log("  GET    /api/v1/account/user/:id     - Get user by ID");
-console.log("  POST   /api/v1/account/user         - Create new user");
-console.log("  PUT    /api/v1/account/user/:id     - Update user");
-console.log("  DELETE /api/v1/account/user/:id     - Delete user");
+console.log("  POST   /api/v1/auth/register       - Register new user");
+console.log("  POST   /api/v1/auth/login          - User login");
+console.log("  POST   /api/v1/auth/logout         - User logout");
+console.log("  GET    /api/v1/auth/profile        - Get user profile");
 console.log("");
 console.log("📖 API Documentation:");
 console.log(
