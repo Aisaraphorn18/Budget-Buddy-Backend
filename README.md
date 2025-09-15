@@ -128,65 +128,55 @@ Run the following SQL script in your Supabase SQL editor to set up the database 
 
 ```sql
 -- Users table
-CREATE TABLE users (
-    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE User (
+    user_id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    password TEXT NOT NULL,
+    created_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Categories table
-CREATE TABLE categories (
-    category_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
-    color VARCHAR(7), -- hex color code
-    icon VARCHAR(50),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE Category (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL
 );
 
 -- Transactions table
-CREATE TABLE transactions (
-    transaction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
-    category_id UUID REFERENCES categories(category_id),
-    amount DECIMAL(15,2) NOT NULL,
+CREATE TABLE Transaction (
+    transaction_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES User(user_id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES Category(category_id),
     type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
-    description TEXT,
-    date DATE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    amount DECIMAL(15,2) NOT NULL,
+    note TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Budgets table
-CREATE TABLE budgets (
-    budget_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
-    category_id UUID REFERENCES categories(category_id),
-    amount DECIMAL(15,2) NOT NULL,
-    period VARCHAR(20) CHECK (period IN ('monthly', 'weekly', 'yearly')) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+CREATE TABLE Budget (
+    budget_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES User(user_id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES Category(category_id),
+    budget_amount DECIMAL(15,2) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    cycle_month DATE NOT NULL -- YYYY-MM format stored as first day of month
 );
 
 -- Insert default categories
-INSERT INTO categories (name, type, color, icon) VALUES
-('Food & Dining', 'expense', '#FF6B6B', '🍔'),
-('Transportation', 'expense', '#4ECDC4', '🚗'),
-('Shopping', 'expense', '#45B7D1', '🛍️'),
-('Entertainment', 'expense', '#96CEB4', '🎬'),
-('Bills & Utilities', 'expense', '#FECA57', '💡'),
-('Healthcare', 'expense', '#FF9FF3', '🏥'),
-('Salary', 'income', '#54A0FF', '💼'),
-('Freelance', 'income', '#5F27CD', '💻'),
-('Investment', 'income', '#00D2D3', '📈'),
-('Other Income', 'income', '#FF9F43', '💰');
+INSERT INTO Category (category_name) VALUES
+('Food & Dining'),
+('Transportation'),
+('Shopping'),
+('Entertainment'),
+('Bills & Utilities'),
+('Healthcare'),
+('Salary'),
+('Freelance'),
+('Investment'),
+('Other Income');
 ```
 
 ### 🚀 Run Development Server
@@ -753,65 +743,55 @@ NODE_ENV=development
 
 ```sql
 -- ตาราง Users
-CREATE TABLE users (
-    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE User (
+    user_id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    password TEXT NOT NULL,
+    created_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ตาราง Categories
-CREATE TABLE categories (
-    category_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
-    color VARCHAR(7), -- รหัสสี hex
-    icon VARCHAR(50),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE Category (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL
 );
 
 -- ตาราง Transactions
-CREATE TABLE transactions (
-    transaction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
-    category_id UUID REFERENCES categories(category_id),
-    amount DECIMAL(15,2) NOT NULL,
+CREATE TABLE Transaction (
+    transaction_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES User(user_id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES Category(category_id),
     type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
-    description TEXT,
-    date DATE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    amount DECIMAL(15,2) NOT NULL,
+    note TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ตาราง Budgets
-CREATE TABLE budgets (
-    budget_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
-    category_id UUID REFERENCES categories(category_id),
-    amount DECIMAL(15,2) NOT NULL,
-    period VARCHAR(20) CHECK (period IN ('monthly', 'weekly', 'yearly')) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+CREATE TABLE Budget (
+    budget_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES User(user_id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES Category(category_id),
+    budget_amount DECIMAL(15,2) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    cycle_month DATE NOT NULL -- รูปแบบ YYYY-MM เก็บเป็นวันแรกของเดือน
 );
 
 -- เพิ่มหมวดหมู่เริ่มต้น
-INSERT INTO categories (name, type, color, icon) VALUES
-('อาหารและเครื่องดื่ม', 'expense', '#FF6B6B', '🍔'),
-('การเดินทาง', 'expense', '#4ECDC4', '🚗'),
-('ช้อปปิ้ง', 'expense', '#45B7D1', '🛍️'),
-('ความบันเทิง', 'expense', '#96CEB4', '🎬'),
-('ค่าบิลและสาธารณูปโภค', 'expense', '#FECA57', '💡'),
-('สุขภาพ', 'expense', '#FF9FF3', '🏥'),
-('เงินเดือน', 'income', '#54A0FF', '💼'),
-('งานอิสระ', 'income', '#5F27CD', '💻'),
-('การลงทุน', 'income', '#00D2D3', '📈'),
-('รายได้อื่นๆ', 'income', '#FF9F43', '💰');
+INSERT INTO Category (category_name) VALUES
+('อาหารและเครื่องดื่ม'),
+('การเดินทาง'),
+('ช้อปปิ้ง'),
+('ความบันเทิง'),
+('ค่าบิลและสาธารณูปโภค'),
+('สุขภาพ'),
+('เงินเดือน'),
+('งานอิสระ'),
+('การลงทุน'),
+('รายได้อื่นๆ');
 ```
 
 #### �🚀 เริ่มต้น Development Server
