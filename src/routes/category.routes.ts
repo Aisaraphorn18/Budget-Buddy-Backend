@@ -37,8 +37,49 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
       detail: {
         tags: ["Categories"],
         summary: "Get all categories",
-        description: "Retrieve all available categories",
-        security: [{ bearerAuth: [] }]
+        description: "Retrieve all available categories for transaction classification. Returns a complete list of categories ordered by ID.",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: "Successfully retrieved all categories",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Categories retrieved successfully" },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          category_id: { type: "integer", example: 1 },
+                          category_name: { type: "string", example: "Food & Dining" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Invalid or missing JWT token",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Unauthorized" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   )
@@ -50,8 +91,74 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
       detail: {
         tags: ["Categories"],
         summary: "Get category by ID",
-        description: "Retrieve a specific category by its ID",
-        security: [{ bearerAuth: [] }]
+        description: "Retrieve a specific category by its unique identifier",
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "Category ID",
+            schema: {
+              type: "integer",
+              minimum: 1,
+              example: 1
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: "Successfully retrieved category",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Category retrieved successfully" },
+                    data: {
+                      type: "object",
+                      properties: {
+                        category_id: { type: "integer", example: 1 },
+                        category_name: { type: "string", example: "Food & Dining" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Invalid or missing JWT token",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Unauthorized" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          404: {
+            description: "Category not found",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Category not found" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   )
@@ -63,8 +170,81 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
       detail: {
         tags: ["Categories"],
         summary: "Create new category",
-        description: "Create a new category for transaction classification",
-        security: [{ bearerAuth: [] }]
+        description: "Create a new category for transaction classification. Category names must be unique.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["category_name"],
+                properties: {
+                  category_name: {
+                    type: "string",
+                    description: "Category name (must be unique)",
+                    example: "Food & Dining",
+                    minLength: 1,
+                    maxLength: 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: "Category created successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Category created successfully" },
+                    data: {
+                      type: "object",
+                      properties: {
+                        category_id: { type: "integer", example: 1 },
+                        category_name: { type: "string", example: "Food & Dining" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          400: {
+            description: "Bad request - Invalid input or category name already exists",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Category name already exists" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Invalid or missing JWT token",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Unauthorized" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   )
@@ -76,8 +256,108 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
       detail: {
         tags: ["Categories"],
         summary: "Update category",
-        description: "Update an existing category by its ID",
-        security: [{ bearerAuth: [] }]
+        description: "Update an existing category by its ID. Only category name can be updated.",
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "Category ID",
+            schema: {
+              type: "integer",
+              minimum: 1,
+              example: 1
+            }
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  category_name: {
+                    type: "string",
+                    description: "Updated category name (must be unique)",
+                    example: "Food & Beverages",
+                    minLength: 1,
+                    maxLength: 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: "Category updated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Category updated successfully" },
+                    data: {
+                      type: "object",
+                      properties: {
+                        category_id: { type: "integer", example: 1 },
+                        category_name: { type: "string", example: "Food & Beverages" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          400: {
+            description: "Bad request - Invalid input or category name already exists",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Category name already exists" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Invalid or missing JWT token",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Unauthorized" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          404: {
+            description: "Category not found",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Category not found" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   )
@@ -89,8 +369,83 @@ export const categoryRoutes = new Elysia({ prefix: "/api/v1/categories" })
       detail: {
         tags: ["Categories"],
         summary: "Delete category",
-        description: "Delete a category by its ID (only if no transactions or budgets depend on it)",
-        security: [{ bearerAuth: [] }]
+        description: "Delete a category by its ID. Categories cannot be deleted if they have associated transactions or budgets (foreign key constraint).",
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "Category ID",
+            schema: {
+              type: "integer",
+              minimum: 1,
+              example: 1
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: "Category deleted successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Category deleted successfully" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          400: {
+            description: "Bad request - Category has dependencies",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Cannot delete category with existing transactions or budgets" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Invalid or missing JWT token",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Unauthorized" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          },
+          404: {
+            description: "Category not found",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Category not found" },
+                    data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   );
