@@ -48,6 +48,9 @@
 - [🏗️ สถาปัตยกรรมโปรเจค](#️-สถาปัตยกรรมโปรเจค)
 - [🛠️ เทคโนโลยีที่ใช้](#️-เทคโนโลยีที่ใช้)
 - [🧪 การพัฒนาและทดสอบ](#-การพัฒนาและทดสอบ)
+  - [🔧 เวิร์กโฟลว์การพัฒนา](#-เวิร์กโฟลว์การพัฒนา)
+  - [🧪 กลยุทธ์การทดสอบ](#-กลยุทธ์การทดสอบ)
+  - [📊 คุณภาพโค้ด](#-คุณภาพโค้ด)
 - [🛡️ คุณสมบัติด้านความปลอดภัย](#️-คุณสมบัติด้านความปลอดภัย)
 - [🚀 การ Deploy](#-การ-deploy)
 - [🚨 การแก้ไขปัญหา](#-การแก้ไขปัญหา)
@@ -58,6 +61,7 @@
 ### 📖 Detailed Documentation
 - **[📋 Complete API Documentation (English)](API_DOCUMENTATION_EN.md)** - Complete API reference in English
 - **[📋 เอกสาร API แบบสมบูรณ์ (ไทย)](API_DOCUMENTATION_TH.md)** - เอกสาร API ภาษาไทยแบบละเอียด
+- **[🧪 Testing Documentation](tests/README.md)** - Comprehensive testing guide and examples
 - **[🌐 Interactive API Explorer](http://localhost:3000/openapi)** - ทดสอบ API แบบ real-time
 
 ---
@@ -435,15 +439,70 @@ bun install
 # Start development server with hot reload
 bun run dev
 
-# Run tests (when implemented)
+# Run all tests
 bun test
 
-# Build for production
-bun run build
+# Run unit tests only
+bun test:unit
 
-# Start production server
-bun start
+# Run integration tests only
+bun test:integration
+
+# Run tests in watch mode
+bun test:watch
+
+# Run tests with coverage
+bun test:coverage
 ```
+
+### 🧪 Testing Strategy
+
+Budget Buddy Backend uses **Bun's built-in test framework** for comprehensive testing without database dependencies:
+
+#### Test Types
+- **Unit Tests** - Test individual service methods in isolation
+- **Integration Tests** - Test API endpoints end-to-end
+- **Mock Testing** - All tests use mocked Supabase client (no real database operations)
+
+#### Test Coverage
+- ✅ CategoryService business logic
+- ✅ Category API endpoints (CRUD operations)
+- ✅ Authentication and authorization scenarios
+- ✅ Error handling and validation
+- ✅ HTTP status codes and response formats
+
+#### Test Structure
+```
+tests/
+├── unit/                          # Unit tests for services
+│   └── category.service.bun.test.ts
+├── integration/                   # API endpoint tests
+│   └── category.api.test.ts
+├── mocks/                        # Mock implementations
+│   └── supabase-simple.mock.ts
+└── utils/                        # Test utilities
+    └── test-utils.ts
+```
+
+#### Running Specific Tests
+```bash
+# Run CategoryService unit tests
+bun test tests/unit/category.service.bun.test.ts
+
+# Run Category API integration tests  
+bun test tests/integration/category.api.test.ts
+
+# Run all category-related tests
+bun test tests/ --match="*category*"
+```
+
+#### Mock Features
+- **No Database Operations** - All tests run without real INSERT/UPDATE/DELETE
+- **Controlled Responses** - Predictable test data and scenarios
+- **Authentication Mocking** - Test protected routes without real JWT tokens
+- **Fast Execution** - Tests complete in milliseconds
+
+For detailed testing documentation, see **[tests/README.md](tests/README.md)**
 
 ### 📊 Code Quality
 
@@ -1046,15 +1105,70 @@ bun install
 # เริ่มเซิร์ฟเวอร์พัฒนาพร้อม hot reload
 bun run dev
 
-# รันการทดสอบ (เมื่อ implemented)
+# รันการทดสอบทั้งหมด
 bun test
 
-# สร้างสำหรับ production
-bun run build
+# รันการทดสอบ unit tests เท่านั้น
+bun test:unit
 
-# เริ่มเซิร์ฟเวอร์ production
-bun start
+# รันการทดสอบ integration tests เท่านั้น
+bun test:integration
+
+# รันการทดสอบแบบ watch mode
+bun test:watch
+
+# รันการทดสอบพร้อม coverage
+bun test:coverage
 ```
+
+#### 🧪 กลยุทธ์การทดสอบ
+
+Budget Buddy Backend ใช้ **เฟรมเวิร์กการทดสอบของ Bun** สำหรับการทดสอบที่ครอบคลุมโดยไม่พึ่งพาฐานข้อมูล:
+
+##### ประเภทการทดสอบ
+- **Unit Tests** - ทดสอบเมธอดของ service แต่ละตัวแยกกัน
+- **Integration Tests** - ทดสอบ API endpoints แบบ end-to-end
+- **Mock Testing** - การทดสอบทั้งหมดใช้ mock Supabase client (ไม่มีการใช้ฐานข้อมูลจริง)
+
+##### ขอบเขตการทดสอบ
+- ✅ Business logic ของ CategoryService
+- ✅ Category API endpoints (การดำเนินการ CRUD)
+- ✅ สถานการณ์การยืนยันตัวตนและการอนุญาต
+- ✅ การจัดการข้อผิดพลาดและการตรวจสอบ
+- ✅ HTTP status codes และรูปแบบการตอบสนอง
+
+##### โครงสร้างการทดสอบ
+```
+tests/
+├── unit/                          # Unit tests สำหรับ services
+│   └── category.service.bun.test.ts
+├── integration/                   # การทดสอบ API endpoints
+│   └── category.api.test.ts
+├── mocks/                        # การใช้งาน Mock
+│   └── supabase-simple.mock.ts
+└── utils/                        # เครื่องมือการทดสอบ
+    └── test-utils.ts
+```
+
+##### การรันการทดสอบเฉพาะ
+```bash
+# รัน CategoryService unit tests
+bun test tests/unit/category.service.bun.test.ts
+
+# รัน Category API integration tests  
+bun test tests/integration/category.api.test.ts
+
+# รันการทดสอบที่เกี่ยวข้องกับ category ทั้งหมด
+bun test tests/ --match="*category*"
+```
+
+##### คุณสมบัติ Mock
+- **ไม่มีการดำเนินการฐานข้อมูล** - การทดสอบทั้งหมดรันโดยไม่ต้องทำ INSERT/UPDATE/DELETE จริง
+- **การตอบสนองที่ควบคุมได้** - ข้อมูลการทดสอบและสถานการณ์ที่คาดเดาได้
+- **การ Mock การยืนยันตัวตน** - ทดสอบเส้นทางที่ได้รับการป้องกันโดยไม่ต้องใช้ JWT tokens จริง
+- **การทำงานที่รวดเร็ว** - การทดสอบเสร็จสิ้นในมิลลิวินาที
+
+สำหรับเอกสารการทดสอบโดยละเอียด ดู **[tests/README.md](tests/README.md)**
 
 #### 📊 คุณภาพโค้ด
 
