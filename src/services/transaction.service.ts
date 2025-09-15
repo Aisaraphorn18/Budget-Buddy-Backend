@@ -32,25 +32,51 @@ export class TransactionService {
     limit: number
   }> {
     try {
+      // Validate userId
+      if (!userId || userId <= 0) {
+        throw new Error("Valid user ID is required");
+      }
+
       const { type, category_id, start_date, end_date, page = 1, limit = 20 } = filters;
       
+      // Validate pagination parameters
+      if (page <= 0) {
+        throw new Error("Page number must be greater than 0");
+      }
+      if (limit <= 0 || limit > 100) {
+        throw new Error("Limit must be between 1 and 100");
+      }
+
       let query = supabase
         .from('Transaction')
         .select('*', { count: 'exact' })
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
-      // Apply filters
+      // Apply filters with validation
       if (type) {
+        if (!['income', 'expense'].includes(type)) {
+          throw new Error("Type must be 'income' or 'expense'");
+        }
         query = query.eq('type', type);
       }
       if (category_id) {
-        query = query.eq('category_id', category_id);
+        const categoryId = typeof category_id === 'string' ? parseInt(category_id) : category_id;
+        if (isNaN(categoryId) || categoryId <= 0) {
+          throw new Error("Category ID must be a positive integer");
+        }
+        query = query.eq('category_id', categoryId);
       }
       if (start_date) {
+        if (isNaN(Date.parse(start_date))) {
+          throw new Error("Start date must be a valid date format");
+        }
         query = query.gte('created_at', start_date);
       }
       if (end_date) {
+        if (isNaN(Date.parse(end_date))) {
+          throw new Error("End date must be a valid date format");
+        }
         query = query.lte('created_at', end_date);
       }
 
@@ -62,7 +88,8 @@ export class TransactionService {
       const { data, error, count } = await query;
 
       if (error) {
-        throw error;
+        console.error("Database error getting transactions:", error);
+        throw new Error(`Failed to retrieve transactions: ${error.message}`);
       }
 
       return {
@@ -73,12 +100,23 @@ export class TransactionService {
       };
     } catch (error) {
       console.error("Error getting transactions:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to retrieve transactions - unknown error occurred");
     }
   }
 
   async getTransactionById(transactionId: number, userId: number): Promise<Transaction | null> {
     try {
+      // Validate input parameters
+      if (!transactionId || transactionId <= 0) {
+        throw new Error("Valid transaction ID is required");
+      }
+      if (!userId || userId <= 0) {
+        throw new Error("Valid user ID is required");
+      }
+
       const { data, error } = await supabase
         .from('Transaction')
         .select('*')
@@ -88,20 +126,36 @@ export class TransactionService {
 
       if (error) {
         if (error.code === 'PGRST116') {
+          // No rows returned
           return null;
         }
-        throw error;
+        console.error("Database error getting transaction by ID:", error);
+        throw new Error(`Failed to retrieve transaction: ${error.message}`);
       }
 
       return data;
     } catch (error) {
       console.error("Error getting transaction by ID:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to retrieve transaction - unknown error occurred");
     }
   }
 
   async createTransaction(transactionData: CreateTransactionData): Promise<Transaction> {
     try {
+      // Validate required fields
+      if (!transactionData.category_id) {
+        throw new Error("Category ID is required");
+      }
+      if (!transactionData.type || !['income', 'expense'].includes(transactionData.type)) {
+        throw new Error("Transaction type must be 'income' or 'expense'");
+      }
+      if (!transactionData.amount || transactionData.amount <= 0) {
+        throw new Error("Amount must be a positive number");
+      }
+
       const { data, error } = await supabase
         .from('Transaction')
         .insert([transactionData])
@@ -109,18 +163,63 @@ export class TransactionService {
         .single();
 
       if (error) {
-        throw error;
+        console.error("Database error creating transaction:", error);
+        
+        // Handle specific database errors
+        if (error.code === '23503') {
+          if (error.message.includes('category_id')) {
+            throw new Error("Invalid category ID - category does not exist");
+          }
+          if (error.message.includes('user_id')) {
+            throw new Error("Invalid user ID - user does not exist");
+          }
+          throw new Error("Invalid reference - related record does not exist");
+        }
+        if (error.code === '23505') {
+          throw new Error("Duplicate transaction - this transaction already exists");
+        }
+        if (error.code === '23514') {
+          throw new Error("Invalid data - check constraint violation");
+        }
+        
+        throw new Error(`Failed to create transaction: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error("Transaction was not created - no data returned");
       }
 
       return data;
     } catch (error) {
       console.error("Error creating transaction:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to create transaction - unknown error occurred");
     }
   }
 
   async updateTransaction(transactionId: number, userId: number, updateData: UpdateTransactionData): Promise<Transaction | null> {
     try {
+      // Validate input parameters
+      if (!transactionId || transactionId <= 0) {
+        throw new Error("Valid transaction ID is required");
+      }
+      if (!userId || userId <= 0) {
+        throw new Error("Valid user ID is required");
+      }
+      if (!updateData || Object.keys(updateData).length === 0) {
+        throw new Error("Update data is required");
+      }
+
+      // Validate update data
+      if (updateData.type && !['income', 'expense'].includes(updateData.type)) {
+        throw new Error("Transaction type must be 'income' or 'expense'");
+      }
+      if (updateData.amount !== undefined && updateData.amount <= 0) {
+        throw new Error("Amount must be a positive number");
+      }
+
       const { data, error } = await supabase
         .from('Transaction')
         .update(updateData)
@@ -131,20 +230,46 @@ export class TransactionService {
 
       if (error) {
         if (error.code === 'PGRST116') {
+          // No rows affected - transaction not found or belongs to different user
           return null;
         }
-        throw error;
+        
+        console.error("Database error updating transaction:", error);
+        
+        // Handle specific database errors
+        if (error.code === '23503') {
+          if (error.message.includes('category_id')) {
+            throw new Error("Invalid category ID - category does not exist");
+          }
+          throw new Error("Invalid reference - related record does not exist");
+        }
+        if (error.code === '23514') {
+          throw new Error("Invalid data - check constraint violation");
+        }
+        
+        throw new Error(`Failed to update transaction: ${error.message}`);
       }
 
       return data;
     } catch (error) {
       console.error("Error updating transaction:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to update transaction - unknown error occurred");
     }
   }
 
   async deleteTransaction(transactionId: number, userId: number): Promise<boolean> {
     try {
+      // Validate input parameters
+      if (!transactionId || transactionId <= 0) {
+        throw new Error("Valid transaction ID is required");
+      }
+      if (!userId || userId <= 0) {
+        throw new Error("Valid user ID is required");
+      }
+
       const { data, error } = await supabase
         .from('Transaction')
         .delete()
@@ -153,13 +278,22 @@ export class TransactionService {
         .select();
 
       if (error) {
-        throw error;
+        console.error("Database error deleting transaction:", error);
+        throw new Error(`Failed to delete transaction: ${error.message}`);
       }
 
-      return (data && data.length > 0);
+      if (!data || data.length === 0) {
+        // No rows deleted - transaction not found or belongs to different user
+        return false;
+      }
+
+      return true;
     } catch (error) {
       console.error("Error deleting transaction:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to delete transaction - unknown error occurred");
     }
   }
 

@@ -38,13 +38,17 @@ export class CategoryService {
         .order("category_id", { ascending: true });
 
       if (error) {
-        throw error;
+        console.error("Database error getting all categories:", error);
+        throw new Error(`Failed to retrieve categories: ${error.message}`);
       }
 
       return data || [];
     } catch (error) {
       console.error("Error getting all categories:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to retrieve categories - unknown error occurred");
     }
   }
 

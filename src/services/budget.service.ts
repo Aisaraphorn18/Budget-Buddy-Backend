@@ -108,6 +108,20 @@ export class BudgetService {
 
   async createBudget(budgetData: CreateBudgetData): Promise<Budget> {
     try {
+      // Validate required fields
+      if (!budgetData.category_id) {
+        throw new Error("Category ID is required");
+      }
+      if (!budgetData.budget_amount || budgetData.budget_amount <= 0) {
+        throw new Error("Budget amount must be a positive number");
+      }
+      if (!budgetData.cycle_month) {
+        throw new Error("Budget cycle month is required");
+      }
+      // if (!budgetData.cycle_month.match(/^\d{4}-\d{2}$/)) {
+      //   throw new Error("Budget cycle month must be in YYYY-MM format");
+      // }
+
       // Check if budget already exists for this user, category, and cycle_month
       const existingBudget = await this.findExistingBudget(
         budgetData.user_id,
@@ -126,13 +140,39 @@ export class BudgetService {
         .single();
 
       if (error) {
-        throw error;
+        console.error("Database error creating budget:", error);
+        
+        // Handle specific database errors
+        if (error.code === '23503') {
+          if (error.message.includes('category_id')) {
+            throw new Error("Invalid category ID - category does not exist");
+          }
+          if (error.message.includes('user_id')) {
+            throw new Error("Invalid user ID - user does not exist");
+          }
+          throw new Error("Invalid reference - related record does not exist");
+        }
+        if (error.code === '23505') {
+          throw new Error("Duplicate budget - budget already exists for this category and month");
+        }
+        if (error.code === '23514') {
+          throw new Error("Invalid data - check constraint violation");
+        }
+        
+        throw new Error(`Failed to create budget: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error("Budget was not created - no data returned");
       }
 
       return data;
     } catch (error) {
       console.error("Error creating budget:", error);
-      throw error;
+      if (error instanceof Error) {
+        throw error; // Re-throw our custom errors
+      }
+      throw new Error("Failed to create budget - unknown error occurred");
     }
   }
 
