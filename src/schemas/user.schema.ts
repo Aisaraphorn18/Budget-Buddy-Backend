@@ -1,6 +1,32 @@
+/**
+ * User Validation Schemas
+ * 
+ * Elysia validation schemas for user-related data structures in Budget Buddy.
+ * These schemas define validation rules for user authentication, registration,
+ * and profile management endpoints.
+ * 
+ * Key Features:
+ * - Strong typing for user data validation
+ * - Separate schemas for requests and responses
+ * - Password field exclusion in response schemas for security
+ * - Detailed field descriptions for OpenAPI documentation
+ * - Generic response wrappers for consistent API format
+ * 
+ * Security Considerations:
+ * - Password fields are included only in request schemas
+ * - Response schemas exclude sensitive information
+ * - Consistent validation across all user-related endpoints
+ * - Type safety for authentication flows
+ */
+
 import { t, type TSchema } from "elysia";
 
-// User Schema Definitions
+// ==================== USER SCHEMAS ====================
+
+/**
+ * Complete user data schema (internal use)
+ * Includes all user fields including sensitive data like password
+ */
 export const UserSchema = t.Object({
   user_id: t.Number({ description: "Unique identifier for the user" }),
   username: t.String({ description: "Username of the user" }),
@@ -12,6 +38,10 @@ export const UserSchema = t.Object({
   })
 });
 
+/**
+ * User response schema (API responses)
+ * Excludes sensitive information like password for security
+ */
 export const UserResponseSchema = t.Object({
   user_id: t.Number({ description: "Unique identifier for the user" }),
   username: t.String({ description: "Username of the user" }),

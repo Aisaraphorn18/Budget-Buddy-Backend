@@ -1,3 +1,25 @@
+/**
+ * Budget Controller
+ * 
+ * HTTP request handler for budget management endpoints in Budget Buddy.
+ * Manages budget planning, tracking, and analysis operations for users.
+ * Budgets help users set spending limits and monitor financial goals.
+ * 
+ * Key Features:
+ * - Complete CRUD operations for budgets
+ * - Monthly budget cycle management (YYYY-MM format)
+ * - Category-based budget filtering
+ * - User-scoped access control (users can only access their own budgets)
+ * - Duplicate prevention (one budget per category per month)
+ * - Input validation and sanitization
+ * - Proper error handling and HTTP status codes
+ * 
+ * Security:
+ * - JWT authentication required for all operations
+ * - User isolation (userId validation from JWT token)
+ * - Budget ownership validation for updates/deletes
+ */
+
 import { BudgetService } from "../services/budget.service";
 import { BudgetFilters } from "../models/budget.model";
 
@@ -8,6 +30,13 @@ export class BudgetController {
     this.budgetService = new BudgetService();
   }
 
+  /**
+   * Get all budgets for authenticated user
+   * Supports filtering by cycle_month and category_id
+   * 
+   * @param context - Elysia context with user info and query parameters
+   * @returns Array of budget records matching the criteria
+   */
   async getAllBudgets(context: any) {
     try {
       const userId = context.user?.userId;

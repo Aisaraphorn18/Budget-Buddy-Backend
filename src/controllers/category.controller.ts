@@ -1,3 +1,21 @@
+/**
+ * Category Controller
+ * 
+ * HTTP request handler for category management endpoints in Budget Buddy.
+ * Categories are used to organize financial transactions into meaningful groups
+ * such as Food, Transportation, Entertainment, etc.
+ * 
+ * Key Features:
+ * - Public access to category data (no authentication required)
+ * - Retrieve all available categories
+ * - Find specific categories by ID
+ * - Consistent error handling and response formatting
+ * - Optimized for frontend category selection components
+ * 
+ * Note: Categories are typically shared resources across users,
+ * allowing consistent transaction categorization throughout the system.
+ */
+
 import { CategoryService } from "../services/category.service";
 
 export class CategoryController {
@@ -7,6 +25,13 @@ export class CategoryController {
     this.categoryService = new CategoryService();
   }
 
+  /**
+   * Get all categories
+   * Returns complete list of available categories for transaction classification
+   * 
+   * @param context - Elysia context (no authentication required)
+   * @returns Array of all categories ordered by ID
+   */
   async getAllCategories(context: any) {
     try {
       const categories = await this.categoryService.getAllCategories();
@@ -27,6 +52,13 @@ export class CategoryController {
     }
   }
 
+  /**
+   * Get specific category by ID
+   * Retrieves a single category by its unique identifier
+   * 
+   * @param context - Elysia context with category ID parameter
+   * @returns Category object or error if not found
+   */
   async getCategoryById(context: any) {
     try {
       const categoryId = parseInt(context.params.id);

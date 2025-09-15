@@ -1,3 +1,32 @@
+/**
+ * Home Controller
+ * 
+ * HTTP request handler for dashboard and analytics endpoints in Budget Buddy.
+ * Provides comprehensive financial insights, summaries, and dashboard data
+ * to help users understand their financial situation at a glance.
+ * 
+ * Key Features:
+ * - Dashboard overview with key financial metrics
+ * - Recent transaction summaries
+ * - Financial analytics and insights
+ * - Category-based spending analysis
+ * - Cash flow tracking and trends
+ * - Multi-service data aggregation
+ * - Real-time financial calculations
+ * 
+ * Analytics Capabilities:
+ * - Total income/expense calculations
+ * - Budget vs actual spending comparisons
+ * - Monthly financial summaries
+ * - Category-wise spending breakdown
+ * - Financial trend analysis
+ * 
+ * Security:
+ * - JWT authentication required for all operations
+ * - User-scoped data access only
+ * - Aggregated data presentation for privacy
+ */
+
 import { TransactionService } from "../services/transaction.service";
 import { BudgetService } from "../services/budget.service";
 import { AuthService } from "../services/auth.service";
@@ -13,6 +42,13 @@ export class HomeController {
     this.authService = new AuthService();
   }
 
+  /**
+   * Get home dashboard data
+   * Aggregates financial data from multiple sources for dashboard overview
+   * 
+   * @param context - Elysia context with authenticated user info
+   * @returns Comprehensive dashboard data including user info, transactions, and budgets
+   */
   async getHomeData(context: any) {
     try {
       const userId = context.user?.userId;

@@ -1,6 +1,31 @@
+/**
+ * Authentication Validation Schemas
+ * 
+ * Elysia validation schemas specifically for authentication endpoints
+ * in Budget Buddy API. These schemas ensure secure and properly
+ * formatted authentication data.
+ * 
+ * Key Features:
+ * - Strong password requirements (minimum 6 characters)
+ * - Username validation (minimum 3 characters)
+ * - Name field validation for user registration
+ * - Input sanitization and type checking
+ * - OpenAPI documentation integration
+ * - Security-focused validation rules
+ * 
+ * Security Considerations:
+ * - Minimum length requirements prevent weak credentials
+ * - String type validation prevents injection attacks
+ * - Required field validation ensures data completeness
+ * - Consistent validation across auth endpoints
+ */
+
 import { t } from 'elysia';
 
-// Login schema
+/**
+ * Login request validation schema
+ * Validates user credentials for authentication
+ */
 export const LoginRequestSchema = t.Object({
   username: t.String({ 
     minLength: 3,
@@ -12,7 +37,10 @@ export const LoginRequestSchema = t.Object({
   })
 });
 
-// Register schema
+/**
+ * Registration request validation schema
+ * Validates new user account creation data
+ */
 export const RegisterRequestSchema = t.Object({
   username: t.String({ 
     minLength: 3,

@@ -1,3 +1,34 @@
+/**
+ * Transaction Routes
+ * 
+ * Defines HTTP endpoints for financial transaction management in Budget Buddy.
+ * All transaction routes are protected and require JWT authentication.
+ * Transactions are the core of the personal finance system, recording all
+ * income and expense activities with proper categorization and tracking.
+ * 
+ * Routes:
+ * - POST /api/v1/transactions - Create new transaction
+ * - GET /api/v1/transactions - Get transactions with filtering and pagination
+ * - GET /api/v1/transactions/:id - Get specific transaction by ID
+ * - PATCH /api/v1/transactions/:id - Update existing transaction
+ * - DELETE /api/v1/transactions/:id - Delete transaction
+ * 
+ * Features:
+ * - JWT authentication required for all endpoints
+ * - Input validation with Elysia schemas
+ * - Advanced filtering (type, category, date range, amount)
+ * - Pagination support for large datasets
+ * - User-scoped access control (users can only access their own transactions)
+ * - OpenAPI documentation integration
+ * - Proper HTTP status codes and error handling
+ * 
+ * Security:
+ * - Bearer token authentication on all endpoints
+ * - User isolation (transaction ownership validation)
+ * - Input sanitization and type validation
+ * - Protection against unauthorized access
+ */
+
 import { Elysia, t } from "elysia";
 import { TransactionController } from "../controllers/transaction.controller";
 import { CreateTransactionSchema, UpdateTransactionSchema } from "../schemas/api.schema";
@@ -5,6 +36,7 @@ import { CreateTransactionSchema, UpdateTransactionSchema } from "../schemas/api
 const transactionController = new TransactionController();
 
 export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
+  // Create new transaction endpoint
   .post("/",
     async (context) => await transactionController.createTransaction(context),
     {
@@ -17,6 +49,8 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
       }
     }
   )
+  
+  // Get all transactions with filtering endpoint
   .get("/",
     async (context) => await transactionController.getAllTransactions(context),
     {
@@ -36,6 +70,8 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
       }
     }
   )
+  
+  // Get specific transaction by ID endpoint
   .get("/:id",
     async (context) => await transactionController.getTransactionById(context),
     {
@@ -47,6 +83,8 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
       }
     }
   )
+  
+  // Update existing transaction endpoint
   .patch("/:id",
     async (context) => await transactionController.updateTransaction(context),
     {
@@ -59,6 +97,8 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
       }
     }
   )
+  
+  // Delete transaction endpoint
   .delete("/:id",
     async (context) => await transactionController.deleteTransaction(context),
     {

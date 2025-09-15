@@ -1,3 +1,21 @@
+/**
+ * Transaction Service
+ * 
+ * Business logic layer for transaction management in Budget Buddy.
+ * Handles all database operations related to financial transactions including:
+ * 
+ * Features:
+ * - CRUD operations (Create, Read, Update, Delete)
+ * - Advanced filtering by date, category, type, and amount
+ * - Pagination support for large datasets
+ * - User-scoped data access (users can only access their own transactions)
+ * - Data validation and error handling
+ * - Database transaction integrity
+ * 
+ * This service acts as an abstraction layer between controllers and the database,
+ * ensuring clean separation of concerns and reusable business logic.
+ */
+
 import { supabase } from "../config/supabase";
 import { 
   Transaction, 

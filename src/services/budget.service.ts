@@ -1,7 +1,37 @@
+/**
+ * Budget Service
+ * 
+ * Business logic layer for budget management in Budget Buddy.
+ * Handles budget planning, tracking, and analysis operations for users.
+ * Budgets help users set spending limits by category and monitor their financial goals.
+ * 
+ * Key Features:
+ * - User-scoped budget management (users can only access their own budgets)
+ * - Monthly budget cycles with YYYY-MM format
+ * - Category-based budget allocation
+ * - Budget filtering by month and category
+ * - CRUD operations for budget management
+ * - Budget analysis and spending tracking
+ * - Duplicate prevention (one budget per category per month)
+ * 
+ * Business Rules:
+ * - Each user can have one budget per category per month
+ * - Budget amounts must be positive values
+ * - Budget cycles are monthly-based for consistent tracking
+ */
+
 import { supabase } from "../config/supabase";
 import { Budget, CreateBudgetData, UpdateBudgetData, BudgetFilters } from "../models/budget.model";
 
 export class BudgetService {
+  /**
+   * Retrieve all budgets for a user with optional filtering
+   * Supports filtering by month and category for targeted budget views
+   * 
+   * @param userId - The ID of the user whose budgets to retrieve
+   * @param filters - Optional filters for cycle_month and category_id
+   * @returns Array of budget records matching the criteria
+   */
   async getAllBudgets(userId: number, filters: BudgetFilters = {}): Promise<Budget[]> {
     try {
       const { cycle_month, category_id } = filters;
@@ -32,6 +62,14 @@ export class BudgetService {
     }
   }
 
+  /**
+   * Retrieve a specific budget by ID
+   * Ensures user can only access their own budgets through user_id validation
+   * 
+   * @param budgetId - The ID of the budget to retrieve
+   * @param userId - The ID of the user (for security validation)
+   * @returns Budget object if found and belongs to user, null otherwise
+   */
   async getBudgetById(budgetId: number, userId: number): Promise<Budget | null> {
     try {
       const { data, error } = await supabase

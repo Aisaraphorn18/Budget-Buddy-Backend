@@ -1,11 +1,48 @@
+/**
+ * API Validation Schemas
+ * 
+ * Comprehensive collection of Elysia validation schemas for Budget Buddy API.
+ * These schemas define the structure, types, and validation rules for all
+ * API requests and responses, ensuring data integrity and type safety.
+ * 
+ * Features:
+ * - Strong typing with TypeScript integration
+ * - Input validation and sanitization
+ * - OpenAPI documentation generation
+ * - Error message customization
+ * - Min/max length and value constraints
+ * - Optional field handling
+ * - Union types for enums
+ * 
+ * Schema Categories:
+ * - Category schemas: For transaction categorization
+ * - Transaction schemas: For financial transaction management
+ * - Budget schemas: For budget planning and tracking
+ * - User schemas: For authentication and profile management
+ * - Response schemas: For standardized API responses
+ * 
+ * Usage:
+ * These schemas are used in route definitions to validate request bodies,
+ * query parameters, and generate OpenAPI documentation automatically.
+ */
+
 import { t } from 'elysia';
 
-// Category schemas
+// ==================== CATEGORY SCHEMAS ====================
+
+/**
+ * Category response schema
+ * Defines the structure of category data returned by the API
+ */
 export const CategorySchema = t.Object({
   category_id: t.Number(),
   category_name: t.String()
 });
 
+/**
+ * Create category request schema
+ * Validates data for creating new categories
+ */
 export const CreateCategorySchema = t.Object({
   category_name: t.String({ 
     minLength: 2,
@@ -13,7 +50,12 @@ export const CreateCategorySchema = t.Object({
   })
 });
 
-// Transaction schemas
+// ==================== TRANSACTION SCHEMAS ====================
+
+/**
+ * Transaction response schema
+ * Defines the complete structure of transaction data
+ */
 export const TransactionSchema = t.Object({
   transaction_id: t.Number(),
   user_id: t.Number(),
@@ -24,6 +66,10 @@ export const TransactionSchema = t.Object({
   created_at: t.String()
 });
 
+/**
+ * Create transaction request schema
+ * Validates data for creating new transactions
+ */
 export const CreateTransactionSchema = t.Object({
   category_id: t.Number({ 
     minimum: 1,
@@ -57,7 +103,12 @@ export const TransactionFiltersSchema = t.Object({
   limit: t.Optional(t.Number({ minimum: 1, maximum: 100 }))
 });
 
-// Budget schemas
+// ==================== BUDGET SCHEMAS ====================
+
+/**
+ * Budget response schema
+ * Defines the complete structure of budget data
+ */
 export const BudgetSchema = t.Object({
   budget_id: t.Number(),
   user_id: t.Number(),
@@ -68,6 +119,10 @@ export const BudgetSchema = t.Object({
   cycle_month: t.String()
 });
 
+/**
+ * Create budget request schema
+ * Validates data for creating new budgets
+ */
 export const CreateBudgetSchema = t.Object({
   category_id: t.Number({ 
     minimum: 1,

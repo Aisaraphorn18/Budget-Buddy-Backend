@@ -1,3 +1,25 @@
+/**
+ * Transaction Controller
+ * 
+ * HTTP request handler for transaction management endpoints in Budget Buddy.
+ * Manages all transaction-related operations including CRUD operations,
+ * filtering, pagination, and data validation.
+ * 
+ * Key Features:
+ * - Complete CRUD operations for transactions
+ * - Advanced filtering (by type, category, date range, amount)
+ * - Pagination support for large datasets
+ * - User-scoped access control (users can only access their own transactions)
+ * - Input validation and sanitization
+ * - Proper error handling and HTTP status codes
+ * - Transaction amount validation
+ * 
+ * Security:
+ * - JWT authentication required for all operations
+ * - User isolation (userId validation from JWT token)
+ * - Input sanitization and type conversion
+ */
+
 import { TransactionService } from "../services/transaction.service";
 import { TransactionFilters } from "../models/transaction.model";
 
@@ -8,6 +30,13 @@ export class TransactionController {
     this.transactionService = new TransactionService();
   }
 
+  /**
+   * Get all transactions for authenticated user
+   * Supports filtering by type, category, date range, and pagination
+   * 
+   * @param context - Elysia context with user info and query parameters
+   * @returns Paginated list of transactions with metadata
+   */
   async getAllTransactions(context: any) {
     try {
       const userId = context.user?.userId;
@@ -54,6 +83,13 @@ export class TransactionController {
     }
   }
 
+  /**
+   * Get specific transaction by ID
+   * Retrieves a single transaction if it belongs to the authenticated user
+   * 
+   * @param context - Elysia context with user info and transaction ID parameter
+   * @returns Transaction object or error if not found/unauthorized
+   */
   async getTransactionById(context: any) {
     try {
       const userId = context.user?.userId;
@@ -101,6 +137,13 @@ export class TransactionController {
     }
   }
 
+  /**
+   * Create new transaction
+   * Creates a financial transaction record for the authenticated user
+   * 
+   * @param context - Elysia context with user info and transaction data in body
+   * @returns Created transaction object or validation error
+   */
   async createTransaction(context: any) {
     try {
       const userId = context.user?.userId;

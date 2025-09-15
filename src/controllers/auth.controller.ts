@@ -1,3 +1,19 @@
+/**
+ * Authentication Controller
+ * 
+ * Handles all authentication-related HTTP requests including:
+ * - User registration with password hashing
+ * - User login with JWT token generation
+ * - User logout (token invalidation)
+ * - User profile retrieval
+ * 
+ * Security Features:
+ * - Password hashing with bcryptjs (12 salt rounds)
+ * - JWT token generation for session management
+ * - Input validation and sanitization
+ * - Proper error handling and response formatting
+ */
+
 import bcrypt from "bcryptjs";
 import { AuthService } from "../services/auth.service";
 
@@ -8,6 +24,13 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
+  /**
+   * Register new user
+   * Creates a new user account with hashed password
+   * 
+   * @param context - Elysia context containing request body
+   * @returns Success/error response with user data or error message
+   */
   async register(context: any) {
     try {
       const { username, first_name, last_name, password } = context.body as any;
