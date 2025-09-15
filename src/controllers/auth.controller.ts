@@ -62,7 +62,7 @@ export class AuthController {
         success: true,
         message: "User registered successfully",
         user: {
-          id: user.user_id,
+          user_id: user.user_id,
           username: user.username,
           first_name: user.first_name,
           last_name: user.last_name,
@@ -117,7 +117,7 @@ export class AuthController {
         message: "Login successful",
         token,
         user: {
-          id: user.user_id,
+          user_id: user.user_id,
           username: user.username,
           first_name: user.first_name,
           last_name: user.last_name,
@@ -189,7 +189,7 @@ export class AuthController {
         success: true,
         message: "Profile retrieved successfully",
         user: {
-          id: user.user_id,
+          user_id: user.user_id,
           username: user.username,
           first_name: user.first_name,
           last_name: user.last_name,

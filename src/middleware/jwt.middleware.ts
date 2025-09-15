@@ -28,20 +28,33 @@ export const jwtMiddleware = new Elysia()
   .use(bearer())
   // Derive user information from validated JWT token
   .derive(async ({ bearer, jwt }) => {
+    console.log('🔍 JWT Middleware - Bearer token received:', bearer ? 'Yes' : 'No');
+    console.log('🔍 JWT Middleware - Bearer token length:', bearer?.length);
+    
     // Check if Authorization Bearer token is present
     if (!bearer) {
+      console.log('❌ No bearer token found');
       throw new Error('Authorization token required');
     }
 
     // Verify and decode the JWT token
     const payload = await jwt.verify(bearer);
+    console.log('🔍 JWT Middleware - Payload:', payload);
     if (!payload) {
+      console.log('❌ Invalid token payload');
       throw new Error('Invalid token');
     }
 
+    const user = {
+      user_id: payload.userId, // Convert userId to user_id for consistency
+      username: payload.username,
+      ...payload
+    };
+    console.log('✅ JWT Middleware - User object:', user);
+
     // Attach user information to request context for use in protected routes
     return {
-      user: payload
+      user
     };
   })
   // Handle authentication errors with appropriate HTTP responses

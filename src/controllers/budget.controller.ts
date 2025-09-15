@@ -39,7 +39,7 @@ export class BudgetController {
    */
   async getAllBudgets(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {

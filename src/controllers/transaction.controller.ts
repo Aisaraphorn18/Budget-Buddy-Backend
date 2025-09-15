@@ -39,7 +39,7 @@ export class TransactionController {
    */
   async getAllTransactions(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -92,7 +92,7 @@ export class TransactionController {
    */
   async getTransactionById(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -146,7 +146,8 @@ export class TransactionController {
    */
   async createTransaction(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
+      console.log(context.user);
       if (!userId) {
         context.set.status = 401;
         return {
@@ -186,7 +187,7 @@ export class TransactionController {
 
   async updateTransaction(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -234,7 +235,7 @@ export class TransactionController {
 
   async deleteTransaction(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
