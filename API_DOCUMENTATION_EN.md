@@ -6,6 +6,13 @@
 [![ElysiaJS](https://img.shields.io/badge/Framework-ElysiaJS-ff6b9d.svg)](https://elysiajs.com/)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://www.typescriptlang.org/)
 
+## 🌏 Language Versions
+
+- **🇺🇸 English** - Current
+- **[🇹🇭 ไทย (Thai Version)](API_DOCUMENTATION_TH.md)** - เอกสาร API ภาษาไทย
+
+---
+
 ## 📚 Table of Contents
 
 - [🌐 Base URL](#-base-url)
@@ -30,13 +37,13 @@ Production: https://your-domain.com
 
 ## 🔐 Authentication
 
-บาง API endpoints ต้องการ JWT token ใน header:
+Some API endpoints require JWT token in header:
 
 ```http
 Authorization: Bearer <your-jwt-token>
 ```
 
-**Token ได้รับจาก:** `/api/v1/auth/login` endpoint
+**Token obtained from:** `/api/v1/auth/login` endpoint
 
 ---
 
@@ -81,7 +88,7 @@ Authorization: Bearer <your-jwt-token>
 
 ### GET `/health`
 
-ตรวจสอบสถานะของ API server
+Check API server status
 
 #### 📥 Request
 ```http
@@ -111,7 +118,7 @@ Content-Type: application/json
 
 ### POST `/api/v1/auth/register`
 
-สมัครสมาชิกใหม่
+Register new user
 
 #### 📥 Request
 ```http
@@ -135,10 +142,10 @@ Content-Type: application/json
 #### 📝 Request Body Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `username` | string | ✅ | ชื่อผู้ใช้ (ต้องไม่ซ้ำ) |
-| `password` | string | ✅ | รหัสผ่าน (ขั้นต่ำ 6 ตัวอักษร) |
-| `first_name` | string | ❌ | ชื่อจริง |
-| `last_name` | string | ❌ | นามสกุล |
+| `username` | string | ✅ | Username (must be unique) |
+| `password` | string | ✅ | Password (minimum 6 characters) |
+| `first_name` | string | ❌ | First name |
+| `last_name` | string | ❌ | Last name |
 
 #### 📤 Response (201 Created)
 ```json
@@ -174,7 +181,7 @@ Content-Type: application/json
 
 ### POST `/api/v1/auth/login`
 
-เข้าสู่ระบบ
+User login
 
 #### 📥 Request
 ```http
@@ -196,8 +203,8 @@ Content-Type: application/json
 #### 📝 Request Body Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `username` | string | ✅ | ชื่อผู้ใช้ |
-| `password` | string | ✅ | รหัสผ่าน |
+| `username` | string | ✅ | Username |
+| `password` | string | ✅ | Password |
 
 #### 📤 Response (200 OK)
 ```json
@@ -232,7 +239,7 @@ Content-Type: application/json
 
 ### POST `/api/v1/auth/logout`
 
-ออกจากระบบ
+User logout
 
 #### 📥 Request
 ```http
@@ -263,7 +270,7 @@ Authorization: Bearer <token>
 
 ### GET `/api/v1/auth/profile`
 
-ดูข้อมูลโปรไฟล์ผู้ใช้
+Get user profile
 
 #### 📥 Request
 ```http
@@ -298,7 +305,7 @@ Authorization: Bearer <token>
 
 ### GET `/api/v1/categories`
 
-ดูหมวดหมู่ทั้งหมด
+Get all categories
 
 #### 📥 Request
 ```http
@@ -340,7 +347,7 @@ GET /api/v1/categories
 
 ### GET `/api/v1/categories/:id`
 
-ดูหมวดหมู่ตาม ID
+Get category by ID
 
 #### 📥 Request
 ```http
@@ -353,7 +360,7 @@ GET /api/v1/categories/550e8400-e29b-41d4-a716-446655440001
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของหมวดหมู่ |
+| `id` | UUID | ✅ | Category ID |
 
 #### 📤 Response (200 OK)
 ```json
@@ -392,7 +399,7 @@ GET /api/v1/categories/550e8400-e29b-41d4-a716-446655440001
 
 ### POST `/protected/api/v1/transactions`
 
-สร้างรายการเงินใหม่
+Create new transaction
 
 #### 📥 Request
 ```http
@@ -419,11 +426,11 @@ Authorization: Bearer <token>
 #### 📝 Request Body Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `category_id` | UUID | ✅ | ID ของหมวดหมู่ |
-| `amount` | number | ✅ | จำนวนเงิน (บวก) |
-| `type` | string | ✅ | ประเภท: "income" หรือ "expense" |
-| `description` | string | ❌ | คำอธิบายรายการ |
-| `date` | string | ✅ | วันที่ (YYYY-MM-DD) |
+| `category_id` | UUID | ✅ | Category ID |
+| `amount` | number | ✅ | Amount (positive) |
+| `type` | string | ✅ | Type: "income" or "expense" |
+| `description` | string | ❌ | Transaction description |
+| `date` | string | ✅ | Date (YYYY-MM-DD) |
 
 #### 📤 Response (201 Created)
 ```json
@@ -454,7 +461,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/transactions`
 
-ดูรายการเงินทั้งหมด (พร้อมการกรองและ pagination)
+Get all transactions (with filtering and pagination)
 
 #### 📥 Request
 ```http
@@ -468,14 +475,14 @@ Authorization: Bearer <token>
 #### 📝 Query Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `page` | number | ❌ | หมายเลขหน้า (ค่าเริ่มต้น: 1) |
-| `limit` | number | ❌ | จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 10, สูงสุด: 100) |
-| `type` | string | ❌ | กรองตามประเภท: "income" หรือ "expense" |
-| `category_id` | UUID | ❌ | กรองตาม ID หมวดหมู่ |
-| `start_date` | string | ❌ | วันที่เริ่มต้น (YYYY-MM-DD) |
-| `end_date` | string | ❌ | วันที่สิ้นสุด (YYYY-MM-DD) |
-| `min_amount` | number | ❌ | จำนวนเงินต่ำสุด |
-| `max_amount` | number | ❌ | จำนวนเงินสูงสุด |
+| `page` | number | ❌ | Page number (default: 1) |
+| `limit` | number | ❌ | Items per page (default: 10, max: 100) |
+| `type` | string | ❌ | Filter by type: "income" or "expense" |
+| `category_id` | UUID | ❌ | Filter by category ID |
+| `start_date` | string | ❌ | Start date (YYYY-MM-DD) |
+| `end_date` | string | ❌ | End date (YYYY-MM-DD) |
+| `min_amount` | number | ❌ | Minimum amount |
+| `max_amount` | number | ❌ | Maximum amount |
 
 #### 📤 Response (200 OK)
 ```json
@@ -516,7 +523,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/transactions/:id`
 
-ดูรายการเงินตาม ID
+Get transaction by ID
 
 #### 📥 Request
 ```http
@@ -530,7 +537,7 @@ Authorization: Bearer <token>
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของรายการเงิน |
+| `id` | UUID | ✅ | Transaction ID |
 
 #### 📤 Response (200 OK)
 ```json
@@ -562,7 +569,7 @@ Authorization: Bearer <token>
 
 ### PATCH `/protected/api/v1/transactions/:id`
 
-แก้ไขรายการเงิน
+Update transaction
 
 #### 📥 Request
 ```http
@@ -578,7 +585,7 @@ Authorization: Bearer <token>
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของรายการเงิน |
+| `id` | UUID | ✅ | Transaction ID |
 
 #### 📋 Request Body
 ```json
@@ -589,14 +596,14 @@ Authorization: Bearer <token>
 }
 ```
 
-#### 📝 Request Body Parameters (ทุกฟิลด์เป็น optional)
+#### 📝 Request Body Parameters (all optional)
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `category_id` | UUID | ❌ | ID ของหมวดหมู่ |
-| `amount` | number | ❌ | จำนวนเงิน |
-| `type` | string | ❌ | ประเภท: "income" หรือ "expense" |
-| `description` | string | ❌ | คำอธิบายรายการ |
-| `date` | string | ❌ | วันที่ (YYYY-MM-DD) |
+| `category_id` | UUID | ❌ | Category ID |
+| `amount` | number | ❌ | Amount |
+| `type` | string | ❌ | Type: "income" or "expense" |
+| `description` | string | ❌ | Transaction description |
+| `date` | string | ❌ | Date (YYYY-MM-DD) |
 
 #### 📤 Response (200 OK)
 ```json
@@ -628,7 +635,7 @@ Authorization: Bearer <token>
 
 ### DELETE `/protected/api/v1/transactions/:id`
 
-ลบรายการเงิน
+Delete transaction
 
 #### 📥 Request
 ```http
@@ -642,7 +649,7 @@ Authorization: Bearer <token>
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของรายการเงิน |
+| `id` | UUID | ✅ | Transaction ID |
 
 #### 📤 Response (200 OK)
 ```json
@@ -661,7 +668,7 @@ Authorization: Bearer <token>
 
 ### POST `/protected/api/v1/budgets`
 
-สร้างงบประมาณใหม่
+Create new budget
 
 #### 📥 Request
 ```http
@@ -688,11 +695,11 @@ Authorization: Bearer <token>
 #### 📝 Request Body Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `category_id` | UUID | ✅ | ID ของหมวดหมู่ |
-| `amount` | number | ✅ | จำนวนเงินงบประมาณ |
-| `period` | string | ✅ | รอบงบประมาณ: "weekly", "monthly", "yearly" |
-| `start_date` | string | ✅ | วันที่เริ่มต้น (YYYY-MM-DD) |
-| `end_date` | string | ✅ | วันที่สิ้นสุด (YYYY-MM-DD) |
+| `category_id` | UUID | ✅ | Category ID |
+| `amount` | number | ✅ | Budget amount |
+| `period` | string | ✅ | Budget period: "weekly", "monthly", "yearly" |
+| `start_date` | string | ✅ | Start date (YYYY-MM-DD) |
+| `end_date` | string | ✅ | End date (YYYY-MM-DD) |
 
 #### 📤 Response (201 Created)
 ```json
@@ -728,7 +735,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/budgets`
 
-ดูงบประมาณทั้งหมด
+Get all budgets
 
 #### 📥 Request
 ```http
@@ -742,10 +749,10 @@ Authorization: Bearer <token>
 #### 📝 Query Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `page` | number | ❌ | หมายเลขหน้า (ค่าเริ่มต้น: 1) |
-| `limit` | number | ❌ | จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 10, สูงสุด: 100) |
-| `period` | string | ❌ | กรองตามรอบ: "weekly", "monthly", "yearly" |
-| `category_id` | UUID | ❌ | กรองตาม ID หมวดหมู่ |
+| `page` | number | ❌ | Page number (default: 1) |
+| `limit` | number | ❌ | Items per page (default: 10, max: 100) |
+| `period` | string | ❌ | Filter by period: "weekly", "monthly", "yearly" |
+| `category_id` | UUID | ❌ | Filter by category ID |
 
 #### 📤 Response (200 OK)
 ```json
@@ -791,7 +798,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/budgets/:id`
 
-ดูงบประมาณตาม ID
+Get budget by ID
 
 #### 📥 Request
 ```http
@@ -805,7 +812,7 @@ Authorization: Bearer <token>
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของงบประมาณ |
+| `id` | UUID | ✅ | Budget ID |
 
 #### 📤 Response (200 OK)
 ```json
@@ -852,7 +859,7 @@ Authorization: Bearer <token>
 
 ### PATCH `/protected/api/v1/budgets/:id`
 
-แก้ไขงบประมาณ
+Update budget
 
 #### 📥 Request
 ```http
@@ -868,7 +875,7 @@ Authorization: Bearer <token>
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของงบประมาณ |
+| `id` | UUID | ✅ | Budget ID |
 
 #### 📋 Request Body
 ```json
@@ -878,14 +885,14 @@ Authorization: Bearer <token>
 }
 ```
 
-#### 📝 Request Body Parameters (ทุกฟิลด์เป็น optional)
+#### 📝 Request Body Parameters (all optional)
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `category_id` | UUID | ❌ | ID ของหมวดหมู่ |
-| `amount` | number | ❌ | จำนวนเงินงบประมาณ |
-| `period` | string | ❌ | รอบงบประมาณ: "weekly", "monthly", "yearly" |
-| `start_date` | string | ❌ | วันที่เริ่มต้น (YYYY-MM-DD) |
-| `end_date` | string | ❌ | วันที่สิ้นสุด (YYYY-MM-DD) |
+| `category_id` | UUID | ❌ | Category ID |
+| `amount` | number | ❌ | Budget amount |
+| `period` | string | ❌ | Budget period: "weekly", "monthly", "yearly" |
+| `start_date` | string | ❌ | Start date (YYYY-MM-DD) |
+| `end_date` | string | ❌ | End date (YYYY-MM-DD) |
 
 #### 📤 Response (200 OK)
 ```json
@@ -922,7 +929,7 @@ Authorization: Bearer <token>
 
 ### DELETE `/protected/api/v1/budgets/:id`
 
-ลบงบประมาณ
+Delete budget
 
 #### 📥 Request
 ```http
@@ -936,7 +943,7 @@ Authorization: Bearer <token>
 #### 📝 URL Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | UUID | ✅ | ID ของงบประมาณ |
+| `id` | UUID | ✅ | Budget ID |
 
 #### 📤 Response (200 OK)
 ```json
@@ -955,7 +962,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/home`
 
-ดูข้อมูลหน้าหลัก/แดชบอร์ด
+Get dashboard/home data
 
 #### 📥 Request
 ```http
@@ -1016,7 +1023,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/recent-transactions`
 
-ดูรายการเงินล่าสุด
+Get recent transactions
 
 #### 📥 Request
 ```http
@@ -1030,7 +1037,7 @@ Authorization: Bearer <token>
 #### 📝 Query Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `limit` | number | ❌ | จำนวนรายการ (ค่าเริ่มต้น: 10, สูงสุด: 50) |
+| `limit` | number | ❌ | Number of items (default: 10, max: 50) |
 
 #### 📤 Response (200 OK)
 ```json
@@ -1061,7 +1068,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/analytics/summary`
 
-ดูสรุปการเงิน
+Get financial summary
 
 #### 📥 Request
 ```http
@@ -1075,9 +1082,9 @@ Authorization: Bearer <token>
 #### 📝 Query Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `period` | string | ❌ | รอบเวลา: "monthly", "yearly" (ค่าเริ่มต้น: "monthly") |
-| `year` | number | ❌ | ปี (ค่าเริ่มต้น: ปีปัจจุบัน) |
-| `month` | number | ❌ | เดือน 1-12 (ใช้เมื่อ period="monthly") |
+| `period` | string | ❌ | Time period: "monthly", "yearly" (default: "monthly") |
+| `year` | number | ❌ | Year (default: current year) |
+| `month` | number | ❌ | Month 1-12 (used when period="monthly") |
 
 #### 📤 Response (200 OK)
 ```json
@@ -1123,7 +1130,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/analytics/by-category`
 
-ดูการวิเคราะห์ตามหมวดหมู่
+Get analytics by category
 
 #### 📥 Request
 ```http
@@ -1137,10 +1144,10 @@ Authorization: Bearer <token>
 #### 📝 Query Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `type` | string | ❌ | ประเภท: "income", "expense" (ค่าเริ่มต้น: "expense") |
-| `period` | string | ❌ | รอบเวลา: "monthly", "yearly" (ค่าเริ่มต้น: "monthly") |
-| `year` | number | ❌ | ปี (ค่าเริ่มต้น: ปีปัจจุบัน) |
-| `month` | number | ❌ | เดือน 1-12 (ใช้เมื่อ period="monthly") |
+| `type` | string | ❌ | Type: "income", "expense" (default: "expense") |
+| `period` | string | ❌ | Time period: "monthly", "yearly" (default: "monthly") |
+| `year` | number | ❌ | Year (default: current year) |
+| `month` | number | ❌ | Month 1-12 (used when period="monthly") |
 
 #### 📤 Response (200 OK)
 ```json
@@ -1181,7 +1188,7 @@ Authorization: Bearer <token>
 
 ### GET `/protected/api/v1/analytics/flow`
 
-ดูการวิเคราะห์กระแสเงินสด
+Get cash flow analytics
 
 #### 📥 Request
 ```http
@@ -1195,10 +1202,10 @@ Authorization: Bearer <token>
 #### 📝 Query Parameters
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `period` | string | ❌ | รอบเวลา: "monthly", "daily" (ค่าเริ่มต้น: "monthly") |
-| `year` | number | ❌ | ปี (ค่าเริ่มต้น: ปีปัจจุบัน) |
-| `months` | number | ❌ | จำนวนเดือนย้อนหลัง (ค่าเริ่มต้น: 6, สูงสุด: 12) |
-| `days` | number | ❌ | จำนวนวันย้อนหลัง (ใช้เมื่อ period="daily", สูงสุด: 90) |
+| `period` | string | ❌ | Time period: "monthly", "daily" (default: "monthly") |
+| `year` | number | ❌ | Year (default: current year) |
+| `months` | number | ❌ | Number of months back (default: 6, max: 12) |
+| `days` | number | ❌ | Number of days back (used when period="daily", max: 90) |
 
 #### 📤 Response (200 OK)
 ```json
@@ -1247,43 +1254,43 @@ Authorization: Bearer <token>
 
 ### 🚀 Quick Start for Testing
 
-1. **เริ่มเซิร์ฟเวอร์:**
+1. **Start server:**
    ```bash
    bun run dev
    ```
 
-2. **ทดสอบ Health Check:**
+2. **Test Health Check:**
    ```bash
    curl http://localhost:3000/health
    ```
 
-3. **สมัครสมาชิก:**
+3. **Register:**
    ```bash
    curl -X POST http://localhost:3000/api/v1/auth/register \
      -H "Content-Type: application/json" \
      -d '{"username":"testuser","password":"password123","first_name":"Test","last_name":"User"}'
    ```
 
-4. **เข้าสู่ระบบและรับ Token:**
+4. **Login and get Token:**
    ```bash
    curl -X POST http://localhost:3000/api/v1/auth/login \
      -H "Content-Type: application/json" \
      -d '{"username":"testuser","password":"password123"}'
    ```
 
-5. **ใช้ Token ในการเรียก Protected APIs:**
+5. **Use Token for Protected APIs:**
    ```bash
    curl -X GET http://localhost:3000/protected/api/v1/transactions \
      -H "Authorization: Bearer YOUR_TOKEN_HERE"
    ```
 
 ### 📝 Notes
-- ทุก timestamp ใช้รูปแบบ ISO 8601 (UTC)
-- UUID ใช้รูปแบบ v4
-- จำนวนเงินใช้ทศนิยม 2 ตำแหน่ง
-- วันที่ใช้รูปแบบ YYYY-MM-DD
-- Pagination เริ่มจากหน้า 1
-- Token หมดอายุใน 24 ชั่วโมง
+- All timestamps use ISO 8601 format (UTC)
+- UUIDs use v4 format
+- Amounts use 2 decimal places
+- Dates use YYYY-MM-DD format
+- Pagination starts from page 1
+- Tokens expire in 24 hours
 
 ---
 
@@ -1291,8 +1298,8 @@ Authorization: Bearer <token>
 
 ### 📚 API Documentation Complete! 
 
-สร้างโดย Budget Buddy Team ด้วย ❤️
+Created by Budget Buddy Team with ❤️
 
-**[🔙 กลับไปที่ README](README.md)** • **[🌐 ทดสอบ API](http://localhost:3000/openapi)**
+**[🔙 Back to README](README.md)** • **[🇹🇭 Thai Version](API_DOCUMENTATION_TH.md)** • **[🌐 Test API](http://localhost:3000/openapi)**
 
 </div>
