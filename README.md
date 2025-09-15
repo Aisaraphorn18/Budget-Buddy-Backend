@@ -1,9 +1,9 @@
-# 🚀 BudgetBuddy API Backend
+# � Budget Buddy Backend API
 
-[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-5.2.6-green.svg)](https://www.djangoproject.com/)
-[![Django REST Framework](https://img.shields.io/badge/DRF-3.15.2-red.svg)](https://www.django-rest-framework.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-orange.svg)](https://supabase.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
+[![ElysiaJS](https://img.shields.io/badge/ElysiaJS-1.1-green.svg)](https://elysiajs.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-orange.svg)](https://supabase.com/)
+[![JWT](https://img.shields.io/badge/JWT-Authentication-red.svg)](https://jwt.io/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🌐 Language / ภาษา
@@ -17,52 +17,53 @@
 
 ## English Version
 
-> 💰 A modern personal finance management API built with Django REST Framework and Supabase PostgreSQL
+> � A modern personal finance management RESTful API built with ElysiaJS, TypeScript, and Supabase
+
+### ✨ Features
+
+- � **JWT Authentication** - Secure user authentication with Bearer tokens
+- 💸 **Transaction Management** - Complete CRUD operations for financial transactions
+- 📊 **Budget Tracking** - Set and monitor spending budgets by categories
+- 📈 **Analytics Dashboard** - Comprehensive financial insights and summaries
+- 🏷️ **Category Management** - Organize transactions with custom categories
+- 🔍 **Advanced Filtering** - Filter by date, category, amount, and type
+- 📄 **Pagination Support** - Efficient data loading with pagination
+- 📖 **OpenAPI Documentation** - Interactive API documentation with Swagger
+- 🚀 **High Performance** - Built with ElysiaJS for optimal speed
+- 🛡️ **Type Safety** - Full TypeScript implementation
 
 ### 🎯 Getting Started
 
 #### 📋 Prerequisites
 
-- Python 3.13+
-- PostgreSQL (Supabase)
+- Node.js 18+ or Bun runtime
+- PostgreSQL database (Supabase recommended)
 - Git
 
 #### 🛠️ Installation
 
-##### 🪟 Install Python Virtual Environment (Windows)
-
-```powershell
-# Create virtual environment with Python 3.13
-py -3.13 -m venv env
-
-# Activate virtual environment
-env\Scripts\activate
-
-# Verify Python version
-python --version
-```
-
-#### 🍎 Install Python Virtual Environment (macOS/Linux)
+##### 📥 Clone Repository
 
 ```bash
-# Create virtual environment with Python 3.13
-python3.13 -m venv env
-
-# Activate virtual environment
-source env/bin/activate
-
-# Verify Python version
-python --version
+git clone https://github.com/your-username/budget-buddy-backend.git
+cd budget-buddy-backend
 ```
 
-#### 📦 Install Dependencies
+##### 📦 Install Dependencies
 
+**Using Bun (Recommended):**
 ```bash
-# Install required packages
-pip install -r requirements.txt
+bun install
+```
 
-# Verify installation
-pip list
+**Using npm:**
+```bash
+npm install
+```
+
+**Using yarn:**
+```bash
+yarn install
 ```
 
 ### 🔧 Environment Configuration
@@ -70,83 +71,468 @@ pip list
 Create a `.env` file in the root directory:
 
 ```env
-# Django Settings
-SECRET_KEY=your-secret-key-here
-DEBUG=True
-ALLOWED_HOSTS=127.0.0.1,localhost
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here-change-in-production
 
 # Supabase Database Configuration
-DB_NAME=your-database-name
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_HOST=your-host.supabase.co
-DB_PORT=5432
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Server Configuration
+PORT=3000
+NODE_ENV=development
 ```
 
 ### 🗄️ Database Setup
 
-```bash
-# Create initial migrations
-python manage.py makemigrations accounts
-python manage.py makemigrations finance
+#### Supabase Database Schema
 
-# Apply fake migrations (use existing Supabase tables)
-python manage.py migrate --fake
+The API requires the following tables in your Supabase database:
+
+```sql
+-- Users table
+CREATE TABLE users (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Categories table
+CREATE TABLE categories (
+    category_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
+    color VARCHAR(7), -- hex color code
+    icon VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Transactions table
+CREATE TABLE transactions (
+    transaction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    category_id UUID REFERENCES categories(category_id),
+    amount DECIMAL(15,2) NOT NULL,
+    type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
+    description TEXT,
+    date DATE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Budgets table
+CREATE TABLE budgets (
+    budget_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    category_id UUID REFERENCES categories(category_id),
+    amount DECIMAL(15,2) NOT NULL,
+    period VARCHAR(20) CHECK (period IN ('monthly', 'weekly', 'yearly')) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default categories
+INSERT INTO categories (name, type, color, icon) VALUES
+('Food & Dining', 'expense', '#FF6B6B', '🍔'),
+('Transportation', 'expense', '#4ECDC4', '🚗'),
+('Shopping', 'expense', '#45B7D1', '🛍️'),
+('Entertainment', 'expense', '#96CEB4', '🎬'),
+('Bills & Utilities', 'expense', '#FECA57', '💡'),
+('Healthcare', 'expense', '#FF9FF3', '🏥'),
+('Salary', 'income', '#54A0FF', '💼'),
+('Freelance', 'income', '#5F27CD', '💻'),
+('Investment', 'income', '#00D2D3', '📈'),
+('Other Income', 'income', '#FF9F43', '💰');
 ```
 
 ### 🚀 Run Development Server
 
+**Using Bun:**
 ```bash
-# Start Django development server
-python manage.py runserver
-
-# Server will be available at:
-# http://127.0.0.1:8000/
+bun run dev
 ```
+
+**Using npm:**
+```bash
+npm run dev
+```
+
+The server will start at `http://localhost:3000`
 
 ## 🌐 API Endpoints
 
-### 📊 Available APIs
+### 📊 API Overview
+
+The Budget Buddy API provides comprehensive endpoints for personal finance management:
+
+#### 🔓 Public Endpoints (No Authentication Required)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/accounts/AllUser/` | Get all users |
-| `POST` | `/api/accounts/CreateUser/` | Create new user |
-| `GET` | `/api/finance/AllCategory/` | Get all categories |
-| `GET` | `/api/finance/AllTransaction/` | Get all transactions |
-| `GET` | `/api/finance/AllBudget/` | Get all budgets |
+| `GET` | `/health` | Health check |
+| `POST` | `/api/v1/auth/register` | Register new user |
+| `POST` | `/api/v1/auth/login` | User login |
+| `POST` | `/api/v1/auth/logout` | User logout |
+| `GET` | `/api/v1/auth/profile` | Get user profile |
+| `GET` | `/api/v1/categories` | Get all categories |
+| `GET` | `/api/v1/categories/:id` | Get category by ID |
 
-### 🎯 Django REST Framework Browsable API
+#### 🔒 Protected Endpoints (JWT Authentication Required)
 
-BudgetBuddy API ใช้ Django REST Framework ที่มาพร้อมกับ **Browsable API** - เครื่องมือทดสอบ API ที่มีประสิทธิภาพ
+**� Transaction Management**
 
-#### 🚀 การเข้าถึง Browsable API
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/protected/api/v1/transactions` | Create new transaction |
+| `GET` | `/protected/api/v1/transactions` | Get transactions (with filtering) |
+| `GET` | `/protected/api/v1/transactions/:id` | Get transaction by ID |
+| `PATCH` | `/protected/api/v1/transactions/:id` | Update transaction |
+| `DELETE` | `/protected/api/v1/transactions/:id` | Delete transaction |
 
-1. **เริ่มต้น Django Server**
-   ```bash
-   python manage.py runserver
-   ```
+**📊 Budget Management**
 
-2. **เปิดเบราว์เซอร์และไปที่ API endpoint ใดก็ได้**
-   ```
-   http://127.0.0.1:8000/api/accounts/AllUser/
-   http://127.0.0.1:8000/api/accounts/CreateUser/
-   http://127.0.0.1:8000/api/finance/AllCategory/
-   ```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/protected/api/v1/budgets` | Create new budget |
+| `GET` | `/protected/api/v1/budgets` | Get budgets (with filtering) |
+| `GET` | `/protected/api/v1/budgets/:id` | Get budget by ID |
+| `PATCH` | `/protected/api/v1/budgets/:id` | Update budget |
+| `DELETE` | `/protected/api/v1/budgets/:id` | Delete budget |
 
-#### 🎨 คุณสมบัติของ Browsable API
+**🏠 Home & Analytics**
 
-- **📝 Form Interface**: กรอกข้อมูลผ่านฟอร์มแทนการเขียน JSON
-- **🔍 Response Viewer**: ดู Response ในรูปแบบที่อ่านง่าย
-- **📊 Data Format**: เลือกรูปแบบข้อมูล (JSON, HTML, Raw)
-- **🧪 Live Testing**: ทดสอบ API แบบ Real-time
-- **📚 Auto Documentation**: เอกสาร API ที่สร้างอัตโนมัติ
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/protected/api/v1/home` | Get dashboard data |
+| `GET` | `/protected/api/v1/recent-transactions` | Get recent transactions |
+| `GET` | `/protected/api/v1/analytics/summary` | Get financial summary |
+| `GET` | `/protected/api/v1/analytics/by-category` | Get analytics by category |
+| `GET` | `/protected/api/v1/analytics/flow` | Get cash flow analytics |
 
-#### 💡 วิธีใช้งาน Browsable API
+### 🔑 Authentication
 
-1. **ดู API ทั้งหมด**
-   - ไปที่: `http://127.0.0.1:8000/api/`
-   - คลิกลิงก์เพื่อดู endpoint ต่างๆ
+The API uses JWT (JSON Web Token) for authentication. Include the token in the Authorization header:
+
+```bash
+Authorization: Bearer your-jwt-token-here
+```
+
+#### Login Example
+
+```bash
+curl -X POST http://localhost:3000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "johndoe",
+    "password": "securepassword123"
+  }'
+```
+
+### 📖 Interactive API Documentation
+
+Access the interactive Swagger documentation at:
+- **OpenAPI JSON**: `http://localhost:3000/openapi`
+- **Interactive Docs**: Visit any endpoint in your browser for the browsable API
+
+### 🔍 Query Parameters
+
+#### Pagination
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 10, max: 100)
+
+#### Filtering (Transactions & Budgets)
+- `category_id`: Filter by category UUID
+- `type`: Filter by type ('income' or 'expense')
+- `start_date`: Filter from date (YYYY-MM-DD)
+- `end_date`: Filter to date (YYYY-MM-DD)
+- `min_amount`: Minimum amount
+- `max_amount`: Maximum amount
+
+#### Example with Filters
+```bash
+GET /protected/api/v1/transactions?page=1&limit=20&type=expense&category_id=uuid&start_date=2024-01-01&end_date=2024-12-31
+```
+
+## 🏗️ Project Architecture
+
+### 📁 Project Structure
+
+```
+Budget-Buddy-Backend/
+├── src/
+│   ├── controllers/           # HTTP request handlers
+│   │   ├── auth.controller.ts
+│   │   ├── category.controller.ts
+│   │   ├── transaction.controller.ts
+│   │   ├── budget.controller.ts
+│   │   └── home.controller.ts
+│   ├── services/             # Business logic layer
+│   │   ├── auth.service.ts
+│   │   ├── category.service.ts
+│   │   ├── transaction.service.ts
+│   │   └── budget.service.ts
+│   ├── models/               # TypeScript interfaces
+│   │   ├── user.model.ts
+│   │   ├── category.model.ts
+│   │   ├── transaction.model.ts
+│   │   └── budget.model.ts
+│   ├── routes/               # API route definitions
+│   │   ├── auth.routes.ts
+│   │   ├── category.routes.ts
+│   │   ├── transaction.routes.ts
+│   │   ├── budget.routes.ts
+│   │   ├── home.routes.ts
+│   │   ├── health.routes.ts
+│   │   └── index.ts
+│   ├── middleware/           # Custom middleware
+│   │   └── jwt.middleware.ts
+│   ├── schemas/              # Validation schemas
+│   │   └── api.schema.ts
+│   ├── config/               # Configuration files
+│   │   └── supabase.ts
+│   └── index.ts              # Application entry point
+├── package.json
+├── tsconfig.json
+├── bun.lockb
+└── README.md
+```
+
+### 🏛️ Architecture Patterns
+
+- **Clean Architecture**: Separation of concerns with layers (Controllers → Services → Models)
+- **Dependency Injection**: Services are injected into controllers
+- **Middleware Pattern**: JWT authentication and error handling
+- **Schema Validation**: Request/response validation with TypeScript schemas
+- **RESTful API Design**: Standard HTTP methods and status codes
+
+## 🧪 Testing
+
+### API Testing with curl
+
+#### Register a new user
+```bash
+curl -X POST http://localhost:3000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "johndoe",
+    "password": "securepassword123",
+    "first_name": "John",
+    "last_name": "Doe"
+  }'
+```
+
+#### Create a transaction
+```bash
+curl -X POST http://localhost:3000/protected/api/v1/transactions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "category_id": "category-uuid-here",
+    "amount": 50.00,
+    "type": "expense",
+    "description": "Lunch at restaurant",
+    "date": "2024-01-15"
+  }'
+```
+
+## 🚀 Deployment
+
+### 📦 Build for Production
+
+```bash
+bun run build
+```
+
+### 🌐 Environment Variables for Production
+
+```env
+NODE_ENV=production
+JWT_SECRET=your-production-jwt-secret-very-long-and-secure
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-production-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-production-service-role-key
+PORT=3000
+```
+
+### ☁️ Deploy to Vercel/Railway/Render
+
+1. Connect your GitHub repository
+2. Set environment variables
+3. Deploy with automatic builds
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+- � Email: your-email@example.com
+- 💬 Issues: [GitHub Issues](https://github.com/your-username/budget-buddy-backend/issues)
+- 📖 Documentation: [API Docs](http://localhost:3000/openapi)
+
+---
+
+## Thai Version
+
+> 🚀 RESTful API สำหรับการจัดการการเงินส่วนบุคคลที่ทันสมัย สร้างด้วย ElysiaJS, TypeScript และ Supabase
+
+### ✨ คุณสมบัติ
+
+- 🔐 **JWT Authentication** - ระบบยืนยันตัวตนที่ปลอดภัยด้วย Bearer tokens
+- 💸 **จัดการรายการเงิน** - การจัดการข้อมูลทางการเงินแบบครบวงจร
+- 📊 **ติดตามงบประมาณ** - ตั้งและติดตามงบประมาณรายจ่ายตามหมวดหมู่
+- 📈 **แดชบอร์ดวิเคราะห์** - รายงานและข้อมูลเชิงลึกทางการเงินที่ครอบคลุม
+- 🏷️ **จัดการหมวดหมู่** - จัดระเบียบรายการเงินด้วยหมวดหมู่ที่กำหนดเอง
+- 🔍 **การกรองขั้นสูง** - กรองตามวันที่ หมวดหมู่ จำนวนเงิน และประเภท
+- � **รองรับ Pagination** - โหลดข้อมูลอย่างมีประสิทธิภาพ
+- 📖 **เอกสาร OpenAPI** - เอกสาร API แบบ Interactive ด้วย Swagger
+- 🚀 **ประสิทธิภาพสูง** - สร้างด้วย ElysiaJS เพื่อความเร็วสูงสุด
+- 🛡️ **Type Safety** - ใช้ TypeScript เต็มรูปแบบ
+
+### 🎯 เริ่มต้นใช้งาน
+
+#### 📋 ความต้องการเบื้องต้น
+
+- Node.js 18+ หรือ Bun runtime
+- ฐานข้อมูล PostgreSQL (แนะนำ Supabase)
+- Git
+
+#### 🛠️ การติดตั้ง
+
+##### 📥 Clone Repository
+
+```bash
+git clone https://github.com/your-username/budget-buddy-backend.git
+cd budget-buddy-backend
+```
+
+##### 📦 ติดตั้ง Dependencies
+
+**ใช้ Bun (แนะนำ):**
+```bash
+bun install
+```
+
+**ใช้ npm:**
+```bash
+npm install
+```
+
+### 🔧 การตั้งค่า Environment
+
+สร้างไฟล์ `.env` ในโฟลเดอร์หลัก:
+
+```env
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here-change-in-production
+
+# Supabase Database Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Server Configuration
+PORT=3000
+NODE_ENV=development
+```
+
+### � เริ่มต้น Development Server
+
+**ใช้ Bun:**
+```bash
+bun run dev
+```
+
+**ใช้ npm:**
+```bash
+npm run dev
+```
+
+เซิร์ฟเวอร์จะเริ่มที่ `http://localhost:3000`
+
+### 🌐 API Endpoints
+
+#### 🔓 Public Endpoints (ไม่ต้องยืนยันตัวตน)
+
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|----------|
+| `GET` | `/health` | ตรวจสอบสถานะเซิร์ฟเวอร์ |
+| `POST` | `/api/v1/auth/register` | สมัครสมาชิกใหม่ |
+| `POST` | `/api/v1/auth/login` | เข้าสู่ระบบ |
+| `POST` | `/api/v1/auth/logout` | ออกจากระบบ |
+| `GET` | `/api/v1/auth/profile` | ดูโปรไฟล์ผู้ใช้ |
+| `GET` | `/api/v1/categories` | ดูหมวดหมู่ทั้งหมด |
+| `GET` | `/api/v1/categories/:id` | ดูหมวดหมู่ตาม ID |
+
+#### � Protected Endpoints (ต้องยืนยันตัวตนด้วย JWT)
+
+**💸 จัดการรายการเงิน**
+
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|----------|
+| `POST` | `/protected/api/v1/transactions` | สร้างรายการเงินใหม่ |
+| `GET` | `/protected/api/v1/transactions` | ดูรายการเงิน (มีการกรอง) |
+| `GET` | `/protected/api/v1/transactions/:id` | ดูรายการเงินตาม ID |
+| `PATCH` | `/protected/api/v1/transactions/:id` | แก้ไขรายการเงิน |
+| `DELETE` | `/protected/api/v1/transactions/:id` | ลบรายการเงิน |
+
+**📊 จัดการงบประมาณ**
+
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|----------|
+| `POST` | `/protected/api/v1/budgets` | สร้างงบประมาณใหม่ |
+| `GET` | `/protected/api/v1/budgets` | ดูงบประมาณ (มีการกรอง) |
+| `GET` | `/protected/api/v1/budgets/:id` | ดูงบประมาณตาม ID |
+| `PATCH` | `/protected/api/v1/budgets/:id` | แก้ไขงบประมาณ |
+| `DELETE` | `/protected/api/v1/budgets/:id` | ลบงบประมาณ |
+
+### 🔑 การยืนยันตัวตน
+
+API ใช้ JWT (JSON Web Token) สำหรับการยืนยันตัวตน ใส่ token ใน Authorization header:
+
+```bash
+Authorization: Bearer your-jwt-token-here
+```
+
+### 📖 เอกสาร API แบบ Interactive
+
+เข้าถึงเอกสาร Swagger ได้ที่:
+- **OpenAPI JSON**: `http://localhost:3000/openapi`
+
+### 🏛️ สถาปัตยกรรมโปรเจค
+
+โปรเจคใช้ **Clean Architecture** แบ่งแยกความรับผิดชอบเป็นชั้นๆ:
+- **Controllers**: จัดการ HTTP requests/responses
+- **Services**: Business logic และการเชื่อมต่อฐานข้อมูล
+- **Models**: TypeScript interfaces สำหรับข้อมูล
+- **Routes**: กำหนด API endpoints
+- **Middleware**: JWT authentication และ error handling
+
+### 📞 การสนับสนุน
+
+- 📧 Email: your-email@example.com
+- 💬 Issues: [GitHub Issues](https://github.com/your-username/budget-buddy-backend/issues)
+- 📖 เอกสาร: [API Docs](http://localhost:3000/openapi)
+
+---
+
+<p align="center">Made with ❤️ by Budget Buddy Team</p>
 
 2. **ทดสอบ GET API**
    - ไปที่ endpoint ที่ต้องการ

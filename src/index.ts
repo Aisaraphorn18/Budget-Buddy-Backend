@@ -1,26 +1,44 @@
+/**
+ * Budget Buddy Backend API
+ * 
+ * A comprehensive RESTful API for personal finance management built with ElysiaJS and Supabase.
+ * Features include user authentication, transaction tracking, budget management, and financial analytics.
+ * 
+ * Architecture:
+ * - Framework: ElysiaJS with TypeScript
+ * - Database: Supabase (PostgreSQL)
+ * - Authentication: JWT Bearer Token
+ * - Documentation: OpenAPI/Swagger
+ * - Architecture Pattern: Clean Architecture (Models/Services/Controllers/Routes)
+ */
+
 import { Elysia } from "elysia";
 import { openapi } from "@elysiajs/openapi";
 import { cors } from "@elysiajs/cors";
 import { jwt } from "@elysiajs/jwt";
 import { bearer } from "@elysiajs/bearer";
 import { 
-  authRoutes, 
-  healthRoutes, 
-  categoryRoutes, 
-  transactionRoutes, 
-  budgetRoutes, 
-  homeRoutes 
+  authRoutes,      // Authentication routes (register, login, logout, profile)
+  healthRoutes,    // Health check endpoint
+  categoryRoutes,  // Category management (public read-only)
+  transactionRoutes, // Transaction CRUD operations (protected)
+  budgetRoutes,    // Budget management (protected)
+  homeRoutes       // Dashboard and analytics (protected)
 } from "./routes";
-import { jwtMiddleware } from "./middleware/jwt.middleware";
+import { jwtMiddleware } from "./middleware/jwt.middleware"; // JWT authentication middleware
 
+// Initialize Elysia application with comprehensive middleware setup
 const app = new Elysia()
+  // JWT Configuration - Handles token generation and validation
   .use(
     jwt({
       name: 'jwt',
-      secret: process.env.JWT_SECRET || 'budget-buddy-secret-key-2024'
+      secret: process.env.JWT_SECRET || 'budget-buddy-secret-key-2024' // Use environment variable in production
     })
   )
+  // Bearer Token Plugin - Extracts Authorization header for JWT middleware
   .use(bearer())
+  // OpenAPI Documentation Plugin - Generates interactive API documentation
   .use(
     openapi({
       documentation: {
@@ -29,6 +47,7 @@ const app = new Elysia()
           version: "1.0.0",
           description: "RESTful API for Budget Buddy application with JWT Authentication"
         },
+        // API endpoint categorization for better documentation organization
         tags: [
           { name: "Health", description: "Health check operations" },
           { name: "Authentication", description: "User authentication and authorization" },
@@ -37,6 +56,7 @@ const app = new Elysia()
           { name: "Budgets", description: "Budget management operations" },
           { name: "Home & Analytics", description: "Dashboard and analytics operations" }
         ],
+        // Security scheme configuration for JWT authentication
         components: {
           securitySchemes: {
             bearerAuth: {
@@ -49,31 +69,36 @@ const app = new Elysia()
       }
     })
   )
+  // CORS Configuration - Enables cross-origin requests for frontend integration
   .use(
     cors({
-      origin: true,
+      origin: true, // Allow all origins (configure specific domains in production)
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
-      credentials: true
+      credentials: true // Allow cookies and authentication headers
     })
   )
 
-  // Register Routes
-  .use(healthRoutes)
-  .use(authRoutes)
-  .use(categoryRoutes)
+  // Route Registration
+  // Public routes (no authentication required)
+  .use(healthRoutes)     // Health check endpoint
+  .use(authRoutes)       // Authentication endpoints (register, login, logout, profile)
+  .use(categoryRoutes)   // Category read-only endpoints (public access)
+  
+  // Protected routes group (JWT authentication required)
   .group("/protected", (app) => 
     app
-      .use(jwtMiddleware)
-      .use(transactionRoutes)
-      .use(budgetRoutes)
-      .use(homeRoutes)
+      .use(jwtMiddleware)        // Apply JWT validation middleware to all routes in this group
+      .use(transactionRoutes)    // Transaction CRUD operations
+      .use(budgetRoutes)         // Budget management operations  
+      .use(homeRoutes)           // Dashboard and analytics operations
   )
 
-  // Error Handling
+  // Global Error Handling - Provides consistent error responses across all endpoints
   .onError(({ error, code, set }) => {
     console.error("API Error:", error);
 
+    // Handle specific error types with appropriate HTTP status codes
     if (code === "NOT_FOUND") {
       set.status = 404;
       return {
@@ -92,6 +117,7 @@ const app = new Elysia()
       };
     }
 
+    // Default error response for unexpected errors
     set.status = 500;
     return {
       success: false,
@@ -100,12 +126,15 @@ const app = new Elysia()
     };
   })
 
+  // Start the server on port 3000
   .listen(3000);
 
+// Server startup logging
 console.log(
   `🦊 Budget Buddy Backend is running at ${app.server?.hostname}:${app.server?.port}`
 );
 
+// API Endpoint Documentation - Provides a comprehensive list of all available endpoints
 console.log("📚 Available API Endpoints:");
 console.log("🔓 Public Routes:");
 console.log("  GET    /health                     - Health check");
