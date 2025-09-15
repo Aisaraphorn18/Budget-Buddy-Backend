@@ -43,7 +43,20 @@ export class BudgetService {
         .order('created_at', { ascending: false });
 
       if (cycle_month) {
-        query = query.eq('cycle_month', cycle_month);
+        // หากได้รับ cycle_month ในรูปแบบ YYYY-MM ให้ค้นหาทุกวันในเดือนนั้น
+        if (cycle_month.match(/^\d{4}-\d{2}$/)) {
+          // ค้นหาทุกวันในเดือนนั้น เช่น 2025-12 จะค้นหา 2025-12-01 ถึง 2025-12-31
+          const startDate = `${cycle_month}-01`;
+          const year = parseInt(cycle_month.substring(0, 4));
+          const month = parseInt(cycle_month.substring(5, 7));
+          const lastDay = new Date(year, month, 0).getDate();
+          const endDate = `${cycle_month}-${lastDay.toString().padStart(2, '0')}`;
+          
+          query = query.gte('cycle_month', startDate).lte('cycle_month', endDate);
+        } else {
+          // หากเป็น full date format แล้ว
+          query = query.eq('cycle_month', cycle_month);
+        }
       }
       if (category_id) {
         query = query.eq('category_id', category_id);
@@ -169,18 +182,28 @@ export class BudgetService {
 
   private async findExistingBudget(userId: number, categoryId: number, cycleMonth: string): Promise<Budget | null> {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('Budget')
         .select('*')
         .eq('user_id', userId)
-        .eq('category_id', categoryId)
-        .eq('cycle_month', cycleMonth)
-        .single();
+        .eq('category_id', categoryId);
+
+      // หากได้รับ cycle_month ในรูปแบบ YYYY-MM ให้ค้นหาทุกวันในเดือนนั้น
+      if (cycleMonth.match(/^\d{4}-\d{2}$/)) {
+        const startDate = `${cycleMonth}-01`;
+        const year = parseInt(cycleMonth.substring(0, 4));
+        const month = parseInt(cycleMonth.substring(5, 7));
+        const lastDay = new Date(year, month, 0).getDate();
+        const endDate = `${cycleMonth}-${lastDay.toString().padStart(2, '0')}`;
+        
+        query = query.gte('cycle_month', startDate).lte('cycle_month', endDate);
+      } else {
+        query = query.eq('cycle_month', cycleMonth);
+      }
+
+      const { data, error } = await query.maybeSingle();
 
       if (error) {
-        if (error.code === 'PGRST116') {
-          return null;
-        }
         throw error;
       }
 

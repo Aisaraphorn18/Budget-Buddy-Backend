@@ -232,6 +232,7 @@ The Budget Buddy API provides comprehensive endpoints for personal finance manag
 | `POST` | `/protected/api/v1/transactions` | Create new transaction |
 | `GET` | `/protected/api/v1/transactions` | Get transactions (with filtering) |
 | `GET` | `/protected/api/v1/transactions/:id` | Get transaction by ID |
+| `GET` | `/protected/api/v1/transactions/user/:user_id` | Get transactions by user ID (admin only) |
 | `PATCH` | `/protected/api/v1/transactions/:id` | Update transaction |
 | `DELETE` | `/protected/api/v1/transactions/:id` | Delete transaction |
 
@@ -242,6 +243,7 @@ The Budget Buddy API provides comprehensive endpoints for personal finance manag
 | `POST` | `/protected/api/v1/budgets` | Create new budget |
 | `GET` | `/protected/api/v1/budgets` | Get budgets (with filtering) |
 | `GET` | `/protected/api/v1/budgets/:id` | Get budget by ID |
+| `GET` | `/protected/api/v1/budgets/user/:user_id` | Get budgets by user ID (admin only) |
 | `PATCH` | `/protected/api/v1/budgets/:id` | Update budget |
 | `DELETE` | `/protected/api/v1/budgets/:id` | Delete budget |
 
@@ -254,6 +256,14 @@ The Budget Buddy API provides comprehensive endpoints for personal finance manag
 | `GET` | `/protected/api/v1/analytics/summary` | Get financial summary |
 | `GET` | `/protected/api/v1/analytics/by-category` | Get analytics by category |
 | `GET` | `/protected/api/v1/analytics/flow` | Get cash flow analytics |
+
+**👥 User Management (Admin Only)**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/protected/api/v1/users` | Get all users (with search & pagination) |
+| `GET` | `/protected/api/v1/users/:id` | Get user by ID (with stats) |
+| `DELETE` | `/protected/api/v1/users/:id` | Delete user account |
 
 ### 🔑 Authentication
 
@@ -898,6 +908,7 @@ npm run dev
 | `POST` | `/protected/api/v1/transactions` | สร้างรายการเงินใหม่ |
 | `GET` | `/protected/api/v1/transactions` | ดูรายการเงิน (มีการกรอง) |
 | `GET` | `/protected/api/v1/transactions/:id` | ดูรายการเงินตาม ID |
+| `GET` | `/protected/api/v1/transactions/user/:user_id` | ดูรายการเงินตาม user ID (admin เท่านั้น) |
 | `PATCH` | `/protected/api/v1/transactions/:id` | แก้ไขรายการเงิน |
 | `DELETE` | `/protected/api/v1/transactions/:id` | ลบรายการเงิน |
 
@@ -908,6 +919,7 @@ npm run dev
 | `POST` | `/protected/api/v1/budgets` | สร้างงบประมาณใหม่ |
 | `GET` | `/protected/api/v1/budgets` | ดูงบประมาณ (มีการกรอง) |
 | `GET` | `/protected/api/v1/budgets/:id` | ดูงบประมาณตาม ID |
+| `GET` | `/protected/api/v1/budgets/user/:user_id` | ดูงบประมาณตาม user ID (admin เท่านั้น) |
 | `PATCH` | `/protected/api/v1/budgets/:id` | แก้ไขงบประมาณ |
 | `DELETE` | `/protected/api/v1/budgets/:id` | ลบงบประมาณ |
 
@@ -920,6 +932,14 @@ npm run dev
 | `GET` | `/protected/api/v1/analytics/summary` | สรุปการเงิน |
 | `GET` | `/protected/api/v1/analytics/by-category` | วิเคราะห์ตามหมวดหมู่ |
 | `GET` | `/protected/api/v1/analytics/flow` | วิเคราะห์กระแสเงินสด |
+
+**👥 จัดการผู้ใช้ (Admin เท่านั้น)**
+
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|----------|
+| `GET` | `/protected/api/v1/users` | ดูผู้ใช้ทั้งหมด (มีค้นหาและแบ่งหน้า) |
+| `GET` | `/protected/api/v1/users/:id` | ดูผู้ใช้ตาม ID (พร้อมสถิติ) |
+| `DELETE` | `/protected/api/v1/users/:id` | ลบบัญชีผู้ใช้ |
 
 #### 🔑 การยืนยันตัวตน
 

@@ -2,7 +2,27 @@
  * Budget Buddy Backend API
  *
  * A comprehensive RESTful API for personal finance management built with ElysiaJS and Supabase.
- * Features include user authentication, transaction tracking, budget management, and financial analytics.
+ * Features include user authentication, transaction tracking, budget manaconsole.log("💸 Transactions:");
+console.log("  POST   /protected/api/v1/transactions     - Create transaction");
+console.log(
+  "  GET    /protected/api/v1/transactions     - Get transactions (with filters)"
+);
+console.log(
+  "  GET    /protected/api/v1/transactions/:id - Get transaction by ID"
+);
+console.log("  GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)");
+console.log("  PATCH  /protected/api/v1/transactions/:id - Update transaction");
+console.log("  DELETE /protected/api/v1/transactions/:id - Delete transaction");
+console.log("");
+console.log("📊 Budgets:");
+console.log("  POST   /protected/api/v1/budgets          - Create budget");
+console.log(
+  "  GET    /protected/api/v1/budgets          - Get budgets (with filters)"
+);
+console.log("  GET    /protected/api/v1/budgets/:id      - Get budget by ID");
+console.log("  GET    /protected/api/v1/budgets/user/:user_id - Get budgets by user ID (admin)");
+console.log("  PATCH  /protected/api/v1/budgets/:id     - Update budget");
+console.log("  DELETE /protected/api/v1/budgets/:id     - Delete budget");al analytics.
  *
  * Architecture:
  * - Framework: ElysiaJS with TypeScript
@@ -23,7 +43,8 @@ import {
   categoryRoutes, // Category management (public read-only)
   transactionRoutes, // Transaction CRUD operations (protected)
   budgetRoutes, // Budget management (protected)
-  homeRoutes // Dashboard and analytics (protected)
+  homeRoutes, // Dashboard and analytics (protected)
+  userRoutes // User management (protected, admin-only)
 } from "./routes";
 
 // Initialize Elysia application with comprehensive middleware setup
@@ -63,6 +84,10 @@ const app = new Elysia()
           {
             name: "Home & Analytics",
             description: "Dashboard and analytics operations"
+          },
+          {
+            name: "User Management",
+            description: "Administrative user management operations"
           }
         ],
         // Security scheme configuration for JWT authentication
@@ -99,9 +124,6 @@ const app = new Elysia()
     (app) =>
       app
         .derive(async ({ bearer, jwt }) => {
-          console.log("🔍 JWT - Bearer token received:", bearer ? "Yes" : "No");
-          console.log("🔍 JWT - Bearer token length:", bearer?.length);
-
           // Check if Authorization Bearer token is present
           if (!bearer) {
             console.log("❌ No bearer token found");
@@ -121,7 +143,6 @@ const app = new Elysia()
             username: payload.username,
             ...payload
           };
-          console.log("✅ JWT - User object:", user);
 
           // Attach user information to request context for use in protected routes
           return {
@@ -147,6 +168,7 @@ const app = new Elysia()
         .use(transactionRoutes) // Transaction CRUD operations
         .use(budgetRoutes) // Budget management operations
         .use(homeRoutes) // Dashboard and analytics operations
+        .use(userRoutes) // User management operations (admin-only)
   )
 
   // Global Error Handling - Provides consistent error responses across all endpoints
@@ -241,7 +263,12 @@ console.log(
 );
 console.log("  GET    /protected/api/v1/analytics/flow   - Get analytics flow");
 console.log("");
-console.log("📖 API Documentation:");
+console.log("� User Management (Admin Only):");
+console.log("  GET    /protected/api/v1/users           - Get all users (with search & pagination)");
+console.log("  GET    /protected/api/v1/users/:id       - Get user by ID (with stats)");
+console.log("  DELETE /protected/api/v1/users/:id       - Delete user account");
+console.log("");
+console.log("�📖 API Documentation:");
 console.log(
   `  OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi`
 );

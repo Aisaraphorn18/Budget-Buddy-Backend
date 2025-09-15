@@ -10,6 +10,7 @@
  * - POST /api/v1/budgets - Create new budget
  * - GET /api/v1/budgets - Get budgets with filtering
  * - GET /api/v1/budgets/:id - Get specific budget by ID
+ * - GET /api/v1/budgets/user/:user_id - Get budgets by user ID (admin only)
  * - PATCH /api/v1/budgets/:id - Update existing budget
  * - DELETE /api/v1/budgets/:id - Delete budget
  * 
@@ -555,6 +556,118 @@ export const budgetRoutes = new Elysia({ prefix: "/api/v1/budgets" })
                     success: { type: "boolean", example: false },
                     message: { type: "string", example: "Budget not found" },
                     data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  )
+
+  // Get budgets by user ID endpoint (admin only)
+  .get("/user/:user_id",
+    async (context) => await budgetController.getBudgetsByUserId(context),
+    {
+      params: t.Object({
+        user_id: t.String({ description: "User ID to get budgets for" })
+      }),
+      query: t.Object({
+        cycle_month: t.Optional(t.String()),
+        category_id: t.Optional(t.String())
+      }),
+      detail: {
+        tags: ["Budgets"],
+        summary: "Get budgets by user ID",
+        description: "Retrieve all budgets for a specific user with filtering (admin only)",
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: "user_id",
+            in: "path",
+            required: true,
+            description: "User ID to get budgets for",
+            schema: {
+              type: "string",
+              example: "1"
+            }
+          },
+          {
+            name: "cycle_month",
+            in: "query",
+            required: false,
+            description: "Filter by budget cycle month (YYYY-MM)",
+            schema: {
+              type: "string",
+              pattern: "^\\d{4}-\\d{2}$",
+              example: "2024-01"
+            }
+          },
+          {
+            name: "category_id",
+            in: "query",
+            required: false,
+            description: "Filter by category ID",
+            schema: {
+              type: "string",
+              example: "1"
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: "Successfully retrieved user budgets",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "User budgets retrieved successfully" },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          budget_id: { type: "integer", example: 1 },
+                          user_id: { type: "integer", example: 1 },
+                          category_id: { type: "integer", example: 1 },
+                          budget_amount: { type: "number", example: 500.00 },
+                          cycle_month: { type: "string", example: "2024-01" },
+                          created_at: { type: "string", example: "2024-01-15T10:30:00Z" },
+                          updated_at: { type: "string", example: "2024-01-15T10:30:00Z" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Admin access required",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Admin access required" }
+                  }
+                }
+              }
+            }
+          },
+          404: {
+            description: "User not found",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "User not found" }
                   }
                 }
               }

@@ -73,7 +73,7 @@ export class BudgetController {
 
   async getBudgetById(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -120,8 +120,12 @@ export class BudgetController {
 
   async createBudget(context: any) {
     try {
-      const userId = context.user?.userId;
+      console.log("🔍 Budget - Creating budget...");
+      console.log("🔍 Budget - Context user:", context.user);
+      
+      const userId = context.user?.user_id;
       if (!userId) {
+        console.log("❌ Budget - No user ID found");
         context.set.status = 401;
         return {
           success: false,
@@ -129,16 +133,26 @@ export class BudgetController {
         };
       }
 
+      console.log("🔍 Budget - User ID:", userId);
+      console.log("🔍 Budget - Request body:", context.body);
+
       const { category_id, budget_amount, cycle_month } = context.body;
 
+      // แปลง cycle_month จาก YYYY-MM เป็น YYYY-MM-01 สำหรับ database date field
+      const formattedCycleMonth = cycle_month.includes('-01') ? cycle_month : `${cycle_month}-01`;
+      
       const budgetData = {
         user_id: userId,
         category_id,
         budget_amount,
-        cycle_month
+        cycle_month: formattedCycleMonth
       };
 
+      console.log("🔍 Budget - Budget data to create:", budgetData);
+
       const budget = await this.budgetService.createBudget(budgetData);
+
+      console.log("✅ Budget - Budget created successfully:", budget);
 
       context.set.status = 201;
       return {
@@ -147,7 +161,7 @@ export class BudgetController {
         data: budget
       };
     } catch (error) {
-      console.error("Create budget error:", error);
+      console.error("❌ Budget - Create budget error:", error);
       
       if (error instanceof Error && error.message.includes('already exists')) {
         context.set.status = 409;
@@ -168,7 +182,7 @@ export class BudgetController {
 
   async updateBudget(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -216,7 +230,7 @@ export class BudgetController {
 
   async deleteBudget(context: any) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -255,6 +269,58 @@ export class BudgetController {
       return {
         success: false,
         message: "Failed to delete budget",
+        error: error instanceof Error ? error.message : "Unknown error"
+      };
+    }
+  }
+
+  /**
+   * Get all budgets for specific user (admin only)
+   * Supports filtering by cycle_month and category_id
+   * 
+   * @param context - Elysia context with user_id parameter and query parameters
+   * @returns Array of budget records for the specified user
+   */
+  async getBudgetsByUserId(context: any) {
+    try {
+      // TODO: Add admin role validation here
+      const currentUserId = context.user?.user_id;
+      if (!currentUserId) {
+        context.set.status = 401;
+        return {
+          success: false,
+          message: "User authentication required"
+        };
+      }
+
+      const targetUserId = parseInt(context.params.user_id);
+      
+      if (isNaN(targetUserId)) {
+        context.set.status = 400;
+        return {
+          success: false,
+          message: "Invalid user ID"
+        };
+      }
+
+      const filters: BudgetFilters = {
+        cycle_month: context.query.cycle_month,
+        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined
+      };
+
+      const budgets = await this.budgetService.getAllBudgets(targetUserId, filters);
+
+      return {
+        success: true,
+        message: "User budgets retrieved successfully",
+        data: budgets
+      };
+    } catch (error) {
+      console.error("Get budgets by user ID error:", error);
+      context.set.status = 500;
+      return {
+        success: false,
+        message: "Failed to get user budgets",
         error: error instanceof Error ? error.message : "Unknown error"
       };
     }

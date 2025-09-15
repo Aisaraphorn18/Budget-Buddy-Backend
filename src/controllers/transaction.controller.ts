@@ -278,4 +278,68 @@ export class TransactionController {
       };
     }
   }
+
+  /**
+   * Get all transactions for specific user (admin only)
+   * Supports filtering by type, category, date range, and pagination
+   * 
+   * @param context - Elysia context with user_id parameter and query parameters
+   * @returns Paginated list of user's transactions with metadata
+   */
+  async getTransactionsByUserId(context: any) {
+    try {
+      // TODO: Add admin role validation here
+      const currentUserId = context.user?.user_id;
+      if (!currentUserId) {
+        context.set.status = 401;
+        return {
+          success: false,
+          message: "User authentication required"
+        };
+      }
+
+      const targetUserId = parseInt(context.params.user_id);
+      
+      if (isNaN(targetUserId)) {
+        context.set.status = 400;
+        return {
+          success: false,
+          message: "Invalid user ID"
+        };
+      }
+
+      const filters: TransactionFilters = {
+        type: context.query.type,
+        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined,
+        start_date: context.query.start_date,
+        end_date: context.query.end_date,
+        page: context.query.page ? parseInt(context.query.page) : 1,
+        limit: context.query.limit ? parseInt(context.query.limit) : 20
+      };
+
+      const result = await this.transactionService.getAllTransactions(targetUserId, filters);
+      
+      const totalPages = Math.ceil(result.total / result.limit);
+
+      return {
+        success: true,
+        message: "User transactions retrieved successfully",
+        data: result.transactions,
+        pagination: {
+          total: result.total,
+          page: result.page,
+          limit: result.limit,
+          totalPages
+        }
+      };
+    } catch (error) {
+      console.error("Get transactions by user ID error:", error);
+      context.set.status = 500;
+      return {
+        success: false,
+        message: "Failed to get user transactions",
+        error: error instanceof Error ? error.message : "Unknown error"
+      };
+    }
+  }
 }

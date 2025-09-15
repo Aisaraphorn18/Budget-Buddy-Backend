@@ -10,6 +10,7 @@
  * - POST /api/v1/transactions - Create new transaction
  * - GET /api/v1/transactions - Get transactions with filtering and pagination
  * - GET /api/v1/transactions/:id - Get specific transaction by ID
+ * - GET /api/v1/transactions/user/:user_id - Get transactions by user ID (admin only)
  * - PATCH /api/v1/transactions/:id - Update existing transaction
  * - DELETE /api/v1/transactions/:id - Delete transaction
  * 
@@ -607,6 +608,173 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
                     success: { type: "boolean", example: false },
                     message: { type: "string", example: "Transaction not found" },
                     data: { type: "object", nullable: true, example: null }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  )
+
+  // Get transactions by user ID endpoint (admin only)
+  .get("/user/:user_id",
+    async (context) => await transactionController.getTransactionsByUserId(context),
+    {
+      params: t.Object({
+        user_id: t.String({ description: "User ID to get transactions for" })
+      }),
+      query: t.Object({
+        type: t.Optional(t.String()),
+        category_id: t.Optional(t.String()),
+        start_date: t.Optional(t.String()),
+        end_date: t.Optional(t.String()),
+        page: t.Optional(t.String()),
+        limit: t.Optional(t.String())
+      }),
+      detail: {
+        tags: ["Transactions"],
+        summary: "Get transactions by user ID",
+        description: "Retrieve all transactions for a specific user with filtering and pagination (admin only)",
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: "user_id",
+            in: "path",
+            required: true,
+            description: "User ID to get transactions for",
+            schema: {
+              type: "string",
+              example: "1"
+            }
+          },
+          {
+            name: "type",
+            in: "query",
+            required: false,
+            description: "Filter by transaction type",
+            schema: {
+              type: "string",
+              enum: ["income", "expense"],
+              example: "expense"
+            }
+          },
+          {
+            name: "category_id",
+            in: "query",
+            required: false,
+            description: "Filter by category ID",
+            schema: {
+              type: "string",
+              example: "1"
+            }
+          },
+          {
+            name: "start_date",
+            in: "query",
+            required: false,
+            description: "Filter from date (YYYY-MM-DD)",
+            schema: {
+              type: "string",
+              format: "date",
+              example: "2024-01-01"
+            }
+          },
+          {
+            name: "end_date",
+            in: "query",
+            required: false,
+            description: "Filter to date (YYYY-MM-DD)",
+            schema: {
+              type: "string",
+              format: "date",
+              example: "2024-12-31"
+            }
+          },
+          {
+            name: "page",
+            in: "query",
+            required: false,
+            description: "Page number for pagination",
+            schema: {
+              type: "string",
+              example: "1"
+            }
+          },
+          {
+            name: "limit",
+            in: "query",
+            required: false,
+            description: "Items per page (max 100)",
+            schema: {
+              type: "string",
+              example: "20"
+            }
+          }
+        ],
+        responses: {
+          200: {
+            description: "Successfully retrieved user transactions",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "User transactions retrieved successfully" },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          transaction_id: { type: "integer", example: 1 },
+                          user_id: { type: "integer", example: 1 },
+                          category_id: { type: "integer", example: 1 },
+                          type: { type: "string", enum: ["income", "expense"], example: "expense" },
+                          amount: { type: "number", example: 25.50 },
+                          note: { type: "string", example: "Lunch at restaurant" },
+                          created_at: { type: "string", example: "2024-01-15T10:30:00Z" }
+                        }
+                      }
+                    },
+                    pagination: {
+                      type: "object",
+                      properties: {
+                        total: { type: "integer", example: 50 },
+                        page: { type: "integer", example: 1 },
+                        limit: { type: "integer", example: 20 },
+                        totalPages: { type: "integer", example: 3 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: "Unauthorized - Admin access required",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "Admin access required" }
+                  }
+                }
+              }
+            }
+          },
+          404: {
+            description: "User not found",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: false },
+                    message: { type: "string", example: "User not found" }
                   }
                 }
               }
