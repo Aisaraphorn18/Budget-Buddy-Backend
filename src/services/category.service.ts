@@ -17,7 +17,7 @@
  */
 
 import { supabase } from "../config/supabase";
-import { Category, CreateCategoryData } from "../models/category.model";
+import { Category, CreateCategoryData, UpdateCategoryData } from "../models/category.model";
 
 export class CategoryService {
   /**
@@ -97,6 +97,93 @@ export class CategoryService {
       return data;
     } catch (error) {
       console.error("Error creating category:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update existing category
+   * Updates category information by its ID
+   * 
+   * @param categoryId - The ID of the category to update
+   * @param updateData - Data to update (partial category object)
+   * @returns Updated category object
+   * @throws Error if category not found or database operation fails
+   */
+  async updateCategory(categoryId: number, updateData: UpdateCategoryData): Promise<Category> {
+    try {
+      const { data, error } = await supabase
+        .from('Category')
+        .update(updateData)
+        .eq('category_id', categoryId)
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new Error('Category not found');
+        }
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error updating category:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete category
+   * Removes a category from the system
+   * 
+   * @param categoryId - The ID of the category to delete
+   * @returns Success status
+   * @throws Error if category not found, has dependent transactions, or database operation fails
+   */
+  async deleteCategory(categoryId: number): Promise<void> {
+    try {
+      // Check if category has any associated transactions
+      const { data: transactions, error: transactionError } = await supabase
+        .from('Transaction')
+        .select('transaction_id')
+        .eq('category_id', categoryId)
+        .limit(1);
+
+      if (transactionError) {
+        throw transactionError;
+      }
+
+      if (transactions && transactions.length > 0) {
+        throw new Error('Cannot delete category with existing transactions');
+      }
+
+      // Check if category has any associated budgets
+      const { data: budgets, error: budgetError } = await supabase
+        .from('Budget')
+        .select('budget_id')
+        .eq('category_id', categoryId)
+        .limit(1);
+
+      if (budgetError) {
+        throw budgetError;
+      }
+
+      if (budgets && budgets.length > 0) {
+        throw new Error('Cannot delete category with existing budgets');
+      }
+
+      // Delete the category
+      const { error } = await supabase
+        .from('Category')
+        .delete()
+        .eq('category_id', categoryId);
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
       throw error;
     }
   }

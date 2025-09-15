@@ -83,12 +83,12 @@ const app = new Elysia()
   // Public routes (no authentication required)
   .use(healthRoutes)     // Health check endpoint
   .use(authRoutes)       // Authentication endpoints (register, login, logout, profile)
-  .use(categoryRoutes)   // Category read-only endpoints (public access)
   
   // Protected routes group (JWT authentication required)
   .group("/protected", (app) => 
     app
       .use(jwtMiddleware)        // Apply JWT validation middleware to all routes in this group
+      .use(categoryRoutes)       // Category management operations (read and write)
       .use(transactionRoutes)    // Transaction CRUD operations
       .use(budgetRoutes)         // Budget management operations  
       .use(homeRoutes)           // Dashboard and analytics operations
@@ -142,11 +142,16 @@ console.log("  POST   /api/v1/auth/register       - Register new user");
 console.log("  POST   /api/v1/auth/login          - User login");
 console.log("  POST   /api/v1/auth/logout         - User logout");
 console.log("  GET    /api/v1/auth/profile        - Get user profile");
-console.log("  GET    /api/v1/categories          - Get all categories");
-console.log("  GET    /api/v1/categories/:id      - Get category by ID");
 console.log("");
 console.log("🔒 Protected Routes (Require JWT Token):");
-console.log("💸 Transactions:");
+console.log("� Categories:");
+console.log("  GET    /protected/api/v1/categories     - Get all categories");
+console.log("  GET    /protected/api/v1/categories/:id - Get category by ID");
+console.log("  POST   /protected/api/v1/categories     - Create new category");
+console.log("  PATCH  /protected/api/v1/categories/:id - Update category");
+console.log("  DELETE /protected/api/v1/categories/:id - Delete category");
+console.log("");
+console.log("�💸 Transactions:");
 console.log("  POST   /protected/api/v1/transactions     - Create transaction");
 console.log("  GET    /protected/api/v1/transactions     - Get transactions (with filters)");
 console.log("  GET    /protected/api/v1/transactions/:id - Get transaction by ID");

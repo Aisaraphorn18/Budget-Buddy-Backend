@@ -218,10 +218,18 @@ The Budget Buddy API provides comprehensive endpoints for personal finance manag
 | `POST` | `/api/v1/auth/login` | User login |
 | `POST` | `/api/v1/auth/logout` | User logout |
 | `GET` | `/api/v1/auth/profile` | Get user profile |
-| `GET` | `/api/v1/categories` | Get all categories |
-| `GET` | `/api/v1/categories/:id` | Get category by ID |
 
 #### 🔒 Protected Endpoints (JWT Authentication Required)
+
+**📁 Category Management**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/protected/api/v1/categories` | Get all categories |
+| `GET` | `/protected/api/v1/categories/:id` | Get category by ID |
+| `POST` | `/protected/api/v1/categories` | Create new category |
+| `PATCH` | `/protected/api/v1/categories/:id` | Update category |
+| `DELETE` | `/protected/api/v1/categories/:id` | Delete category |
 
 **💸 Transaction Management**
 
@@ -831,10 +839,18 @@ npm run dev
 | `POST` | `/api/v1/auth/login` | เข้าสู่ระบบ |
 | `POST` | `/api/v1/auth/logout` | ออกจากระบบ |
 | `GET` | `/api/v1/auth/profile` | ดูโปรไฟล์ผู้ใช้ |
-| `GET` | `/api/v1/categories` | ดูหมวดหมู่ทั้งหมด |
-| `GET` | `/api/v1/categories/:id` | ดูหมวดหมู่ตาม ID |
 
 #### 🔒 Protected Endpoints (ต้องยืนยันตัวตนด้วย JWT)
+
+**📁 จัดการหมวดหมู่**
+
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|----------|
+| `GET` | `/protected/api/v1/categories` | ดูหมวดหมู่ทั้งหมด |
+| `GET` | `/protected/api/v1/categories/:id` | ดูหมวดหมู่ตาม ID |
+| `POST` | `/protected/api/v1/categories` | สร้างหมวดหมู่ใหม่ |
+| `PATCH` | `/protected/api/v1/categories/:id` | แก้ไขหมวดหมู่ |
+| `DELETE` | `/protected/api/v1/categories/:id` | ลบหมวดหมู่ |
 
 **💸 จัดการรายการเงิน**
 

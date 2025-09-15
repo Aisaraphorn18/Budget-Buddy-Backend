@@ -27,3 +27,11 @@ export interface Category {
 export interface CreateCategoryData {
   category_name: string;
 }
+
+/**
+ * Data for updating existing category
+ * Used for category update endpoint validation
+ */
+export interface UpdateCategoryData {
+  category_name?: string;
+}

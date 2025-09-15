@@ -395,6 +395,182 @@ GET /api/v1/categories/550e8400-e29b-41d4-a716-446655440001
 
 ---
 
+### POST `/api/v1/categories`
+
+Create new category
+
+#### 📥 Request
+```http
+POST /api/v1/categories
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+#### 🔑 Headers Required
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+#### 📋 Request Body
+```json
+{
+  "category_name": "Travel & Vacation"
+}
+```
+
+#### 📝 Request Body Parameters
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `category_name` | string | ✅ | Name of the category (must be unique) |
+
+#### 📤 Response (201 Created)
+```json
+{
+  "success": true,
+  "data": {
+    "category_id": 11,
+    "category_name": "Travel & Vacation",
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Category created successfully"
+}
+```
+
+#### ❌ Error Response (409 Conflict)
+```json
+{
+  "success": false,
+  "error": "Category name already exists"
+}
+```
+
+#### ❌ Error Response (400 Bad Request)
+```json
+{
+  "success": false,
+  "error": "Category name is required"
+}
+```
+
+---
+
+### PATCH `/api/v1/categories/:id`
+
+Update existing category
+
+#### 📥 Request
+```http
+PATCH /api/v1/categories/11
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+#### 🔑 Headers Required
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+#### 📝 URL Parameters
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | number | ✅ | Category ID |
+
+#### 📋 Request Body
+```json
+{
+  "category_name": "Travel & Adventure"
+}
+```
+
+#### 📝 Request Body Parameters
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `category_name` | string | ✅ | Updated name of the category |
+
+#### 📤 Response (200 OK)
+```json
+{
+  "success": true,
+  "data": {
+    "category_id": 11,
+    "category_name": "Travel & Adventure",
+    "updated_at": "2024-01-16T14:20:00Z"
+  },
+  "message": "Category updated successfully"
+}
+```
+
+#### ❌ Error Response (404 Not Found)
+```json
+{
+  "success": false,
+  "error": "Category not found"
+}
+```
+
+#### ❌ Error Response (409 Conflict)
+```json
+{
+  "success": false,
+  "error": "Category name already exists"
+}
+```
+
+---
+
+### DELETE `/api/v1/categories/:id`
+
+Delete category
+
+#### 📥 Request
+```http
+DELETE /api/v1/categories/11
+Authorization: Bearer <token>
+```
+
+#### 🔑 Headers Required
+- `Authorization: Bearer <token>`
+
+#### 📝 URL Parameters
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | number | ✅ | Category ID |
+
+#### 📤 Response (200 OK)
+```json
+{
+  "success": true,
+  "data": {
+    "deleted_category_id": 11
+  },
+  "message": "Category deleted successfully"
+}
+```
+
+#### ❌ Error Response (404 Not Found)
+```json
+{
+  "success": false,
+  "error": "Category not found"
+}
+```
+
+#### ❌ Error Response (409 Conflict - Has Dependencies)
+```json
+{
+  "success": false,
+  "error": "Cannot delete category with existing transactions"
+}
+```
+
+#### ❌ Error Response (409 Conflict - Has Budgets)
+```json
+{
+  "success": false,
+  "error": "Cannot delete category with existing budgets"
+}
+```
+
+---
+
 ## 💸 Transaction APIs
 
 ### POST `/protected/api/v1/transactions`
