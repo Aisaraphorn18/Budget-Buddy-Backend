@@ -72,6 +72,11 @@
 - [📈 Reports & Analytics](docs/EN/routes/reports.md) | [ภาษาไทย](docs/TH/routes/reports.md)
 - [👥 User Management](docs/EN/routes/users.md) | [ภาษาไทย](docs/TH/routes/users.md)
 
+#### 🧪 Testing Documentation
+
+- [🧪 Testing Guide (English)](docs/EN/testing.md) - How to test APIs and Unit tests
+- [🧪 คู่มือการทดสอบ (ไทย)](docs/TH/testing.md) - วิธีการทดสอบ API และ Unit tests
+
 ---
 
 ## ✨ Features

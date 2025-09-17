@@ -81,6 +81,7 @@ Authorization: Bearer <your-jwt-token>
 ## 🔗 เอกสารเพิ่มเติม
 
 - **[Interactive API Explorer](http://localhost:3000/openapi)** - ทดสอบ API แบบ real-time
+- **[Testing Guide (คู่มือการทดสอบ)](testing.md)** - วิธีการทดสอบ API และ Unit tests
 - **[English Documentation](../EN/README.md)** - เอกสารภาษาอังกฤษ
 
 ---
