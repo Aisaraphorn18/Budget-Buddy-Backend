@@ -131,7 +131,7 @@ const app = new Elysia()
 
           // Verify and decode the JWT token
           const payload = await jwt.verify(bearer);
-          console.log('🔍 JWT - Payload:', payload);
+          // console.log('🔍 JWT - Payload:', payload);
           if (!payload) {
             console.log('❌ Invalid token payload');
             throw new Error('Invalid token');
