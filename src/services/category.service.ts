@@ -16,12 +16,8 @@
  * allowing users to categorize transactions using predefined categories.
  */
 
-import { supabase } from "../config/supabase";
-import {
-  Category,
-  CreateCategoryData,
-  UpdateCategoryData
-} from "../models/category.model";
+import { supabase } from '../config/supabase';
+import { Category, CreateCategoryData, UpdateCategoryData } from '../models/category.model';
 
 export class CategoryService {
   /**
@@ -33,22 +29,22 @@ export class CategoryService {
   async getAllCategories(): Promise<Category[]> {
     try {
       const { data, error } = await supabase
-        .from("Category")
-        .select("*")
-        .order("category_id", { ascending: true });
+        .from('Category')
+        .select('*')
+        .order('category_id', { ascending: true });
 
       if (error) {
-        console.error("Database error getting all categories:", error);
+        console.error('Database error getting all categories:', error);
         throw new Error(`Failed to retrieve categories: ${error.message}`);
       }
 
       return data || [];
     } catch (error) {
-      console.error("Error getting all categories:", error);
+      console.error('Error getting all categories:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
-      throw new Error("Failed to retrieve categories - unknown error occurred");
+      throw new Error('Failed to retrieve categories - unknown error occurred');
     }
   }
 
@@ -62,13 +58,13 @@ export class CategoryService {
   async getCategoryById(categoryId: number): Promise<Category | null> {
     try {
       const { data, error } = await supabase
-        .from("Category")
-        .select("*")
-        .eq("category_id", categoryId)
+        .from('Category')
+        .select('*')
+        .eq('category_id', categoryId)
         .single();
 
       if (error) {
-        if (error.code === "PGRST116") {
+        if (error.code === 'PGRST116') {
           // No rows found
           return null;
         }
@@ -77,7 +73,7 @@ export class CategoryService {
 
       return data;
     } catch (error) {
-      console.error("Error getting category by ID:", error);
+      console.error('Error getting category by ID:', error);
       throw error;
     }
   }
@@ -93,7 +89,7 @@ export class CategoryService {
   async createCategory(categoryData: CreateCategoryData): Promise<Category> {
     try {
       const { data, error } = await supabase
-        .from("Category")
+        .from('Category')
         .insert([categoryData])
         .select()
         .single();
@@ -104,7 +100,7 @@ export class CategoryService {
 
       return data;
     } catch (error) {
-      console.error("Error creating category:", error);
+      console.error('Error creating category:', error);
       throw error;
     }
   }
@@ -118,28 +114,25 @@ export class CategoryService {
    * @returns Updated category object
    * @throws Error if category not found or database operation fails
    */
-  async updateCategory(
-    categoryId: number,
-    updateData: UpdateCategoryData
-  ): Promise<Category> {
+  async updateCategory(categoryId: number, updateData: UpdateCategoryData): Promise<Category> {
     try {
       const { data, error } = await supabase
-        .from("Category")
+        .from('Category')
         .update(updateData)
-        .eq("category_id", categoryId)
+        .eq('category_id', categoryId)
         .select()
         .single();
 
       if (error) {
-        if (error.code === "PGRST116") {
-          throw new Error("Category not found");
+        if (error.code === 'PGRST116') {
+          throw new Error('Category not found');
         }
         throw error;
       }
 
       return data;
     } catch (error) {
-      console.error("Error updating category:", error);
+      console.error('Error updating category:', error);
       throw error;
     }
   }
@@ -156,9 +149,9 @@ export class CategoryService {
     try {
       // Check if category has any associated transactions
       const { data: transactions, error: transactionError } = await supabase
-        .from("Transaction")
-        .select("transaction_id")
-        .eq("category_id", categoryId)
+        .from('Transaction')
+        .select('transaction_id')
+        .eq('category_id', categoryId)
         .limit(1);
 
       if (transactionError) {
@@ -166,14 +159,14 @@ export class CategoryService {
       }
 
       if (transactions && transactions.length > 0) {
-        throw new Error("Cannot delete category with existing transactions");
+        throw new Error('Cannot delete category with existing transactions');
       }
 
       // Check if category has any associated budgets
       const { data: budgets, error: budgetError } = await supabase
-        .from("Budget")
-        .select("budget_id")
-        .eq("category_id", categoryId)
+        .from('Budget')
+        .select('budget_id')
+        .eq('category_id', categoryId)
         .limit(1);
 
       if (budgetError) {
@@ -181,20 +174,17 @@ export class CategoryService {
       }
 
       if (budgets && budgets.length > 0) {
-        throw new Error("Cannot delete category with existing budgets");
+        throw new Error('Cannot delete category with existing budgets');
       }
 
       // Delete the category
-      const { error } = await supabase
-        .from("Category")
-        .delete()
-        .eq("category_id", categoryId);
+      const { error } = await supabase.from('Category').delete().eq('category_id', categoryId);
 
       if (error) {
         throw error;
       }
     } catch (error) {
-      console.error("Error deleting category:", error);
+      console.error('Error deleting category:', error);
       throw error;
     }
   }

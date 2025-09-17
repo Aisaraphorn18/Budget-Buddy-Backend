@@ -1,10 +1,10 @@
 /**
  * Budget Controller
- * 
+ *
  * HTTP request handler for budget management endpoints in Budget Buddy.
  * Manages budget planning, tracking, and analysis operations for users.
  * Budgets help users set spending limits and monitor financial goals.
- * 
+ *
  * Key Features:
  * - Complete CRUD operations for budgets
  * - Monthly budget cycle management (YYYY-MM format)
@@ -13,15 +13,17 @@
  * - Duplicate prevention (one budget per category per month)
  * - Input validation and sanitization
  * - Proper error handling and HTTP status codes
- * 
+ *
  * Security:
  * - JWT authentication required for all operations
  * - User isolation (userId validation from JWT token)
  * - Budget ownership validation for updates/deletes
  */
 
-import { BudgetService } from "../services/budget.service";
-import { BudgetFilters } from "../models/budget.model";
+import { BudgetService } from '../services/budget.service';
+import type { AuthContext } from '../types/elysia.types';
+
+import { BudgetFilters } from '../models/budget.model';
 
 export class BudgetController {
   private budgetService: BudgetService;
@@ -33,40 +35,48 @@ export class BudgetController {
   /**
    * Get all budgets for authenticated user
    * Supports filtering by cycle_month and category_id
-   * 
+   *
    * @param context - Elysia context with user info and query parameters
    * @returns Array of budget records matching the criteria
    */
-  async getAllBudgets(context: any) {
+  async getAllBudgets(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const filters: BudgetFilters = {
-        cycle_month: context.query.cycle_month,
-        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined
+        cycle_month: Array.isArray(context.query.cycle_month)
+          ? context.query.cycle_month[0]
+          : context.query.cycle_month,
+        category_id: context.query.category_id
+          ? parseInt(
+              Array.isArray(context.query.category_id)
+                ? context.query.category_id[0]
+                : context.query.category_id
+            )
+          : undefined,
       };
 
       const budgets = await this.budgetService.getAllBudgets(userId, filters);
 
       return {
         success: true,
-        message: "Budgets retrieved successfully",
-        data: budgets
+        message: 'Budgets retrieved successfully',
+        data: budgets,
       };
     } catch (error) {
-      console.error("Get all budgets error:", error);
+      console.error('Get all budgets error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get budgets",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get budgets',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -78,115 +88,119 @@ export class BudgetController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const budgetId = parseInt(context.params.id);
-      
+
       if (isNaN(budgetId)) {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid budget ID"
+          message: 'Invalid budget ID',
         };
       }
 
       const budget = await this.budgetService.getBudgetById(budgetId, userId);
-      
+
       if (!budget) {
         context.set.status = 404;
         return {
           success: false,
-          message: "Budget not found"
+          message: 'Budget not found',
         };
       }
 
       return {
         success: true,
-        message: "Budget retrieved successfully",
-        data: budget
+        message: 'Budget retrieved successfully',
+        data: budget,
       };
     } catch (error) {
-      console.error("Get budget by ID error:", error);
+      console.error('Get budget by ID error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get budget",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get budget',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
   async createBudget(context: any) {
     try {
-      console.log("🔍 Budget - Creating budget...");
-      console.log("🔍 Budget - Context user:", context.user);
-      
+      console.log('🔍 Budget - Creating budget...');
+      console.log('🔍 Budget - Context user:', context.user);
+
       const userId = context.user?.user_id;
       if (!userId) {
-        console.log("❌ Budget - No user ID found");
+        console.log('❌ Budget - No user ID found');
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
-      console.log("🔍 Budget - User ID:", userId);
-      console.log("🔍 Budget - Request body:", context.body);
+      console.log('🔍 Budget - User ID:', userId);
+      console.log('🔍 Budget - Request body:', context.body);
 
       const { category_id, budget_amount, cycle_month } = context.body;
 
       // แปลง cycle_month จาก YYYY-MM เป็น YYYY-MM-01 สำหรับ database date field
       const formattedCycleMonth = cycle_month.includes('-01') ? cycle_month : `${cycle_month}-01`;
-      
+
       const budgetData = {
         user_id: userId,
         category_id,
         budget_amount,
-        cycle_month: formattedCycleMonth
+        cycle_month: formattedCycleMonth,
       };
 
-      console.log("🔍 Budget - Budget data to create:", budgetData);
+      console.log('🔍 Budget - Budget data to create:', budgetData);
 
       const budget = await this.budgetService.createBudget(budgetData);
 
-      console.log("✅ Budget - Budget created successfully:", budget);
+      console.log('✅ Budget - Budget created successfully:', budget);
 
       context.set.status = 201;
       return {
         success: true,
-        message: "Budget created successfully",
-        data: budget
+        message: 'Budget created successfully',
+        data: budget,
       };
     } catch (error) {
-      console.error("❌ Budget - Create budget error:", error);
-      
+      console.error('❌ Budget - Create budget error:', error);
+
       // Handle different error types with appropriate status codes
       if (error instanceof Error) {
-        if (error.message.includes("Category ID is required") || 
-            error.message.includes("Budget amount must be a positive number") ||
-            error.message.includes("Budget cycle month is required") ||
-            error.message.includes("Budget cycle month must be in YYYY-MM format") ||
-            error.message.includes("Invalid category ID") ||
-            error.message.includes("Invalid user ID") ||
-            error.message.includes("Invalid data - check constraint violation")) {
+        if (
+          error.message.includes('Category ID is required') ||
+          error.message.includes('Budget amount must be a positive number') ||
+          error.message.includes('Budget cycle month is required') ||
+          error.message.includes('Budget cycle month must be in YYYY-MM format') ||
+          error.message.includes('Invalid category ID') ||
+          error.message.includes('Invalid user ID') ||
+          error.message.includes('Invalid data - check constraint violation')
+        ) {
           context.set.status = 400;
           return {
             success: false,
             message: error.message,
-            data: null
+            data: null,
           };
         }
-        
-        if (error.message.includes('already exists') || 
-            error.message.includes('Duplicate budget')) {
+
+        if (
+          error.message.includes('already exists') ||
+          error.message.includes('Duplicate budget')
+        ) {
           context.set.status = 409; // Conflict
           return {
             success: false,
             message: error.message,
-            data: null
+            data: null,
           };
         }
       }
@@ -194,8 +208,8 @@ export class BudgetController {
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to create budget",
-        data: null
+        message: 'Failed to create budget',
+        data: null,
       };
     }
   }
@@ -207,43 +221,43 @@ export class BudgetController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const budgetId = parseInt(context.params.id);
-      
+
       if (isNaN(budgetId)) {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid budget ID"
+          message: 'Invalid budget ID',
         };
       }
 
       const updateData = context.body;
       const budget = await this.budgetService.updateBudget(budgetId, userId, updateData);
-      
+
       if (!budget) {
         context.set.status = 404;
         return {
           success: false,
-          message: "Budget not found"
+          message: 'Budget not found',
         };
       }
 
       return {
         success: true,
-        message: "Budget updated successfully",
-        data: budget
+        message: 'Budget updated successfully',
+        data: budget,
       };
     } catch (error) {
-      console.error("Update budget error:", error);
+      console.error('Update budget error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to update budget",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to update budget',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -255,41 +269,41 @@ export class BudgetController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const budgetId = parseInt(context.params.id);
-      
+
       if (isNaN(budgetId)) {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid budget ID"
+          message: 'Invalid budget ID',
         };
       }
 
       const deleted = await this.budgetService.deleteBudget(budgetId, userId);
-      
+
       if (!deleted) {
         context.set.status = 404;
         return {
           success: false,
-          message: "Budget not found"
+          message: 'Budget not found',
         };
       }
 
       return {
         success: true,
-        message: "Budget deleted successfully"
+        message: 'Budget deleted successfully',
       };
     } catch (error) {
-      console.error("Delete budget error:", error);
+      console.error('Delete budget error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to delete budget",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to delete budget',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -297,7 +311,7 @@ export class BudgetController {
   /**
    * Get all budgets for specific user (admin only)
    * Supports filtering by cycle_month and category_id
-   * 
+   *
    * @param context - Elysia context with user_id parameter and query parameters
    * @returns Array of budget records for the specified user
    */
@@ -309,39 +323,39 @@ export class BudgetController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const targetUserId = parseInt(context.params.user_id);
-      
+
       if (isNaN(targetUserId)) {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
       const filters: BudgetFilters = {
         cycle_month: context.query.cycle_month,
-        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined
+        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined,
       };
 
       const budgets = await this.budgetService.getAllBudgets(targetUserId, filters);
 
       return {
         success: true,
-        message: "User budgets retrieved successfully",
-        data: budgets
+        message: 'User budgets retrieved successfully',
+        data: budgets,
       };
     } catch (error) {
-      console.error("Get budgets by user ID error:", error);
+      console.error('Get budgets by user ID error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user budgets",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user budgets',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

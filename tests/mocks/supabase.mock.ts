@@ -1,9 +1,8 @@
+/* eslint-disable no-unused-vars */
+
 /**
- * Supabase Mock Client
- * 
- * Mock implementation of Supabase client for testing purposes.
- * Prevents actual database operations during tests and allows
- * controlled responses for different test scenarios.
+ * Supabase Mock for Testing
+ * Mock implementation of Supabase client for unit and integration testing
  */
 
 export interface MockSupabaseResponse<T = any> {
@@ -22,15 +21,15 @@ export class MockSupabaseQueryBuilder {
     this.shouldThrow = shouldThrow || false;
   }
 
-  select(columns: string = '*') {
+  select(_columns: string = '*') {
     return this;
   }
 
-  eq(column: string, value: any) {
+  eq(_column: string, _value: any) {
     return this;
   }
 
-  order(column: string, options?: { ascending?: boolean }) {
+  order(_column: string, _options?: { ascending?: boolean }) {
     return this;
   }
 
@@ -38,11 +37,11 @@ export class MockSupabaseQueryBuilder {
     return this;
   }
 
-  insert(data: any) {
+  insert(_data: any) {
     return this;
   }
 
-  update(data: any) {
+  update(_data: any) {
     return this;
   }
 
@@ -55,10 +54,10 @@ export class MockSupabaseQueryBuilder {
     if (this.shouldThrow) {
       throw new Error('Mock error');
     }
-    
+
     return {
       data: this.mockData,
-      error: this.mockError
+      error: this.mockError,
     };
   }
 }
@@ -103,39 +102,39 @@ export const mockSupabase = new MockSupabaseClient();
 // Mock data templates
 export const mockCategoryData = {
   category_id: 1,
-  category_name: "Test Category"
+  category_name: 'Test Category',
 };
 
 export const mockCategoriesData = [
-  { category_id: 1, category_name: "Food & Dining" },
-  { category_id: 2, category_name: "Transportation" },
-  { category_id: 3, category_name: "Entertainment" }
+  { category_id: 1, category_name: 'Food & Dining' },
+  { category_id: 2, category_name: 'Transportation' },
+  { category_id: 3, category_name: 'Entertainment' },
 ];
 
 export const mockTransactionData = {
   transaction_id: 1,
   user_id: 1,
   category_id: 1,
-  type: "expense",
-  amount: 25.50,
-  note: "Test transaction",
-  created_at: "2024-01-15T10:30:00Z"
+  type: 'expense',
+  amount: 25.5,
+  note: 'Test transaction',
+  created_at: '2024-01-15T10:30:00Z',
 };
 
 export const mockBudgetData = {
   budget_id: 1,
   user_id: 1,
   category_id: 1,
-  budget_amount: 500.00,
-  cycle_month: "2024-01",
-  created_at: "2024-01-15T10:30:00Z",
-  updated_at: "2024-01-15T10:30:00Z"
+  budget_amount: 500.0,
+  cycle_month: '2024-01',
+  created_at: '2024-01-15T10:30:00Z',
+  updated_at: '2024-01-15T10:30:00Z',
 };
 
 export const mockUserData = {
   user_id: 1,
-  username: "testuser",
-  first_name: "Test",
-  last_name: "User",
-  created_date: "2024-01-01T00:00:00Z"
+  username: 'testuser',
+  first_name: 'Test',
+  last_name: 'User',
+  created_date: '2024-01-01T00:00:00Z',
 };

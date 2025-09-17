@@ -1,10 +1,10 @@
 /**
  * User Model Interfaces
- * 
+ *
  * Type definitions for user-related data structures in Budget Buddy.
  * These interfaces ensure type safety throughout the application and define
  * the structure of user data as it flows between database, services, and API responses.
- * 
+ *
  * Key Features:
  * - Strong typing for user authentication and profile data
  * - Separate interfaces for internal use vs. API responses (password exclusion)

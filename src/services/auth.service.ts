@@ -1,23 +1,23 @@
 /**
  * Authentication Service
- * 
+ *
  * Business logic layer for user authentication and account management in Budget Buddy.
  * Handles all authentication-related database operations and user management functions.
- * 
+ *
  * Key Features:
  * - User account creation and management
  * - Username uniqueness validation
  * - Secure user lookup operations
  * - User profile retrieval
  * - Database abstraction for authentication operations
- * 
+ *
  * Security Considerations:
  * - Password hashing handled at controller level
  * - User data validation and sanitization
  * - Proper error handling for database operations
  */
 
-import { supabase } from "../config/supabase";
+import { supabase } from '../config/supabase';
 
 /**
  * User interface for authentication service
@@ -47,7 +47,7 @@ export class AuthService {
   /**
    * Find user by username
    * Used for login validation and username uniqueness checks
-   * 
+   *
    * @param username - The username to search for
    * @returns User object if found, null otherwise
    */
@@ -69,7 +69,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error("Error finding user by username:", error);
+      console.error('Error finding user by username:', error);
       throw error;
     }
   }
@@ -77,17 +77,13 @@ export class AuthService {
   /**
    * Find user by email address
    * Used for email-based authentication (if implemented)
-   * 
+   *
    * @param email - The email address to search for
    * @returns User object if found, null otherwise
    */
   async findUserByEmail(email: string): Promise<User | null> {
     try {
-      const { data, error } = await supabase
-        .from('User')
-        .select('*')
-        .eq('email', email)
-        .single();
+      const { data, error } = await supabase.from('User').select('*').eq('email', email).single();
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -99,7 +95,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error("Error finding user by email:", error);
+      console.error('Error finding user by email:', error);
       throw error;
     }
   }
@@ -107,17 +103,13 @@ export class AuthService {
   /**
    * Find user by user ID
    * Used for profile retrieval and user validation
-   * 
+   *
    * @param id - The user ID to search for
    * @returns User object if found, null otherwise
    */
   async findUserById(id: number): Promise<User | null> {
     try {
-      const { data, error } = await supabase
-        .from('User')
-        .select('*')
-        .eq('user_id', id)
-        .single();
+      const { data, error } = await supabase.from('User').select('*').eq('user_id', id).single();
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -129,7 +121,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error("Error finding user by ID:", error);
+      console.error('Error finding user by ID:', error);
       throw error;
     }
   }
@@ -137,18 +129,14 @@ export class AuthService {
   /**
    * Create new user account
    * Inserts new user data into the database
-   * 
+   *
    * @param userData - Complete user data for account creation
    * @returns Created user object with generated ID
    * @throws Error if username already exists or database operation fails
    */
   async createUser(userData: CreateUserData): Promise<User> {
     try {
-      const { data, error } = await supabase
-        .from('User')
-        .insert([userData])
-        .select()
-        .single();
+      const { data, error } = await supabase.from('User').insert([userData]).select().single();
 
       if (error) {
         throw error;
@@ -156,7 +144,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error('Error creating user:', error);
       throw error;
     }
   }

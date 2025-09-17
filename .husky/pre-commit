@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# Load bun utilities
+. "$(dirname -- "$0")/bun-utils.sh"
+
+# Ensure bun is available
+ensure_bun
+
+echo "🧪 Running tests..."
+run_bun test
+
+echo "🔍 Running lint-staged..."
+run_bunx lint-staged
+
+echo "✅ Pre-commit checks passed!"
+echo "📝 Remember to use Conventional Commits format:"
+echo "   feat: add new feature"
+echo "   fix: resolve bug"
+echo "   docs: update documentation"
+echo "   See docs/CONVENTIONAL_COMMITS.md for more info"

@@ -1,10 +1,10 @@
 /**
  * Budget Service
- * 
+ *
  * Business logic layer for budget management in Budget Buddy.
  * Handles budget planning, tracking, and analysis operations for users.
  * Budgets help users set spending limits by category and monitor their financial goals.
- * 
+ *
  * Key Features:
  * - User-scoped budget management (users can only access their own budgets)
  * - Monthly budget cycles with YYYY-MM format
@@ -13,21 +13,21 @@
  * - CRUD operations for budget management
  * - Budget analysis and spending tracking
  * - Duplicate prevention (one budget per category per month)
- * 
+ *
  * Business Rules:
  * - Each user can have one budget per category per month
  * - Budget amounts must be positive values
  * - Budget cycles are monthly-based for consistent tracking
  */
 
-import { supabase } from "../config/supabase";
-import { Budget, CreateBudgetData, UpdateBudgetData, BudgetFilters } from "../models/budget.model";
+import { supabase } from '../config/supabase';
+import { Budget, CreateBudgetData, UpdateBudgetData, BudgetFilters } from '../models/budget.model';
 
 export class BudgetService {
   /**
    * Retrieve all budgets for a user with optional filtering
    * Supports filtering by month and category for targeted budget views
-   * 
+   *
    * @param userId - The ID of the user whose budgets to retrieve
    * @param filters - Optional filters for cycle_month and category_id
    * @returns Array of budget records matching the criteria
@@ -35,7 +35,7 @@ export class BudgetService {
   async getAllBudgets(userId: number, filters: BudgetFilters = {}): Promise<Budget[]> {
     try {
       const { cycle_month, category_id } = filters;
-      
+
       let query = supabase
         .from('Budget')
         .select('*')
@@ -51,7 +51,7 @@ export class BudgetService {
           const month = parseInt(cycle_month.substring(5, 7));
           const lastDay = new Date(year, month, 0).getDate();
           const endDate = `${cycle_month}-${lastDay.toString().padStart(2, '0')}`;
-          
+
           query = query.gte('cycle_month', startDate).lte('cycle_month', endDate);
         } else {
           // หากเป็น full date format แล้ว
@@ -70,7 +70,7 @@ export class BudgetService {
 
       return data || [];
     } catch (error) {
-      console.error("Error getting budgets:", error);
+      console.error('Error getting budgets:', error);
       throw error;
     }
   }
@@ -78,7 +78,7 @@ export class BudgetService {
   /**
    * Retrieve a specific budget by ID
    * Ensures user can only access their own budgets through user_id validation
-   * 
+   *
    * @param budgetId - The ID of the budget to retrieve
    * @param userId - The ID of the user (for security validation)
    * @returns Budget object if found and belongs to user, null otherwise
@@ -101,7 +101,7 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error("Error getting budget by ID:", error);
+      console.error('Error getting budget by ID:', error);
       throw error;
     }
   }
@@ -110,13 +110,13 @@ export class BudgetService {
     try {
       // Validate required fields
       if (!budgetData.category_id) {
-        throw new Error("Category ID is required");
+        throw new Error('Category ID is required');
       }
       if (!budgetData.budget_amount || budgetData.budget_amount <= 0) {
-        throw new Error("Budget amount must be a positive number");
+        throw new Error('Budget amount must be a positive number');
       }
       if (!budgetData.cycle_month) {
-        throw new Error("Budget cycle month is required");
+        throw new Error('Budget cycle month is required');
       }
       // if (!budgetData.cycle_month.match(/^\d{4}-\d{2}$/)) {
       //   throw new Error("Budget cycle month must be in YYYY-MM format");
@@ -133,50 +133,50 @@ export class BudgetService {
         throw new Error('Budget already exists for this category and month');
       }
 
-      const { data, error } = await supabase
-        .from('Budget')
-        .insert([budgetData])
-        .select()
-        .single();
+      const { data, error } = await supabase.from('Budget').insert([budgetData]).select().single();
 
       if (error) {
-        console.error("Database error creating budget:", error);
-        
+        console.error('Database error creating budget:', error);
+
         // Handle specific database errors
         if (error.code === '23503') {
           if (error.message.includes('category_id')) {
-            throw new Error("Invalid category ID - category does not exist");
+            throw new Error('Invalid category ID - category does not exist');
           }
           if (error.message.includes('user_id')) {
-            throw new Error("Invalid user ID - user does not exist");
+            throw new Error('Invalid user ID - user does not exist');
           }
-          throw new Error("Invalid reference - related record does not exist");
+          throw new Error('Invalid reference - related record does not exist');
         }
         if (error.code === '23505') {
-          throw new Error("Duplicate budget - budget already exists for this category and month");
+          throw new Error('Duplicate budget - budget already exists for this category and month');
         }
         if (error.code === '23514') {
-          throw new Error("Invalid data - check constraint violation");
+          throw new Error('Invalid data - check constraint violation');
         }
-        
+
         throw new Error(`Failed to create budget: ${error.message}`);
       }
 
       if (!data) {
-        throw new Error("Budget was not created - no data returned");
+        throw new Error('Budget was not created - no data returned');
       }
 
       return data;
     } catch (error) {
-      console.error("Error creating budget:", error);
+      console.error('Error creating budget:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
-      throw new Error("Failed to create budget - unknown error occurred");
+      throw new Error('Failed to create budget - unknown error occurred');
     }
   }
 
-  async updateBudget(budgetId: number, userId: number, updateData: UpdateBudgetData): Promise<Budget | null> {
+  async updateBudget(
+    budgetId: number,
+    userId: number,
+    updateData: UpdateBudgetData
+  ): Promise<Budget | null> {
     try {
       const { data, error } = await supabase
         .from('Budget')
@@ -195,7 +195,7 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error("Error updating budget:", error);
+      console.error('Error updating budget:', error);
       throw error;
     }
   }
@@ -213,14 +213,18 @@ export class BudgetService {
         throw error;
       }
 
-      return (data && data.length > 0);
+      return data && data.length > 0;
     } catch (error) {
-      console.error("Error deleting budget:", error);
+      console.error('Error deleting budget:', error);
       throw error;
     }
   }
 
-  private async findExistingBudget(userId: number, categoryId: number, cycleMonth: string): Promise<Budget | null> {
+  private async findExistingBudget(
+    userId: number,
+    categoryId: number,
+    cycleMonth: string
+  ): Promise<Budget | null> {
     try {
       let query = supabase
         .from('Budget')
@@ -235,7 +239,7 @@ export class BudgetService {
         const month = parseInt(cycleMonth.substring(5, 7));
         const lastDay = new Date(year, month, 0).getDate();
         const endDate = `${cycleMonth}-${lastDay.toString().padStart(2, '0')}`;
-        
+
         query = query.gte('cycle_month', startDate).lte('cycle_month', endDate);
       } else {
         query = query.eq('cycle_month', cycleMonth);
@@ -249,32 +253,39 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error("Error finding existing budget:", error);
+      console.error('Error finding existing budget:', error);
       throw error;
     }
   }
 
-  async getBudgetsWithSpending(userId: number, cycleMonth: string): Promise<{
-    budget_id: number,
-    category_id: number,
-    category_name: string,
-    budget_amount: number,
-    spent_amount: number,
-    remaining_amount: number,
-    percentage_used: number
-  }[]> {
+  async getBudgetsWithSpending(
+    userId: number,
+    cycleMonth: string
+  ): Promise<
+    {
+      budget_id: number;
+      category_id: number;
+      category_name: string;
+      budget_amount: number;
+      spent_amount: number;
+      remaining_amount: number;
+      percentage_used: number;
+    }[]
+  > {
     try {
       // Get budgets for the specified month
       const { data: budgets, error: budgetError } = await supabase
         .from('Budget')
-        .select(`
+        .select(
+          `
           budget_id,
           category_id,
           budget_amount,
           Category (
             category_name
           )
-        `)
+        `
+        )
         .eq('user_id', userId)
         .eq('cycle_month', cycleMonth);
 
@@ -311,9 +322,8 @@ export class BudgetService {
           );
 
           const remainingAmount = budget.budget_amount - spentAmount;
-          const percentageUsed = budget.budget_amount > 0 
-            ? (spentAmount / budget.budget_amount) * 100 
-            : 0;
+          const percentageUsed =
+            budget.budget_amount > 0 ? (spentAmount / budget.budget_amount) * 100 : 0;
 
           return {
             budget_id: budget.budget_id,
@@ -322,14 +332,14 @@ export class BudgetService {
             budget_amount: budget.budget_amount,
             spent_amount: spentAmount,
             remaining_amount: remainingAmount,
-            percentage_used: Math.round(percentageUsed * 100) / 100
+            percentage_used: Math.round(percentageUsed * 100) / 100,
           };
         })
       );
 
       return results;
     } catch (error) {
-      console.error("Error getting budgets with spending:", error);
+      console.error('Error getting budgets with spending:', error);
       throw error;
     }
   }
@@ -342,15 +352,17 @@ export class BudgetService {
   }> {
     try {
       const { data: budgets, error } = await supabase
-        .from("budgets")
-        .select(`
+        .from('budgets')
+        .select(
+          `
           *,
           transactions!inner(amount)
-        `)
-        .eq("user_id", userId);
+        `
+        )
+        .eq('user_id', userId);
 
       if (error) {
-        console.error("Error getting budget overview:", error);
+        console.error('Error getting budget overview:', error);
         throw new Error(`Failed to get budget overview: ${error.message}`);
       }
 
@@ -359,38 +371,40 @@ export class BudgetService {
           total_budgets: 0,
           total_budget_amount: 0,
           budgets_over_limit: 0,
-          average_utilization: 0
+          average_utilization: 0,
         };
       }
 
       // Calculate spending for each budget
       const budgetOverview = budgets.map(budget => {
-        const spending = budget.transactions
-          ?.filter((t: any) => t.amount < 0) // Only expense transactions
-          .reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0) || 0;
-        
+        const spending =
+          budget.transactions
+            ?.filter((t: any) => t.amount < 0) // Only expense transactions
+            .reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0) || 0;
+
         return {
           ...budget,
           spending,
-          utilization: budget.amount > 0 ? (spending / budget.amount) * 100 : 0
+          utilization: budget.amount > 0 ? (spending / budget.amount) * 100 : 0,
         };
       });
 
       const totalBudgets = budgetOverview.length;
       const totalBudgetAmount = budgetOverview.reduce((sum, b) => sum + b.amount, 0);
       const budgetsOverLimit = budgetOverview.filter(b => b.utilization > 100).length;
-      const averageUtilization = totalBudgets > 0 
-        ? budgetOverview.reduce((sum, b) => sum + b.utilization, 0) / totalBudgets 
-        : 0;
+      const averageUtilization =
+        totalBudgets > 0
+          ? budgetOverview.reduce((sum, b) => sum + b.utilization, 0) / totalBudgets
+          : 0;
 
       return {
         total_budgets: totalBudgets,
         total_budget_amount: totalBudgetAmount,
         budgets_over_limit: budgetsOverLimit,
-        average_utilization: Math.round(averageUtilization * 100) / 100
+        average_utilization: Math.round(averageUtilization * 100) / 100,
       };
     } catch (error) {
-      console.error("Error getting budget overview:", error);
+      console.error('Error getting budget overview:', error);
       throw error;
     }
   }

@@ -1,10 +1,10 @@
 /**
  * Budget Model Interfaces
- * 
+ *
  * Type definitions for budget management in Budget Buddy.
  * Budgets help users set spending limits for different categories
  * and track their financial goals over monthly cycles.
- * 
+ *
  * Key Features:
  * - Monthly budget cycles (YYYY-MM format)
  * - Category-specific budget allocation
@@ -22,10 +22,10 @@ export interface Budget {
   budget_id: number;
   user_id: number;
   category_id: number;
-  budget_amount: number;      // Allocated budget amount
-  created_at: string;         // ISO timestamp of creation
-  updated_at: string;         // ISO timestamp of last update
-  cycle_month: string;        // Budget cycle in YYYY-MM format
+  budget_amount: number; // Allocated budget amount
+  created_at: string; // ISO timestamp of creation
+  updated_at: string; // ISO timestamp of last update
+  cycle_month: string; // Budget cycle in YYYY-MM format
 }
 
 /**
@@ -36,7 +36,7 @@ export interface CreateBudgetData {
   user_id: number;
   category_id: number;
   budget_amount: number;
-  cycle_month: string;        // YYYY-MM format (e.g., "2024-01")
+  cycle_month: string; // YYYY-MM format (e.g., "2024-01")
 }
 
 /**
@@ -53,6 +53,6 @@ export interface UpdateBudgetData {
  * Supports filtering by time period and category
  */
 export interface BudgetFilters {
-  cycle_month?: string;       // Filter by specific month (YYYY-MM)
-  category_id?: number;       // Filter by category
+  cycle_month?: string; // Filter by specific month (YYYY-MM)
+  category_id?: number; // Filter by category
 }

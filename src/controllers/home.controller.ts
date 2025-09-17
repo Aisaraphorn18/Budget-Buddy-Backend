@@ -1,10 +1,10 @@
 /**
  * Home Controller
- * 
+ *
  * HTTP request handler for dashboard and analytics endpoints in Budget Buddy.
  * Provides comprehensive financial insights, summaries, and dashboard data
  * to help users understand their financial situation at a glance.
- * 
+ *
  * Key Features:
  * - Dashboard overview with key financial metrics
  * - Recent transaction summaries
@@ -13,23 +13,23 @@
  * - Cash flow tracking and trends
  * - Multi-service data aggregation
  * - Real-time financial calculations
- * 
+ *
  * Analytics Capabilities:
  * - Total income/expense calculations
  * - Budget vs actual spending comparisons
  * - Monthly financial summaries
  * - Category-wise spending breakdown
  * - Financial trend analysis
- * 
+ *
  * Security:
  * - JWT authentication required for all operations
  * - User-scoped data access only
  * - Aggregated data presentation for privacy
  */
 
-import { TransactionService } from "../services/transaction.service";
-import { BudgetService } from "../services/budget.service";
-import { AuthService } from "../services/auth.service";
+import { TransactionService } from '../services/transaction.service';
+import { BudgetService } from '../services/budget.service';
+import { AuthService } from '../services/auth.service';
 
 export class HomeController {
   private transactionService: TransactionService;
@@ -45,7 +45,7 @@ export class HomeController {
   /**
    * Get home dashboard data
    * Aggregates financial data from multiple sources for dashboard overview
-   * 
+   *
    * @param context - Elysia context with authenticated user info
    * @returns Comprehensive dashboard data including user info, transactions, and budgets
    */
@@ -56,7 +56,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -66,7 +66,7 @@ export class HomeController {
         context.set.status = 404;
         return {
           success: false,
-          message: "User not found"
+          message: 'User not found',
         };
       }
 
@@ -85,25 +85,25 @@ export class HomeController {
 
       return {
         success: true,
-        message: "Home data retrieved successfully",
+        message: 'Home data retrieved successfully',
         data: {
           user: {
             username: user.username,
             first_name: user.first_name,
-            last_name: user.last_name
+            last_name: user.last_name,
           },
           financial_summary: summary,
           budget_overview: budgetOverview,
-          recent_transactions: recentTransactions
-        }
+          recent_transactions: recentTransactions,
+        },
       };
     } catch (error) {
-      console.error("Get home data error:", error);
+      console.error('Get home data error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get home data",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get home data',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -115,7 +115,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -124,16 +124,16 @@ export class HomeController {
 
       return {
         success: true,
-        message: "Recent transactions retrieved successfully",
-        data: transactions
+        message: 'Recent transactions retrieved successfully',
+        data: transactions,
       };
     } catch (error) {
-      console.error("Get recent transactions error:", error);
+      console.error('Get recent transactions error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get recent transactions",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get recent transactions',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -145,27 +145,31 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const startDate = context.query.start_date;
       const endDate = context.query.end_date;
 
-      const summary = await this.transactionService.getTransactionsSummary(userId, startDate, endDate);
+      const summary = await this.transactionService.getTransactionsSummary(
+        userId,
+        startDate,
+        endDate
+      );
 
       return {
         success: true,
-        message: "Analytics summary retrieved successfully",
-        data: summary
+        message: 'Analytics summary retrieved successfully',
+        data: summary,
       };
     } catch (error) {
-      console.error("Get analytics summary error:", error);
+      console.error('Get analytics summary error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get analytics summary",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get analytics summary',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -177,27 +181,31 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const startDate = context.query.start_date;
       const endDate = context.query.end_date;
 
-      const categoryAnalytics = await this.transactionService.getTransactionsByCategory(userId, startDate, endDate);
+      const categoryAnalytics = await this.transactionService.getTransactionsByCategory(
+        userId,
+        startDate,
+        endDate
+      );
 
       return {
         success: true,
-        message: "Analytics by category retrieved successfully",
-        data: categoryAnalytics
+        message: 'Analytics by category retrieved successfully',
+        data: categoryAnalytics,
       };
     } catch (error) {
-      console.error("Get analytics by category error:", error);
+      console.error('Get analytics by category error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get analytics by category",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get analytics by category',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -209,7 +217,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -219,24 +227,28 @@ export class HomeController {
 
       // This would need more complex implementation for timeline grouping
       // For now, return basic summary
-      const summary = await this.transactionService.getTransactionsSummary(userId, startDate, endDate);
+      const summary = await this.transactionService.getTransactionsSummary(
+        userId,
+        startDate,
+        endDate
+      );
 
       return {
         success: true,
-        message: "Analytics flow retrieved successfully",
+        message: 'Analytics flow retrieved successfully',
         data: {
           group_by: groupBy,
           summary,
-          timeline: [] // TODO: Implement timeline grouping logic
-        }
+          timeline: [], // TODO: Implement timeline grouping logic
+        },
       };
     } catch (error) {
-      console.error("Get analytics flow error:", error);
+      console.error('Get analytics flow error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get analytics flow",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get analytics flow',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -250,7 +262,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -259,7 +271,7 @@ export class HomeController {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
@@ -269,41 +281,44 @@ export class HomeController {
         context.set.status = 404;
         return {
           success: false,
-          message: "User not found"
+          message: 'User not found',
         };
       }
 
       // Get financial summary
       const summary = await this.transactionService.getFinancialSummary(targetUserId);
-      
+
       // Get budget overview
       const budgetOverview = await this.budgetService.getBudgetOverview(targetUserId);
-      
+
       // Get recent transactions
-      const recentTransactions = await this.transactionService.getRecentTransactions(targetUserId, 5);
+      const recentTransactions = await this.transactionService.getRecentTransactions(
+        targetUserId,
+        5
+      );
 
       return {
         success: true,
-        message: "User home data retrieved successfully",
+        message: 'User home data retrieved successfully',
         data: {
           user: {
             user_id: user.user_id,
             username: user.username,
             first_name: user.first_name,
-            last_name: user.last_name
+            last_name: user.last_name,
           },
           summary,
           budget_overview: budgetOverview,
-          recent_transactions: recentTransactions
-        }
+          recent_transactions: recentTransactions,
+        },
       };
     } catch (error) {
-      console.error("Get user home data error:", error);
+      console.error('Get user home data error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user home data",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user home data',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -316,7 +331,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -325,7 +340,7 @@ export class HomeController {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
@@ -334,16 +349,16 @@ export class HomeController {
 
       return {
         success: true,
-        message: "User recent transactions retrieved successfully",
-        data: transactions
+        message: 'User recent transactions retrieved successfully',
+        data: transactions,
       };
     } catch (error) {
-      console.error("Get user recent transactions error:", error);
+      console.error('Get user recent transactions error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user recent transactions",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user recent transactions',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -356,7 +371,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -365,25 +380,29 @@ export class HomeController {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
       const { start_date, end_date } = context.query;
-      const summary = await this.transactionService.getFinancialSummary(targetUserId, start_date, end_date);
+      const summary = await this.transactionService.getFinancialSummary(
+        targetUserId,
+        start_date,
+        end_date
+      );
 
       return {
         success: true,
-        message: "User analytics summary retrieved successfully",
-        data: summary
+        message: 'User analytics summary retrieved successfully',
+        data: summary,
       };
     } catch (error) {
-      console.error("Get user analytics summary error:", error);
+      console.error('Get user analytics summary error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user analytics summary",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user analytics summary',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -396,7 +415,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -405,25 +424,29 @@ export class HomeController {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
       const { start_date, end_date } = context.query;
-      const analytics = await this.transactionService.getAnalyticsByCategory(targetUserId, start_date, end_date);
+      const analytics = await this.transactionService.getAnalyticsByCategory(
+        targetUserId,
+        start_date,
+        end_date
+      );
 
       return {
         success: true,
-        message: "User analytics by category retrieved successfully",
-        data: analytics
+        message: 'User analytics by category retrieved successfully',
+        data: analytics,
       };
     } catch (error) {
-      console.error("Get user analytics by category error:", error);
+      console.error('Get user analytics by category error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user analytics by category",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user analytics by category',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -436,7 +459,7 @@ export class HomeController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -445,27 +468,27 @@ export class HomeController {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
-      const { start_date, end_date, group_by } = context.query;
       // TODO: Implement analytics flow by user ID logic
-      
+      // Query parameters: start_date, end_date, group_by available in context.query
+
       return {
         success: true,
-        message: "User analytics flow retrieved successfully",
+        message: 'User analytics flow retrieved successfully',
         data: {
-          timeline: [] // TODO: Implement timeline grouping logic for specific user
-        }
+          timeline: [], // TODO: Implement timeline grouping logic for specific user
+        },
       };
     } catch (error) {
-      console.error("Get user analytics flow error:", error);
+      console.error('Get user analytics flow error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user analytics flow",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user analytics flow',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

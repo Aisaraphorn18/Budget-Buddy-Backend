@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+# Load bun utilities
+. "$(dirname -- "$0")/bun-utils.sh"
+
+# Ensure bun is available
+ensure_bun
+
+echo "🔍 Validating commit message format..."
+run_bunx commitlint --edit $1

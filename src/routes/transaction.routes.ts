@@ -1,11 +1,11 @@
 /**
  * Transaction Routes
- * 
+ *
  * Defines HTTP endpoints for financial transaction management in Budget Buddy.
  * All transaction routes are protected and require JWT authentication.
  * Transactions are the core of the personal finance system, recording all
  * income and expense activities with proper categorization and tracking.
- * 
+ *
  * Routes:
  * - POST /api/v1/transactions - Create new transaction
  * - GET /api/v1/transactions - Get transactions with filtering and pagination
@@ -13,7 +13,7 @@
  * - GET /api/v1/transactions/user/:user_id - Get transactions by user ID (admin only)
  * - PATCH /api/v1/transactions/:id - Update existing transaction
  * - DELETE /api/v1/transactions/:id - Delete transaction
- * 
+ *
  * Features:
  * - JWT authentication required for all endpoints
  * - Input validation with Elysia schemas
@@ -22,7 +22,7 @@
  * - User-scoped access control (users can only access their own transactions)
  * - OpenAPI documentation integration
  * - Proper HTTP status codes and error handling
- * 
+ *
  * Security:
  * - Bearer token authentication on all endpoints
  * - User isolation (transaction ownership validation)
@@ -30,159 +30,162 @@
  * - Protection against unauthorized access
  */
 
-import { Elysia, t } from "elysia";
-import { TransactionController } from "../controllers/transaction.controller";
-import { CreateTransactionSchema, UpdateTransactionSchema } from "../schemas/api.schema";
+import { Elysia, t } from 'elysia';
+import { TransactionController } from '../controllers/transaction.controller';
+import { CreateTransactionSchema, UpdateTransactionSchema } from '../schemas/api.schema';
 
 const transactionController = new TransactionController();
 
-export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
+export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
   // Create new transaction endpoint
-  .post("/",
-    async (context) => {
+  .post(
+    '/',
+    async context => {
       try {
         return await transactionController.createTransaction(context);
       } catch (error) {
-        console.error("Error in transaction creation route:", error);
+        console.error('Error in transaction creation route:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Failed to create transaction",
-          data: null
+          message: error instanceof Error ? error.message : 'Failed to create transaction',
+          data: null,
         };
       }
     },
     {
       body: CreateTransactionSchema,
       detail: {
-        tags: ["Transactions"],
-        summary: "Create new transaction",
-        description: "Add a new income or expense transaction. Transactions are automatically linked to the authenticated user.",
+        tags: ['Transactions'],
+        summary: 'Create new transaction',
+        description:
+          'Add a new income or expense transaction. Transactions are automatically linked to the authenticated user.',
         security: [{ bearerAuth: [] }],
         requestBody: {
           required: true,
           content: {
-            "application/json": {
+            'application/json': {
               schema: {
-                type: "object",
-                required: ["category_id", "type", "amount"],
+                type: 'object',
+                required: ['category_id', 'type', 'amount'],
                 properties: {
                   category_id: {
-                    type: "integer",
-                    description: "Category ID for transaction classification",
+                    type: 'integer',
+                    description: 'Category ID for transaction classification',
                     minimum: 1,
-                    example: 1
+                    example: 1,
                   },
                   type: {
-                    type: "string",
-                    enum: ["income", "expense"],
-                    description: "Transaction type",
-                    example: "expense"
+                    type: 'string',
+                    enum: ['income', 'expense'],
+                    description: 'Transaction type',
+                    example: 'expense',
                   },
                   amount: {
-                    type: "number",
-                    description: "Transaction amount (must be positive)",
+                    type: 'number',
+                    description: 'Transaction amount (must be positive)',
                     minimum: 0.01,
-                    example: 25.50
+                    example: 25.5,
                   },
                   note: {
-                    type: "string",
-                    description: "Optional transaction note/description",
+                    type: 'string',
+                    description: 'Optional transaction note/description',
                     maxLength: 500,
-                    example: "Lunch at restaurant"
-                  }
-                }
-              }
-            }
-          }
+                    example: 'Lunch at restaurant',
+                  },
+                },
+              },
+            },
+          },
         },
         responses: {
           201: {
-            description: "Transaction created successfully",
+            description: 'Transaction created successfully',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: true },
-                    message: { type: "string", example: "Transaction created successfully" },
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string', example: 'Transaction created successfully' },
                     data: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        transaction_id: { type: "integer", example: 1 },
-                        user_id: { type: "integer", example: 1 },
-                        category_id: { type: "integer", example: 1 },
-                        type: { type: "string", example: "expense" },
-                        amount: { type: "number", example: 25.50 },
-                        note: { type: "string", example: "Lunch at restaurant" },
-                        created_at: { type: "string", example: "2024-01-15T10:30:00Z" }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        transaction_id: { type: 'integer', example: 1 },
+                        user_id: { type: 'integer', example: 1 },
+                        category_id: { type: 'integer', example: 1 },
+                        type: { type: 'string', example: 'expense' },
+                        amount: { type: 'number', example: 25.5 },
+                        note: { type: 'string', example: 'Lunch at restaurant' },
+                        created_at: { type: 'string', example: '2024-01-15T10:30:00Z' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           400: {
-            description: "Bad request - Invalid input or category not found",
+            description: 'Bad request - Invalid input or category not found',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Invalid category ID or validation error" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Invalid category ID or validation error' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           401: {
-            description: "Unauthorized - Invalid or missing JWT token",
+            description: 'Unauthorized - Invalid or missing JWT token',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Unauthorized" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Unauthorized' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           500: {
-            description: "Internal server error",
+            description: 'Internal server error',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Internal server error" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Internal server error' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   )
-  
+
   // Get all transactions with filtering endpoint
-  .get("/",
-    async (context) => {
+  .get(
+    '/',
+    async context => {
       try {
         return await transactionController.getAllTransactions(context);
       } catch (error) {
-        console.error("Error in get all transactions route:", error);
+        console.error('Error in get all transactions route:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Failed to retrieve transactions",
-          data: null
+          message: error instanceof Error ? error.message : 'Failed to retrieve transactions',
+          data: null,
         };
       }
     },
@@ -193,554 +196,562 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
         start_date: t.Optional(t.String()),
         end_date: t.Optional(t.String()),
         page: t.Optional(t.String()),
-        limit: t.Optional(t.String())
+        limit: t.Optional(t.String()),
       }),
       detail: {
-        tags: ["Transactions"],
-        summary: "Get all transactions",
-        description: "Retrieve user's transactions with optional filtering by type, category, date range, and pagination support",
+        tags: ['Transactions'],
+        summary: 'Get all transactions',
+        description:
+          "Retrieve user's transactions with optional filtering by type, category, date range, and pagination support",
         security: [{ bearerAuth: [] }],
         parameters: [
           {
-            name: "type",
-            in: "query",
+            name: 'type',
+            in: 'query',
             required: false,
-            description: "Filter by transaction type",
+            description: 'Filter by transaction type',
             schema: {
-              type: "string",
-              enum: ["income", "expense"],
-              example: "expense"
-            }
+              type: 'string',
+              enum: ['income', 'expense'],
+              example: 'expense',
+            },
           },
           {
-            name: "category_id",
-            in: "query",
+            name: 'category_id',
+            in: 'query',
             required: false,
-            description: "Filter by category ID",
+            description: 'Filter by category ID',
             schema: {
-              type: "string",
-              example: "1"
-            }
+              type: 'string',
+              example: '1',
+            },
           },
           {
-            name: "start_date",
-            in: "query",
+            name: 'start_date',
+            in: 'query',
             required: false,
-            description: "Filter from date (YYYY-MM-DD)",
+            description: 'Filter from date (YYYY-MM-DD)',
             schema: {
-              type: "string",
-              format: "date",
-              example: "2024-01-01"
-            }
+              type: 'string',
+              format: 'date',
+              example: '2024-01-01',
+            },
           },
           {
-            name: "end_date",
-            in: "query",
+            name: 'end_date',
+            in: 'query',
             required: false,
-            description: "Filter to date (YYYY-MM-DD)",
+            description: 'Filter to date (YYYY-MM-DD)',
             schema: {
-              type: "string",
-              format: "date",
-              example: "2024-01-31"
-            }
+              type: 'string',
+              format: 'date',
+              example: '2024-01-31',
+            },
           },
           {
-            name: "page",
-            in: "query",
+            name: 'page',
+            in: 'query',
             required: false,
-            description: "Page number for pagination",
+            description: 'Page number for pagination',
             schema: {
-              type: "string",
-              example: "1"
-            }
+              type: 'string',
+              example: '1',
+            },
           },
           {
-            name: "limit",
-            in: "query",
+            name: 'limit',
+            in: 'query',
             required: false,
-            description: "Number of transactions per page",
+            description: 'Number of transactions per page',
             schema: {
-              type: "string",
-              example: "10"
-            }
-          }
+              type: 'string',
+              example: '10',
+            },
+          },
         ],
         responses: {
           200: {
-            description: "Successfully retrieved transactions",
+            description: 'Successfully retrieved transactions',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: true },
-                    message: { type: "string", example: "Transactions retrieved successfully" },
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string', example: 'Transactions retrieved successfully' },
                     data: {
-                      type: "array",
+                      type: 'array',
                       items: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          transaction_id: { type: "integer", example: 1 },
-                          user_id: { type: "integer", example: 1 },
-                          category_id: { type: "integer", example: 1 },
-                          category_name: { type: "string", example: "Food & Dining" },
-                          type: { type: "string", example: "expense" },
-                          amount: { type: "number", example: 25.50 },
-                          note: { type: "string", example: "Lunch at restaurant" },
-                          created_at: { type: "string", example: "2024-01-15T10:30:00Z" }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                          transaction_id: { type: 'integer', example: 1 },
+                          user_id: { type: 'integer', example: 1 },
+                          category_id: { type: 'integer', example: 1 },
+                          category_name: { type: 'string', example: 'Food & Dining' },
+                          type: { type: 'string', example: 'expense' },
+                          amount: { type: 'number', example: 25.5 },
+                          note: { type: 'string', example: 'Lunch at restaurant' },
+                          created_at: { type: 'string', example: '2024-01-15T10:30:00Z' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           401: {
-            description: "Unauthorized - Invalid or missing JWT token",
+            description: 'Unauthorized - Invalid or missing JWT token',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Unauthorized" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Unauthorized' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   )
-  
+
   // Get specific transaction by ID endpoint
-  .get("/:id",
-    async (context) => {
+  .get(
+    '/:id',
+    async context => {
       try {
         // Validate ID parameter
         const id = parseInt(context.params.id);
         if (isNaN(id) || id <= 0) {
           return {
             success: false,
-            message: "Invalid transaction ID. Must be a positive integer.",
-            data: null
+            message: 'Invalid transaction ID. Must be a positive integer.',
+            data: null,
           };
         }
         return await transactionController.getTransactionById(context);
       } catch (error) {
-        console.error("Error in get transaction by ID route:", error);
+        console.error('Error in get transaction by ID route:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Failed to retrieve transaction",
-          data: null
+          message: error instanceof Error ? error.message : 'Failed to retrieve transaction',
+          data: null,
         };
       }
     },
     {
       detail: {
-        tags: ["Transactions"],
-        summary: "Get transaction by ID",
-        description: "Retrieve a specific transaction by its unique identifier. Users can only access their own transactions.",
+        tags: ['Transactions'],
+        summary: 'Get transaction by ID',
+        description:
+          'Retrieve a specific transaction by its unique identifier. Users can only access their own transactions.',
         security: [{ bearerAuth: [] }],
         parameters: [
           {
-            name: "id",
-            in: "path",
+            name: 'id',
+            in: 'path',
             required: true,
-            description: "Transaction ID",
+            description: 'Transaction ID',
             schema: {
-              type: "integer",
+              type: 'integer',
               minimum: 1,
-              example: 1
-            }
-          }
+              example: 1,
+            },
+          },
         ],
         responses: {
           200: {
-            description: "Successfully retrieved transaction",
+            description: 'Successfully retrieved transaction',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: true },
-                    message: { type: "string", example: "Transaction retrieved successfully" },
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string', example: 'Transaction retrieved successfully' },
                     data: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        transaction_id: { type: "integer", example: 1 },
-                        user_id: { type: "integer", example: 1 },
-                        category_id: { type: "integer", example: 1 },
-                        category_name: { type: "string", example: "Food & Dining" },
-                        type: { type: "string", example: "expense" },
-                        amount: { type: "number", example: 25.50 },
-                        note: { type: "string", example: "Lunch at restaurant" },
-                        created_at: { type: "string", example: "2024-01-15T10:30:00Z" }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        transaction_id: { type: 'integer', example: 1 },
+                        user_id: { type: 'integer', example: 1 },
+                        category_id: { type: 'integer', example: 1 },
+                        category_name: { type: 'string', example: 'Food & Dining' },
+                        type: { type: 'string', example: 'expense' },
+                        amount: { type: 'number', example: 25.5 },
+                        note: { type: 'string', example: 'Lunch at restaurant' },
+                        created_at: { type: 'string', example: '2024-01-15T10:30:00Z' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           401: {
-            description: "Unauthorized - Invalid or missing JWT token",
+            description: 'Unauthorized - Invalid or missing JWT token',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Unauthorized" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Unauthorized' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           403: {
-            description: "Forbidden - Transaction belongs to another user",
+            description: 'Forbidden - Transaction belongs to another user',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Access denied" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Access denied' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           404: {
-            description: "Transaction not found",
+            description: 'Transaction not found',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Transaction not found" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Transaction not found' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   )
-  
+
   // Update existing transaction endpoint
-  .patch("/:id",
-    async (context) => {
+  .patch(
+    '/:id',
+    async context => {
       try {
         // Validate ID parameter
         const id = parseInt(context.params.id);
         if (isNaN(id) || id <= 0) {
           return {
             success: false,
-            message: "Invalid transaction ID. Must be a positive integer.",
-            data: null
+            message: 'Invalid transaction ID. Must be a positive integer.',
+            data: null,
           };
         }
         return await transactionController.updateTransaction(context);
       } catch (error) {
-        console.error("Error in update transaction route:", error);
+        console.error('Error in update transaction route:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Failed to update transaction",
-          data: null
+          message: error instanceof Error ? error.message : 'Failed to update transaction',
+          data: null,
         };
       }
     },
     {
       body: UpdateTransactionSchema,
       detail: {
-        tags: ["Transactions"],
-        summary: "Update transaction",
-        description: "Modify an existing transaction. Users can only update their own transactions.",
+        tags: ['Transactions'],
+        summary: 'Update transaction',
+        description:
+          'Modify an existing transaction. Users can only update their own transactions.',
         security: [{ bearerAuth: [] }],
         parameters: [
           {
-            name: "id",
-            in: "path",
+            name: 'id',
+            in: 'path',
             required: true,
-            description: "Transaction ID",
+            description: 'Transaction ID',
             schema: {
-              type: "integer",
+              type: 'integer',
               minimum: 1,
-              example: 1
-            }
-          }
+              example: 1,
+            },
+          },
         ],
         requestBody: {
           required: true,
           content: {
-            "application/json": {
+            'application/json': {
               schema: {
-                type: "object",
+                type: 'object',
                 properties: {
                   category_id: {
-                    type: "integer",
-                    description: "Updated category ID",
+                    type: 'integer',
+                    description: 'Updated category ID',
                     minimum: 1,
-                    example: 2
+                    example: 2,
                   },
                   type: {
-                    type: "string",
-                    enum: ["income", "expense"],
-                    description: "Updated transaction type",
-                    example: "income"
+                    type: 'string',
+                    enum: ['income', 'expense'],
+                    description: 'Updated transaction type',
+                    example: 'income',
                   },
                   amount: {
-                    type: "number",
-                    description: "Updated transaction amount (must be positive)",
+                    type: 'number',
+                    description: 'Updated transaction amount (must be positive)',
                     minimum: 0.01,
-                    example: 50.00
+                    example: 50.0,
                   },
                   note: {
-                    type: "string",
-                    description: "Updated transaction note/description",
+                    type: 'string',
+                    description: 'Updated transaction note/description',
                     maxLength: 500,
-                    example: "Updated note"
-                  }
-                }
-              }
-            }
-          }
+                    example: 'Updated note',
+                  },
+                },
+              },
+            },
+          },
         },
         responses: {
           200: {
-            description: "Transaction updated successfully",
+            description: 'Transaction updated successfully',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: true },
-                    message: { type: "string", example: "Transaction updated successfully" },
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string', example: 'Transaction updated successfully' },
                     data: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        transaction_id: { type: "integer", example: 1 },
-                        user_id: { type: "integer", example: 1 },
-                        category_id: { type: "integer", example: 2 },
-                        type: { type: "string", example: "income" },
-                        amount: { type: "number", example: 50.00 },
-                        note: { type: "string", example: "Updated note" },
-                        created_at: { type: "string", example: "2024-01-15T10:30:00Z" }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        transaction_id: { type: 'integer', example: 1 },
+                        user_id: { type: 'integer', example: 1 },
+                        category_id: { type: 'integer', example: 2 },
+                        type: { type: 'string', example: 'income' },
+                        amount: { type: 'number', example: 50.0 },
+                        note: { type: 'string', example: 'Updated note' },
+                        created_at: { type: 'string', example: '2024-01-15T10:30:00Z' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           400: {
-            description: "Bad request - Invalid input",
+            description: 'Bad request - Invalid input',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Invalid category ID" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Invalid category ID' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           401: {
-            description: "Unauthorized - Invalid or missing JWT token",
+            description: 'Unauthorized - Invalid or missing JWT token',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Unauthorized" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Unauthorized' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           403: {
-            description: "Forbidden - Transaction belongs to another user",
+            description: 'Forbidden - Transaction belongs to another user',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Access denied" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Access denied' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           404: {
-            description: "Transaction not found",
+            description: 'Transaction not found',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Transaction not found" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Transaction not found' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   )
-  
+
   // Delete transaction endpoint
-  .delete("/:id",
-    async (context) => {
+  .delete(
+    '/:id',
+    async context => {
       try {
         // Validate ID parameter
         const id = parseInt(context.params.id);
         if (isNaN(id) || id <= 0) {
           return {
             success: false,
-            message: "Invalid transaction ID. Must be a positive integer.",
-            data: null
+            message: 'Invalid transaction ID. Must be a positive integer.',
+            data: null,
           };
         }
         return await transactionController.deleteTransaction(context);
       } catch (error) {
-        console.error("Error in delete transaction route:", error);
+        console.error('Error in delete transaction route:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Failed to delete transaction",
-          data: null
+          message: error instanceof Error ? error.message : 'Failed to delete transaction',
+          data: null,
         };
       }
     },
     {
       detail: {
-        tags: ["Transactions"],
-        summary: "Delete transaction",
-        description: "Remove a transaction permanently. Users can only delete their own transactions.",
+        tags: ['Transactions'],
+        summary: 'Delete transaction',
+        description:
+          'Remove a transaction permanently. Users can only delete their own transactions.',
         security: [{ bearerAuth: [] }],
         parameters: [
           {
-            name: "id",
-            in: "path",
+            name: 'id',
+            in: 'path',
             required: true,
-            description: "Transaction ID",
+            description: 'Transaction ID',
             schema: {
-              type: "integer",
+              type: 'integer',
               minimum: 1,
-              example: 1
-            }
-          }
+              example: 1,
+            },
+          },
         ],
         responses: {
           200: {
-            description: "Transaction deleted successfully",
+            description: 'Transaction deleted successfully',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: true },
-                    message: { type: "string", example: "Transaction deleted successfully" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string', example: 'Transaction deleted successfully' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           401: {
-            description: "Unauthorized - Invalid or missing JWT token",
+            description: 'Unauthorized - Invalid or missing JWT token',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Unauthorized" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Unauthorized' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           403: {
-            description: "Forbidden - Transaction belongs to another user",
+            description: 'Forbidden - Transaction belongs to another user',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Access denied" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Access denied' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
           },
           404: {
-            description: "Transaction not found",
+            description: 'Transaction not found',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Transaction not found" },
-                    data: { type: "object", nullable: true, example: null }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Transaction not found' },
+                    data: { type: 'object', nullable: true, example: null },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   )
 
   // Get transactions by user ID endpoint (admin only)
-  .get("/user/:user_id",
-    async (context) => {
+  .get(
+    '/user/:user_id',
+    async context => {
       try {
         // Validate user_id parameter
         const userId = context.params.user_id;
         if (!userId || userId.trim() === '') {
           return {
             success: false,
-            message: "Invalid user ID. User ID is required.",
-            data: null
+            message: 'Invalid user ID. User ID is required.',
+            data: null,
           };
         }
         return await transactionController.getTransactionsByUserId(context);
       } catch (error) {
-        console.error("Error in get transactions by user ID route:", error);
+        console.error('Error in get transactions by user ID route:', error);
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Failed to retrieve transactions",
-          data: null
+          message: error instanceof Error ? error.message : 'Failed to retrieve transactions',
+          data: null,
         };
       }
     },
     {
       params: t.Object({
-        user_id: t.String({ description: "User ID to get transactions for" })
+        user_id: t.String({ description: 'User ID to get transactions for' }),
       }),
       query: t.Object({
         type: t.Optional(t.String()),
@@ -748,156 +759,160 @@ export const transactionRoutes = new Elysia({ prefix: "/api/v1/transactions" })
         start_date: t.Optional(t.String()),
         end_date: t.Optional(t.String()),
         page: t.Optional(t.String()),
-        limit: t.Optional(t.String())
+        limit: t.Optional(t.String()),
       }),
       detail: {
-        tags: ["Transactions"],
-        summary: "Get transactions by user ID",
-        description: "Retrieve all transactions for a specific user with filtering and pagination (admin only)",
+        tags: ['Transactions'],
+        summary: 'Get transactions by user ID',
+        description:
+          'Retrieve all transactions for a specific user with filtering and pagination (admin only)',
         security: [{ bearerAuth: [] }],
         parameters: [
           {
-            name: "user_id",
-            in: "path",
+            name: 'user_id',
+            in: 'path',
             required: true,
-            description: "User ID to get transactions for",
+            description: 'User ID to get transactions for',
             schema: {
-              type: "string",
-              example: "1"
-            }
+              type: 'string',
+              example: '1',
+            },
           },
           {
-            name: "type",
-            in: "query",
+            name: 'type',
+            in: 'query',
             required: false,
-            description: "Filter by transaction type",
+            description: 'Filter by transaction type',
             schema: {
-              type: "string",
-              enum: ["income", "expense"],
-              example: "expense"
-            }
+              type: 'string',
+              enum: ['income', 'expense'],
+              example: 'expense',
+            },
           },
           {
-            name: "category_id",
-            in: "query",
+            name: 'category_id',
+            in: 'query',
             required: false,
-            description: "Filter by category ID",
+            description: 'Filter by category ID',
             schema: {
-              type: "string",
-              example: "1"
-            }
+              type: 'string',
+              example: '1',
+            },
           },
           {
-            name: "start_date",
-            in: "query",
+            name: 'start_date',
+            in: 'query',
             required: false,
-            description: "Filter from date (YYYY-MM-DD)",
+            description: 'Filter from date (YYYY-MM-DD)',
             schema: {
-              type: "string",
-              format: "date",
-              example: "2024-01-01"
-            }
+              type: 'string',
+              format: 'date',
+              example: '2024-01-01',
+            },
           },
           {
-            name: "end_date",
-            in: "query",
+            name: 'end_date',
+            in: 'query',
             required: false,
-            description: "Filter to date (YYYY-MM-DD)",
+            description: 'Filter to date (YYYY-MM-DD)',
             schema: {
-              type: "string",
-              format: "date",
-              example: "2024-12-31"
-            }
+              type: 'string',
+              format: 'date',
+              example: '2024-12-31',
+            },
           },
           {
-            name: "page",
-            in: "query",
+            name: 'page',
+            in: 'query',
             required: false,
-            description: "Page number for pagination",
+            description: 'Page number for pagination',
             schema: {
-              type: "string",
-              example: "1"
-            }
+              type: 'string',
+              example: '1',
+            },
           },
           {
-            name: "limit",
-            in: "query",
+            name: 'limit',
+            in: 'query',
             required: false,
-            description: "Items per page (max 100)",
+            description: 'Items per page (max 100)',
             schema: {
-              type: "string",
-              example: "20"
-            }
-          }
+              type: 'string',
+              example: '20',
+            },
+          },
         ],
         responses: {
           200: {
-            description: "Successfully retrieved user transactions",
+            description: 'Successfully retrieved user transactions',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: true },
-                    message: { type: "string", example: "User transactions retrieved successfully" },
+                    success: { type: 'boolean', example: true },
+                    message: {
+                      type: 'string',
+                      example: 'User transactions retrieved successfully',
+                    },
                     data: {
-                      type: "array",
+                      type: 'array',
                       items: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          transaction_id: { type: "integer", example: 1 },
-                          user_id: { type: "integer", example: 1 },
-                          category_id: { type: "integer", example: 1 },
-                          type: { type: "string", enum: ["income", "expense"], example: "expense" },
-                          amount: { type: "number", example: 25.50 },
-                          note: { type: "string", example: "Lunch at restaurant" },
-                          created_at: { type: "string", example: "2024-01-15T10:30:00Z" }
-                        }
-                      }
+                          transaction_id: { type: 'integer', example: 1 },
+                          user_id: { type: 'integer', example: 1 },
+                          category_id: { type: 'integer', example: 1 },
+                          type: { type: 'string', enum: ['income', 'expense'], example: 'expense' },
+                          amount: { type: 'number', example: 25.5 },
+                          note: { type: 'string', example: 'Lunch at restaurant' },
+                          created_at: { type: 'string', example: '2024-01-15T10:30:00Z' },
+                        },
+                      },
                     },
                     pagination: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        total: { type: "integer", example: 50 },
-                        page: { type: "integer", example: 1 },
-                        limit: { type: "integer", example: 20 },
-                        totalPages: { type: "integer", example: 3 }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        total: { type: 'integer', example: 50 },
+                        page: { type: 'integer', example: 1 },
+                        limit: { type: 'integer', example: 20 },
+                        totalPages: { type: 'integer', example: 3 },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           401: {
-            description: "Unauthorized - Admin access required",
+            description: 'Unauthorized - Admin access required',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "Admin access required" }
-                  }
-                }
-              }
-            }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'Admin access required' },
+                  },
+                },
+              },
+            },
           },
           404: {
-            description: "User not found",
+            description: 'User not found',
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    success: { type: "boolean", example: false },
-                    message: { type: "string", example: "User not found" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    success: { type: 'boolean', example: false },
+                    message: { type: 'string', example: 'User not found' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   );

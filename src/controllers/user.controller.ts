@@ -1,10 +1,10 @@
 /**
  * User Management Controller
- * 
+ *
  * HTTP request handler for user management endpoints in Budget Buddy.
  * Provides administrative functionality for managing users, viewing user data,
  * and performing user-related operations.
- * 
+ *
  * Key Features:
  * - Admin-only user management operations
  * - User data retrieval with pagination and search
@@ -12,7 +12,7 @@
  * - User account deletion with data cleanup
  * - Input validation and sanitization
  * - Proper error handling and HTTP status codes
- * 
+ *
  * Security:
  * - JWT authentication required for all operations
  * - Admin role validation
@@ -20,7 +20,7 @@
  * - Protected sensitive user data (passwords excluded)
  */
 
-import { UserService } from "../services/user.service";
+import { UserService } from '../services/user.service';
 
 export class UserController {
   private userService: UserService;
@@ -32,7 +32,7 @@ export class UserController {
   /**
    * Get all users with pagination and search
    * Admin-only endpoint for retrieving user list
-   * 
+   *
    * @param context - Elysia context with user info and query parameters
    * @returns Paginated list of users with metadata
    */
@@ -44,7 +44,7 @@ export class UserController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
@@ -54,27 +54,27 @@ export class UserController {
       const search = context.query.search || '';
 
       const result = await this.userService.getAllUsers({ page, limit, search });
-      
+
       const totalPages = Math.ceil(result.total / result.limit);
 
       return {
         success: true,
-        message: "Users retrieved successfully",
+        message: 'Users retrieved successfully',
         data: result.users,
         pagination: {
           total: result.total,
           page: result.page,
           limit: result.limit,
-          totalPages
-        }
+          totalPages,
+        },
       };
     } catch (error) {
-      console.error("Get all users error:", error);
+      console.error('Get all users error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get users",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get users',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -82,7 +82,7 @@ export class UserController {
   /**
    * Get specific user by ID with statistics
    * Admin-only endpoint for retrieving detailed user information
-   * 
+   *
    * @param context - Elysia context with user info and user ID parameter
    * @returns User object with statistics or error if not found
    */
@@ -94,27 +94,27 @@ export class UserController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const userId = parseInt(context.params.id);
-      
+
       if (isNaN(userId)) {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
       const user = await this.userService.getUserById(userId);
-      
+
       if (!user) {
         context.set.status = 404;
         return {
           success: false,
-          message: "User not found"
+          message: 'User not found',
         };
       }
 
@@ -123,19 +123,19 @@ export class UserController {
 
       return {
         success: true,
-        message: "User retrieved successfully",
+        message: 'User retrieved successfully',
         data: {
           ...user,
-          stats
-        }
+          stats,
+        },
       };
     } catch (error) {
-      console.error("Get user by ID error:", error);
+      console.error('Get user by ID error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to get user",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to get user',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -143,7 +143,7 @@ export class UserController {
   /**
    * Delete user account and all associated data
    * Admin-only endpoint for removing user accounts
-   * 
+   *
    * @param context - Elysia context with user info and user ID parameter
    * @returns Success message or error if not found
    */
@@ -155,17 +155,17 @@ export class UserController {
         context.set.status = 401;
         return {
           success: false,
-          message: "User authentication required"
+          message: 'User authentication required',
         };
       }
 
       const userId = parseInt(context.params.id);
-      
+
       if (isNaN(userId)) {
         context.set.status = 400;
         return {
           success: false,
-          message: "Invalid user ID"
+          message: 'Invalid user ID',
         };
       }
 
@@ -174,31 +174,31 @@ export class UserController {
         context.set.status = 400;
         return {
           success: false,
-          message: "Cannot delete your own account"
+          message: 'Cannot delete your own account',
         };
       }
 
       const deleted = await this.userService.deleteUser(userId);
-      
+
       if (!deleted) {
         context.set.status = 404;
         return {
           success: false,
-          message: "User not found"
+          message: 'User not found',
         };
       }
 
       return {
         success: true,
-        message: "User deleted successfully"
+        message: 'User deleted successfully',
       };
     } catch (error) {
-      console.error("Delete user error:", error);
+      console.error('Delete user error:', error);
       context.set.status = 500;
       return {
         success: false,
-        message: "Failed to delete user",
-        error: error instanceof Error ? error.message : "Unknown error"
+        message: 'Failed to delete user',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

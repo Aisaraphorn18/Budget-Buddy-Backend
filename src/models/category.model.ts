@@ -1,10 +1,10 @@
 /**
  * Category Model Interfaces
- * 
+ *
  * Type definitions for category management in Budget Buddy.
  * Categories help organize and classify financial transactions into
  * meaningful groups (e.g., Food, Transportation, Entertainment).
- * 
+ *
  * Features:
  * - Simple category structure with ID and name
  * - Support for transaction categorization

@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
+
 /**
- * Simple Mock Supabase Client for Testing
+ * Simple Supabase Mock
+ * Minimal mock implementation for testing purposes
  */
 
 export interface MockResponse {
@@ -13,61 +16,80 @@ export class SimpleSupabaseMock {
   // Mock table operations
   from(table: string) {
     return {
-      select: (columns?: string) => ({
+      select: (_columns?: string) => ({
         eq: (column: string, value: any) => ({
-          single: () => this.getMockResponse(`${table}_select_single`, {
-            data: this.getDefaultSingleData(table, value),
-            error: null
-          }),
-          then: (resolve: any) => resolve(this.getMockResponse(`${table}_select_eq`, {
-            data: this.getDefaultListData(table),
-            error: null
-          }))
+          single: () =>
+            this.getMockResponse(`${table}_select_single`, {
+              data: this.getDefaultSingleData(table, value),
+              error: null,
+            }),
+          then: (resolve: any) =>
+            resolve(
+              this.getMockResponse(`${table}_select_eq`, {
+                data: this.getDefaultListData(table),
+                error: null,
+              })
+            ),
         }),
-        order: (column: string, options: any) => ({
-          then: (resolve: any) => resolve(this.getMockResponse(`${table}_select_all`, {
-            data: this.getDefaultListData(table),
-            error: null
-          }))
+        order: (_column: string, _options: any) => ({
+          then: (resolve: any) =>
+            resolve(
+              this.getMockResponse(`${table}_select_all`, {
+                data: this.getDefaultListData(table),
+                error: null,
+              })
+            ),
         }),
-        then: (resolve: any) => resolve(this.getMockResponse(`${table}_select_all`, {
-          data: this.getDefaultListData(table),
-          error: null
-        }))
+        then: (resolve: any) =>
+          resolve(
+            this.getMockResponse(`${table}_select_all`, {
+              data: this.getDefaultListData(table),
+              error: null,
+            })
+          ),
       }),
 
       insert: (data: any[]) => ({
         select: () => ({
           single: () => ({
-            then: (resolve: any) => resolve(this.getMockResponse(`${table}_insert`, {
-              data: { ...data[0], id: 1 },
-              error: null
-            }))
-          })
-        })
+            then: (resolve: any) =>
+              resolve(
+                this.getMockResponse(`${table}_insert`, {
+                  data: { ...data[0], id: 1 },
+                  error: null,
+                })
+              ),
+          }),
+        }),
       }),
 
       update: (data: any) => ({
         eq: (column: string, value: any) => ({
           select: () => ({
             single: () => ({
-              then: (resolve: any) => resolve(this.getMockResponse(`${table}_update`, {
-                data: { ...data, id: value },
-                error: null
-              }))
-            })
-          })
-        })
+              then: (resolve: any) =>
+                resolve(
+                  this.getMockResponse(`${table}_update`, {
+                    data: { ...data, id: value },
+                    error: null,
+                  })
+                ),
+            }),
+          }),
+        }),
       }),
 
       delete: () => ({
-        eq: (column: string, value: any) => ({
-          then: (resolve: any) => resolve(this.getMockResponse(`${table}_delete`, {
-            data: null,
-            error: null
-          }))
-        })
-      })
+        eq: (_column: string, _value: any) => ({
+          then: (resolve: any) =>
+            resolve(
+              this.getMockResponse(`${table}_delete`, {
+                data: null,
+                error: null,
+              })
+            ),
+        }),
+      }),
     };
   }
 
@@ -82,7 +104,7 @@ export class SimpleSupabaseMock {
           category_id: id || 1,
           category_name: 'Test Category',
           created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z'
+          updated_at: '2024-01-01T00:00:00Z',
         };
       default:
         return null;
@@ -93,8 +115,18 @@ export class SimpleSupabaseMock {
     switch (table) {
       case 'Category':
         return [
-          { category_id: 1, category_name: 'Food', created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
-          { category_id: 2, category_name: 'Transport', created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' }
+          {
+            category_id: 1,
+            category_name: 'Food',
+            created_at: '2024-01-01T00:00:00Z',
+            updated_at: '2024-01-01T00:00:00Z',
+          },
+          {
+            category_id: 2,
+            category_name: 'Transport',
+            created_at: '2024-01-01T00:00:00Z',
+            updated_at: '2024-01-01T00:00:00Z',
+          },
         ];
       case 'Transaction':
         return [];
