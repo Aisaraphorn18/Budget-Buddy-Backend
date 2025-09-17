@@ -45,7 +45,7 @@ Record and manage financial transactions with advanced filtering and search capa
 
 ### Update Transaction
 
-**PATCH** `/protected/api/v1/transactions/:id`
+**PUT** `/protected/api/v1/transactions/:id`
 
 **Request Body** (partial update):
 

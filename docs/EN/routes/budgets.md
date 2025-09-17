@@ -39,7 +39,7 @@ Create and track monthly budgets with spending comparison.
 
 ### Update Budget
 
-**PATCH** `/protected/api/v1/budgets/:id`
+**PUT** `/protected/api/v1/budgets/:id`
 
 ### Delete Budget
 

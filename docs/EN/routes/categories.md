@@ -36,7 +36,7 @@ Manage income and expense categories for organizing transactions.
 
 ### Update Category
 
-**PATCH** `/protected/api/v1/categories/:id`
+**PUT** `/protected/api/v1/categories/:id`
 
 **Request Body**:
 

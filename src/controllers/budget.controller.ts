@@ -237,7 +237,20 @@ export class BudgetController {
       }
 
       const updateData = context.body as UpdateBudgetData;
-      const budget = await this.budgetService.updateBudget(budgetId, userId, updateData);
+
+      // แปลง cycle_month จาก YYYY-MM เป็น YYYY-MM-01 สำหรับ database date field (ถ้ามีการส่งค่ามา)
+      const formattedUpdateData = { ...updateData };
+      if (updateData.cycle_month) {
+        const originalCycleMonth = updateData.cycle_month;
+        formattedUpdateData.cycle_month = updateData.cycle_month.includes('-01')
+          ? updateData.cycle_month
+          : `${updateData.cycle_month}-01`;
+        logger.info(
+          `🔄 Budget Update - Converting cycle_month: ${originalCycleMonth} → ${formattedUpdateData.cycle_month}`
+        );
+      }
+
+      const budget = await this.budgetService.updateBudget(budgetId, userId, formattedUpdateData);
 
       if (!budget) {
         context.set.status = 404;

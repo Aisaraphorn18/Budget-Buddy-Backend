@@ -36,7 +36,7 @@
 
 ### แก้ไขหมวดหมู่
 
-**PATCH** `/protected/api/v1/categories/:id`
+**PUT** `/protected/api/v1/categories/:id`
 
 **Request Body**:
 

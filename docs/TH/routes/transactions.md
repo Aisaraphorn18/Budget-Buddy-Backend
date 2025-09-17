@@ -45,7 +45,7 @@
 
 ### แก้ไขธุรกรรม
 
-**PATCH** `/protected/api/v1/transactions/:id`
+**PUT** `/protected/api/v1/transactions/:id`
 
 **Request Body** (แก้ไขบางส่วน):
 

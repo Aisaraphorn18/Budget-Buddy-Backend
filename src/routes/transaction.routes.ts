@@ -11,7 +11,7 @@
  * - GET /api/v1/transactions - Get transactions with filtering and pagination
  * - GET /api/v1/transactions/:id - Get specific transaction by ID
  * - GET /api/v1/transactions/user/:user_id - Get transactions by user ID (admin only)
- * - PATCH /api/v1/transactions/:id - Update existing transaction
+ * - PUT /api/v1/transactions/:id - Update existing transaction
  * - DELETE /api/v1/transactions/:id - Delete transaction
  *
  * Features:
@@ -445,7 +445,7 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
   )
 
   // Update existing transaction endpoint
-  .patch(
+  .put(
     '/:id',
     async context => {
       try {

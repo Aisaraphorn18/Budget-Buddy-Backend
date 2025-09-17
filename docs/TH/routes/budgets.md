@@ -39,7 +39,7 @@
 
 ### แก้ไขงบประมาณ
 
-**PATCH** `/protected/api/v1/budgets/:id`
+**PUT** `/protected/api/v1/budgets/:id`
 
 ### ลบงบประมาณ
 

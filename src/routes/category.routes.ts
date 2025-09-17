@@ -9,7 +9,7 @@
  * - GET /protected/api/v1/categories - Get all available categories
  * - GET /protected/api/v1/categories/:id - Get specific category by ID
  * - POST /protected/api/v1/categories - Create new category
- * - PATCH /protected/api/v1/categories/:id - Update existing category
+ * - PUT /protected/api/v1/categories/:id - Update existing category
  * - DELETE /protected/api/v1/categories/:id - Delete category
  *
  * Features:
@@ -299,7 +299,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
   )
 
   // Update category endpoint (protected)
-  .patch(
+  .put(
     '/:id',
     async context => {
       try {

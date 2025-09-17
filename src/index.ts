@@ -11,7 +11,7 @@ logger.info(
   "  GET    /protected/api/v1/transactions/:id - Get transaction by ID"
 );
 logger.info("  GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)");
-logger.info("  PATCH  /protected/api/v1/transactions/:id - Update transaction");
+logger.info("  PUT  /protected/api/v1/transactions/:id - Update transaction");
 logger.info("  DELETE /protected/api/v1/transactions/:id - Delete transaction");
 logger.info("");
 logger.info("📊 Budgets:");
@@ -21,7 +21,7 @@ logger.info(
 );
 logger.info("  GET    /protected/api/v1/budgets/:id      - Get budget by ID");
 logger.info("  GET    /protected/api/v1/budgets/user/:user_id - Get budgets by user ID (admin)");
-logger.info("  PATCH  /protected/api/v1/budgets/:id     - Update budget");
+logger.info("  PUT  /protected/api/v1/budgets/:id     - Update budget");
 logger.info("  DELETE /protected/api/v1/budgets/:id     - Delete budget");al analytics.
  *
  * Architecture:
@@ -219,21 +219,21 @@ logger.info(`
   GET    /protected/api/v1/categories     - Get all categories
   GET    /protected/api/v1/categories/:id - Get category by ID
   POST   /protected/api/v1/categories     - Create new category
-  PATCH  /protected/api/v1/categories/:id - Update category
+  PUT  /protected/api/v1/categories/:id - Update category
   DELETE /protected/api/v1/categories/:id - Delete category
 
 💸 Transactions:
   POST   /protected/api/v1/transactions     - Create transaction
   GET    /protected/api/v1/transactions     - Get transactions (with filters)
   GET    /protected/api/v1/transactions/:id - Get transaction by ID
-  PATCH  /protected/api/v1/transactions/:id - Update transaction
+  PUT  /protected/api/v1/transactions/:id - Update transaction
   DELETE /protected/api/v1/transactions/:id - Delete transaction
 
 📊 Budgets:
   POST   /protected/api/v1/budgets          - Create budget
   GET    /protected/api/v1/budgets          - Get budgets (with filters)
   GET    /protected/api/v1/budgets/:id      - Get budget by ID
-  PATCH  /protected/api/v1/budgets/:id     - Update budget
+  PUT  /protected/api/v1/budgets/:id     - Update budget
   DELETE /protected/api/v1/budgets/:id     - Delete budget
 
 🏠 Reports & Analytics:

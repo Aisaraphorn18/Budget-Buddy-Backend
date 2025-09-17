@@ -11,7 +11,7 @@
  * - GET /api/v1/budgets - Get budgets with filtering
  * - GET /api/v1/budgets/:id - Get specific budget by ID
  * - GET /api/v1/budgets/user/:user_id - Get budgets by user ID (admin only)
- * - PATCH /api/v1/budgets/:id - Update existing budget
+ * - PUT /api/v1/budgets/:id - Update existing budget
  * - DELETE /api/v1/budgets/:id - Delete budget
  *
  * Features:
@@ -386,7 +386,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
   )
 
   // Update existing budget endpoint
-  .patch(
+  .put(
     '/:id',
     async context => {
       try {
