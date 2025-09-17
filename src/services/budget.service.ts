@@ -3,7 +3,16 @@
  *
  * Business logic layer for budget management in Budget Buddy.
  * Handles budget planning, tracking, and analysis operations for users.
- * Budgets help users set spending limits by category and monitor their financial goals.
+ * Budgets help users set spending limits            return data;
+    } catch (error) {
+      logger.error('Error getting budgets with spending:', error);
+      throw error;rn data;
+          return data && data.length > 0;
+    } catch (error) {
+      logger.error('Error finding existing budget:', error);
+      throw error;tch (error) {
+      logger.error('Error creating budget:', error);
+      throw error;category and monitor their financial goals.
  *
  * Key Features:
  * - User-scoped budget management (users can only access their own budgets)
@@ -28,6 +37,7 @@ import {
   BudgetFilters,
   BudgetWithCategory,
 } from '../models/budget.model';
+import logger from '../utils/logger';
 
 export class BudgetService {
   /**
@@ -76,7 +86,7 @@ export class BudgetService {
 
       return data || [];
     } catch (error) {
-      console.error('Error getting budgets:', error);
+      logger.error('Error getting budgets:', error);
       throw error;
     }
   }
@@ -107,7 +117,7 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error('Error getting budget by ID:', error);
+      logger.error('Error getting budget by ID:', error);
       throw error;
     }
   }
@@ -142,7 +152,7 @@ export class BudgetService {
       const { data, error } = await supabase.from('Budget').insert([budgetData]).select().single();
 
       if (error) {
-        console.error('Database error creating budget:', error);
+        logger.error('Database error creating budget:', error);
 
         // Handle specific database errors
         if (error.code === '23503') {
@@ -170,7 +180,7 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error('Error creating budget:', error);
+      logger.error('Error creating budget:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -201,7 +211,7 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error('Error updating budget:', error);
+      logger.error('Error updating budget:', error);
       throw error;
     }
   }
@@ -221,7 +231,7 @@ export class BudgetService {
 
       return data && data.length > 0;
     } catch (error) {
-      console.error('Error deleting budget:', error);
+      logger.error('Error deleting budget:', error);
       throw error;
     }
   }
@@ -259,7 +269,7 @@ export class BudgetService {
 
       return data;
     } catch (error) {
-      console.error('Error finding existing budget:', error);
+      logger.error('Error finding existing budget:', error);
       throw error;
     }
   }
@@ -358,7 +368,7 @@ export class BudgetService {
 
       return results;
     } catch (error) {
-      console.error('Error getting budgets with spending:', error);
+      logger.error('Error getting budgets with spending:', error);
       throw error;
     }
   }
@@ -381,7 +391,7 @@ export class BudgetService {
         .eq('user_id', userId);
 
       if (error) {
-        console.error('Error getting budget overview:', error);
+        logger.error('Error getting budget overview:', error);
         throw new Error(`Failed to get budget overview: ${error.message}`);
       }
 
@@ -423,7 +433,7 @@ export class BudgetService {
         average_utilization: Math.round(averageUtilization * 100) / 100,
       };
     } catch (error) {
-      console.error('Error getting budget overview:', error);
+      logger.error('Error getting budget overview:', error);
       throw error;
     }
   }

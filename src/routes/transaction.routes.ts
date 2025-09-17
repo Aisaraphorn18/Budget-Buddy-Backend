@@ -33,6 +33,8 @@
 import { Elysia, t } from 'elysia';
 import { TransactionController } from '../controllers/transaction.controller';
 import { CreateTransactionSchema, UpdateTransactionSchema } from '../schemas/api.schema';
+import { withAuth } from '../types/elysia.types';
+import logger from '../utils/logger';
 
 const transactionController = new TransactionController();
 
@@ -42,9 +44,9 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
     '/',
     async context => {
       try {
-        return await transactionController.createTransaction(context);
+        return await transactionController.createTransaction(withAuth(context));
       } catch (error) {
-        console.error('Error in transaction creation route:', error);
+        logger.error('Error in transaction creation route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to create transaction',
@@ -179,9 +181,9 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
     '/',
     async context => {
       try {
-        return await transactionController.getAllTransactions(context);
+        return await transactionController.getAllTransactions(withAuth(context));
       } catch (error) {
-        console.error('Error in get all transactions route:', error);
+        logger.error('Error in get all transactions route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve transactions',
@@ -334,9 +336,9 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
             data: null,
           };
         }
-        return await transactionController.getTransactionById(context);
+        return await transactionController.getTransactionById(withAuth(context));
       } catch (error) {
-        console.error('Error in get transaction by ID route:', error);
+        logger.error('Error in get transaction by ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve transaction',
@@ -456,9 +458,9 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
             data: null,
           };
         }
-        return await transactionController.updateTransaction(context);
+        return await transactionController.updateTransaction(withAuth(context));
       } catch (error) {
-        console.error('Error in update transaction route:', error);
+        logger.error('Error in update transaction route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to update transaction',
@@ -629,9 +631,9 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
             data: null,
           };
         }
-        return await transactionController.deleteTransaction(context);
+        return await transactionController.deleteTransaction(withAuth(context));
       } catch (error) {
-        console.error('Error in delete transaction route:', error);
+        logger.error('Error in delete transaction route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to delete transaction',
@@ -739,9 +741,9 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
             data: null,
           };
         }
-        return await transactionController.getTransactionsByUserId(context);
+        return await transactionController.getTransactionsByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in get transactions by user ID route:', error);
+        logger.error('Error in get transactions by user ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve transactions',

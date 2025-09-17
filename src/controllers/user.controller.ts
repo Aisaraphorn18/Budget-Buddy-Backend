@@ -24,7 +24,7 @@
 
 import { UserService } from '../services/user.service';
 import type { AuthContext } from '../types/elysia.types';
-
+import logger from '../utils/logger';
 export class UserController {
   private userService: UserService;
 
@@ -83,7 +83,7 @@ export class UserController {
         },
       };
     } catch (error) {
-      console.error('Get all users error:', error);
+      logger.error('Get all users error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -144,7 +144,7 @@ export class UserController {
         },
       };
     } catch (error) {
-      console.error('Get user by ID error:', error);
+      logger.error('Get user by ID error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -207,7 +207,7 @@ export class UserController {
         message: 'User deleted successfully',
       };
     } catch (error) {
-      console.error('Delete user error:', error);
+      logger.error('Delete user error:', error);
       context.set.status = 500;
       return {
         success: false,

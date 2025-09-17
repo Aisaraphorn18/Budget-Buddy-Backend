@@ -23,6 +23,7 @@ import {
   UpdateTransactionData,
   TransactionFilters,
 } from '../models/transaction.model';
+import logger from '../utils/logger';
 
 export class TransactionService {
   async getAllTransactions(
@@ -91,7 +92,7 @@ export class TransactionService {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error('Database error getting transactions:', error);
+        logger.error('Database error getting transactions:', error);
         throw new Error(`Failed to retrieve transactions: ${error.message}`);
       }
 
@@ -102,7 +103,7 @@ export class TransactionService {
         limit,
       };
     } catch (error) {
-      console.error('Error getting transactions:', error);
+      logger.error('Error getting transactions:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -132,13 +133,13 @@ export class TransactionService {
           // No rows returned
           return null;
         }
-        console.error('Database error getting transaction by ID:', error);
+        logger.error('Database error getting transaction by ID:', error);
         throw new Error(`Failed to retrieve transaction: ${error.message}`);
       }
 
       return data;
     } catch (error) {
-      console.error('Error getting transaction by ID:', error);
+      logger.error('Error getting transaction by ID:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -166,7 +167,7 @@ export class TransactionService {
         .single();
 
       if (error) {
-        console.error('Database error creating transaction:', error);
+        logger.error('Database error creating transaction:', error);
 
         // Handle specific database errors
         if (error.code === '23503') {
@@ -194,7 +195,7 @@ export class TransactionService {
 
       return data;
     } catch (error) {
-      console.error('Error creating transaction:', error);
+      logger.error('Error creating transaction:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -241,7 +242,7 @@ export class TransactionService {
           return null;
         }
 
-        console.error('Database error updating transaction:', error);
+        logger.error('Database error updating transaction:', error);
 
         // Handle specific database errors
         if (error.code === '23503') {
@@ -259,7 +260,7 @@ export class TransactionService {
 
       return data;
     } catch (error) {
-      console.error('Error updating transaction:', error);
+      logger.error('Error updating transaction:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -285,7 +286,7 @@ export class TransactionService {
         .select();
 
       if (error) {
-        console.error('Database error deleting transaction:', error);
+        logger.error('Database error deleting transaction:', error);
         throw new Error(`Failed to delete transaction: ${error.message}`);
       }
 
@@ -296,7 +297,7 @@ export class TransactionService {
 
       return true;
     } catch (error) {
-      console.error('Error deleting transaction:', error);
+      logger.error('Error deleting transaction:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -319,7 +320,7 @@ export class TransactionService {
 
       return data || [];
     } catch (error) {
-      console.error('Error getting recent transactions:', error);
+      logger.error('Error getting recent transactions:', error);
       throw error;
     }
   }
@@ -365,7 +366,7 @@ export class TransactionService {
 
       return summary;
     } catch (error) {
-      console.error('Error getting transactions summary:', error);
+      logger.error('Error getting transactions summary:', error);
       throw error;
     }
   }
@@ -437,7 +438,7 @@ export class TransactionService {
 
       return Array.from(categoryMap.values());
     } catch (error) {
-      console.error('Error getting transactions by category:', error);
+      logger.error('Error getting transactions by category:', error);
       throw error;
     }
   }
@@ -487,7 +488,7 @@ export class TransactionService {
 
       return summary;
     } catch (error) {
-      console.error('Error getting financial summary:', error);
+      logger.error('Error getting financial summary:', error);
       throw error;
     }
   }
@@ -563,7 +564,7 @@ export class TransactionService {
 
       return Array.from(categoryMap.values());
     } catch (error) {
-      console.error('Error getting analytics by category:', error);
+      logger.error('Error getting analytics by category:', error);
       throw error;
     }
   }

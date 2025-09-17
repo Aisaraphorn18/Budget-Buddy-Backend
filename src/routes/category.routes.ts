@@ -27,6 +27,7 @@
 import { Elysia } from 'elysia';
 import { CategoryController } from '../controllers/category.controller';
 import { withAuth } from '../types/elysia.types';
+import logger from '../utils/logger';
 
 const categoryController = new CategoryController();
 
@@ -36,9 +37,9 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
     '/',
     async context => {
       try {
-        return await categoryController.getAllCategories(context);
+        return await categoryController.getAllCategories(withAuth(context));
       } catch (error) {
-        console.error('Error in get all categories route:', error);
+        logger.error('Error in get all categories route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve categories',
@@ -112,9 +113,9 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
             data: null,
           };
         }
-        return await categoryController.getCategoryById(context);
+        return await categoryController.getCategoryById(withAuth(context));
       } catch (error) {
-        console.error('Error in get category by ID route:', error);
+        logger.error('Error in get category by ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve category',
@@ -205,7 +206,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
       try {
         return await categoryController.createCategory(withAuth(context));
       } catch (error) {
-        console.error('Error in create category route:', error);
+        logger.error('Error in create category route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to create category',
@@ -313,7 +314,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
         }
         return await categoryController.updateCategory(withAuth(context));
       } catch (error) {
-        console.error('Error in update category route:', error);
+        logger.error('Error in update category route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to update category',
@@ -447,7 +448,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
         }
         return await categoryController.deleteCategory(withAuth(context));
       } catch (error) {
-        console.error('Error in delete category route:', error);
+        logger.error('Error in delete category route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to delete category',

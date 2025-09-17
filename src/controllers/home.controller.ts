@@ -31,6 +31,7 @@ import { TransactionService } from '../services/transaction.service';
 import { BudgetService } from '../services/budget.service';
 import { AuthService } from '../services/auth.service';
 import type { AuthContext } from '../types/elysia.types';
+import logger from '../utils/logger';
 
 export class HomeController {
   private transactionService: TransactionService;
@@ -99,7 +100,7 @@ export class HomeController {
         },
       };
     } catch (error) {
-      console.error('Get home data error:', error);
+      logger.error('Get home data error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -133,7 +134,7 @@ export class HomeController {
         data: transactions,
       };
     } catch (error) {
-      console.error('Get recent transactions error:', error);
+      logger.error('Get recent transactions error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -173,7 +174,7 @@ export class HomeController {
         data: summary,
       };
     } catch (error) {
-      console.error('Get analytics summary error:', error);
+      logger.error('Get analytics summary error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -213,7 +214,7 @@ export class HomeController {
         data: categoryAnalytics,
       };
     } catch (error) {
-      console.error('Get analytics by category error:', error);
+      logger.error('Get analytics by category error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -262,7 +263,7 @@ export class HomeController {
         },
       };
     } catch (error) {
-      console.error('Get analytics flow error:', error);
+      logger.error('Get analytics flow error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -332,7 +333,7 @@ export class HomeController {
         },
       };
     } catch (error) {
-      console.error('Get user home data error:', error);
+      logger.error('Get user home data error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -375,7 +376,7 @@ export class HomeController {
         data: transactions,
       };
     } catch (error) {
-      console.error('Get user recent transactions error:', error);
+      logger.error('Get user recent transactions error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -424,7 +425,7 @@ export class HomeController {
         data: summary,
       };
     } catch (error) {
-      console.error('Get user analytics summary error:', error);
+      logger.error('Get user analytics summary error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -473,7 +474,7 @@ export class HomeController {
         data: analytics,
       };
     } catch (error) {
-      console.error('Get user analytics by category error:', error);
+      logger.error('Get user analytics by category error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -515,7 +516,7 @@ export class HomeController {
         },
       };
     } catch (error) {
-      console.error('Get user analytics flow error:', error);
+      logger.error('Get user analytics flow error:', error);
       context.set.status = 500;
       return {
         success: false,

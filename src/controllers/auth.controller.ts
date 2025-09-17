@@ -17,7 +17,7 @@
 import bcrypt from 'bcryptjs';
 import { AuthService } from '../services/auth.service';
 import type { ElysiaContext } from '../types/elysia.types';
-
+import logger from '../utils/logger';
 interface RegisterBody {
   username: string;
   first_name: string;
@@ -83,7 +83,7 @@ export class AuthController {
         },
       };
     } catch (error) {
-      console.error('Register error:', error);
+      logger.error('Register error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -146,7 +146,7 @@ export class AuthController {
         },
       };
     } catch (error) {
-      console.error('Login error:', error);
+      logger.error('Login error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -218,7 +218,7 @@ export class AuthController {
         },
       };
     } catch (error) {
-      console.error('Get profile error:', error);
+      logger.error('Get profile error:', error);
       context.set.status = 500;
       return {
         success: false,

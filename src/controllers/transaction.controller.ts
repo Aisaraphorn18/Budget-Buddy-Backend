@@ -23,7 +23,7 @@
 import { TransactionService } from '../services/transaction.service';
 import { TransactionFilters, UpdateTransactionData } from '../models/transaction.model';
 import type { AuthContext } from '../types/elysia.types';
-
+import logger from '../utils/logger';
 export class TransactionController {
   private transactionService: TransactionService;
 
@@ -94,7 +94,7 @@ export class TransactionController {
         },
       };
     } catch (error) {
-      console.error('Get all transactions error:', error);
+      logger.error('Get all transactions error:', error);
 
       // Handle different error types with appropriate status codes
       if (error instanceof Error) {
@@ -170,7 +170,7 @@ export class TransactionController {
         data: transaction,
       };
     } catch (error) {
-      console.error('Get transaction by ID error:', error);
+      logger.error('Get transaction by ID error:', error);
 
       // Handle different error types with appropriate status codes
       if (error instanceof Error) {
@@ -206,7 +206,7 @@ export class TransactionController {
   async createTransaction(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
-      console.log(context.user);
+      logger.info(context.user);
       if (!userId) {
         context.set.status = 401;
         return {
@@ -239,7 +239,7 @@ export class TransactionController {
         data: transaction,
       };
     } catch (error) {
-      console.error('Create transaction error:', error);
+      logger.error('Create transaction error:', error);
 
       // Handle different error types with appropriate status codes
       if (error instanceof Error) {
@@ -320,7 +320,7 @@ export class TransactionController {
         data: transaction,
       };
     } catch (error) {
-      console.error('Update transaction error:', error);
+      logger.error('Update transaction error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -366,7 +366,7 @@ export class TransactionController {
         message: 'Transaction deleted successfully',
       };
     } catch (error) {
-      console.error('Delete transaction error:', error);
+      logger.error('Delete transaction error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -449,7 +449,7 @@ export class TransactionController {
         },
       };
     } catch (error) {
-      console.error('Get transactions by user ID error:', error);
+      logger.error('Get transactions by user ID error:', error);
       context.set.status = 500;
       return {
         success: false,

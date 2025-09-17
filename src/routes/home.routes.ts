@@ -1,11 +1,14 @@
 /**
  * Home & Analytics Routes
  *
- * Defines HTTP en        return await homeController.getHomeData(withAuth(context));
+ * Defiimport { Elysia } from 'elysia';
+import { HomeController } from '../controllers/home.controller';
+import { withAuth } from '../types/elysia.types';
+import logger from '../utils/logger'; HTTP en        return await homeController.getHomeData(withAuth(context));
       } catch (error) {
-        console.error('Error in get home data route:', error);i        return await homeController.getHomeDataByUserId(withAuth(context));
+        logger.error('Error in get home data route:', error);i        return await homeController.getHomeDataByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in get home data by user ID route:', error); for dashboard and analytics functionality in Budget Buddy.
+        logger.error('Error in get home data by user ID route:', error); for dashboard and analytics functionality in Budget Buddy.
  * All home routes are protected and require JWT authentication.
  * These endpoints provide comprehensive financial insights, summaries,
  * and dashboard data to help users understand their financial situation.
@@ -45,6 +48,7 @@
 import { Elysia, t } from 'elysia';
 import { HomeController } from '../controllers/home.controller';
 import { withAuth } from '../types/elysia.types';
+import logger from '../utils/logger';
 
 const homeController = new HomeController();
 
@@ -56,7 +60,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
       try {
         return await homeController.getHomeData(withAuth(context));
       } catch (error) {
-        console.error('Error in home data route:', error);
+        logger.error('Error in home data route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve home data',
@@ -82,7 +86,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
       try {
         return await homeController.getRecentTransactions(withAuth(context));
       } catch (error) {
-        console.error('Error in recent transactions route:', error);
+        logger.error('Error in recent transactions route:', error);
         return {
           success: false,
           message:
@@ -111,7 +115,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
       try {
         return await homeController.getAnalyticsSummary(withAuth(context));
       } catch (error) {
-        console.error('Error in analytics summary route:', error);
+        logger.error('Error in analytics summary route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve analytics summary',
@@ -140,7 +144,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
       try {
         return await homeController.getAnalyticsByCategory(withAuth(context));
       } catch (error) {
-        console.error('Error in analytics by category route:', error);
+        logger.error('Error in analytics by category route:', error);
         return {
           success: false,
           message:
@@ -170,7 +174,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
       try {
         return await homeController.getAnalyticsFlow(withAuth(context));
       } catch (error) {
-        console.error('Error in analytics flow route:', error);
+        logger.error('Error in analytics flow route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve analytics flow',
@@ -209,7 +213,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         }
         return await homeController.getHomeDataByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in home data by user ID route:', error);
+        logger.error('Error in home data by user ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve home data',
@@ -246,7 +250,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         }
         return await homeController.getRecentTransactionsByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in recent transactions by user ID route:', error);
+        logger.error('Error in recent transactions by user ID route:', error);
         return {
           success: false,
           message:
@@ -281,7 +285,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         }
         return await homeController.getAnalyticsSummaryByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in analytics summary by user ID route:', error);
+        logger.error('Error in analytics summary by user ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve analytics summary',
@@ -316,7 +320,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         }
         return await homeController.getAnalyticsByCategoryByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in analytics by category by user ID route:', error);
+        logger.error('Error in analytics by category by user ID route:', error);
         return {
           success: false,
           message:
@@ -352,7 +356,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         }
         return await homeController.getAnalyticsFlowByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in analytics flow by user ID route:', error);
+        logger.error('Error in analytics flow by user ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve analytics flow',

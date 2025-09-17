@@ -1,5 +1,7 @@
 /**
- * Category Service
+ * Category Simport { supabase } from '../config/supabase';
+import type { Category, CreateCategoryData, UpdateCategoryData } from '../models/category.model';
+import logger from '../utils/logger';vice
  *
  * Business logic layer for category management in Budget Buddy.
  * Categories are used to organize and classify financial transactions
@@ -18,6 +20,7 @@
 
 import { supabase } from '../config/supabase';
 import { Category, CreateCategoryData, UpdateCategoryData } from '../models/category.model';
+import logger from '../utils/logger';
 
 export class CategoryService {
   /**
@@ -34,13 +37,13 @@ export class CategoryService {
         .order('category_id', { ascending: true });
 
       if (error) {
-        console.error('Database error getting all categories:', error);
+        logger.error('Database error getting all categories:', error);
         throw new Error(`Failed to retrieve categories: ${error.message}`);
       }
 
       return data || [];
     } catch (error) {
-      console.error('Error getting all categories:', error);
+      logger.error('Error getting all categories:', error);
       if (error instanceof Error) {
         throw error; // Re-throw our custom errors
       }
@@ -73,7 +76,7 @@ export class CategoryService {
 
       return data;
     } catch (error) {
-      console.error('Error getting category by ID:', error);
+      logger.error('Error getting category by ID:', error);
       throw error;
     }
   }
@@ -100,7 +103,7 @@ export class CategoryService {
 
       return data;
     } catch (error) {
-      console.error('Error creating category:', error);
+      logger.error('Error creating category:', error);
       throw error;
     }
   }
@@ -132,7 +135,7 @@ export class CategoryService {
 
       return data;
     } catch (error) {
-      console.error('Error updating category:', error);
+      logger.error('Error updating category:', error);
       throw error;
     }
   }
@@ -184,7 +187,7 @@ export class CategoryService {
         throw error;
       }
     } catch (error) {
-      console.error('Error deleting category:', error);
+      logger.error('Error deleting category:', error);
       throw error;
     }
   }

@@ -2,27 +2,27 @@
  * Budget Buddy Backend API
  *
  * A comprehensive RESTful API for personal finance management built with ElysiaJS and Supabase.
- * Features include user authentication, transaction tracking, budget manaconsole.log("💸 Transactions:");
-console.log("  POST   /protected/api/v1/transactions     - Create transaction");
-console.log(
+ * Features include user authentication, transaction tracking, budget management, and financial analytics.
+logger.info("  POST   /protected/api/v1/transactions     - Create transaction");
+logger.info(
   "  GET    /protected/api/v1/transactions     - Get transactions (with filters)"
 );
-console.log(
+logger.info(
   "  GET    /protected/api/v1/transactions/:id - Get transaction by ID"
 );
-console.log("  GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)");
-console.log("  PATCH  /protected/api/v1/transactions/:id - Update transaction");
-console.log("  DELETE /protected/api/v1/transactions/:id - Delete transaction");
-console.log("");
-console.log("📊 Budgets:");
-console.log("  POST   /protected/api/v1/budgets          - Create budget");
-console.log(
+logger.info("  GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)");
+logger.info("  PATCH  /protected/api/v1/transactions/:id - Update transaction");
+logger.info("  DELETE /protected/api/v1/transactions/:id - Delete transaction");
+logger.info("");
+logger.info("📊 Budgets:");
+logger.info("  POST   /protected/api/v1/budgets          - Create budget");
+logger.info(
   "  GET    /protected/api/v1/budgets          - Get budgets (with filters)"
 );
-console.log("  GET    /protected/api/v1/budgets/:id      - Get budget by ID");
-console.log("  GET    /protected/api/v1/budgets/user/:user_id - Get budgets by user ID (admin)");
-console.log("  PATCH  /protected/api/v1/budgets/:id     - Update budget");
-console.log("  DELETE /protected/api/v1/budgets/:id     - Delete budget");al analytics.
+logger.info("  GET    /protected/api/v1/budgets/:id      - Get budget by ID");
+logger.info("  GET    /protected/api/v1/budgets/user/:user_id - Get budgets by user ID (admin)");
+logger.info("  PATCH  /protected/api/v1/budgets/:id     - Update budget");
+logger.info("  DELETE /protected/api/v1/budgets/:id     - Delete budget");al analytics.
  *
  * Architecture:
  * - Framework: ElysiaJS with TypeScript
@@ -46,7 +46,7 @@ import {
   homeRoutes, // Dashboard and analytics (protected)
   userRoutes, // User management (protected, admin-only)
 } from './routes';
-
+import logger from './utils/logger';
 // Initialize Elysia application with comprehensive middleware setup
 const app = new Elysia()
   // JWT Configuration - Handles token generation and validation
@@ -125,15 +125,15 @@ const app = new Elysia()
         .derive(async ({ bearer, jwt }) => {
           // Check if Authorization Bearer token is present
           if (!bearer) {
-            console.log('❌ No bearer token found');
+            logger.info('❌ No bearer token found');
             throw new Error('Authorization token required');
           }
 
           // Verify and decode the JWT token
           const payload = await jwt.verify(bearer);
-          // console.log('🔍 JWT - Payload:', payload);
+          // logger.info('🔍 JWT - Payload:', payload);
           if (!payload) {
-            console.log('❌ Invalid token payload');
+            logger.info('❌ Invalid token payload');
             throw new Error('Invalid token');
           }
 
@@ -168,7 +168,7 @@ const app = new Elysia()
 
   // Global Error Handling - Provides consistent error responses across all endpoints
   .onError(({ error, code, set }) => {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
 
     // Handle specific error types with appropriate HTTP status codes
     if (code === 'NOT_FOUND') {
@@ -201,53 +201,53 @@ const app = new Elysia()
   // Start the server on port 3000
   .listen(3000);
 
-// Server startup logging
-console.log(`🦊 Budget Buddy Backend is running at ${app.server?.hostname}:${app.server?.port}`);
-
 // API Endpoint Documentation - Provides a comprehensive list of all available endpoints
-console.log('📚 Available API Endpoints:');
-console.log('🔓 Public Routes:');
-console.log('  GET    /health                     - Health check');
-console.log('  POST   /api/v1/auth/register       - Register new user');
-console.log('  POST   /api/v1/auth/login          - User login');
-console.log('  POST   /api/v1/auth/logout         - User logout');
-console.log('  GET    /api/v1/auth/profile        - Get user profile');
-console.log('');
-console.log('🔒 Protected Routes (Require JWT Token):');
-console.log('� Categories:');
-console.log('  GET    /protected/api/v1/categories     - Get all categories');
-console.log('  GET    /protected/api/v1/categories/:id - Get category by ID');
-console.log('  POST   /protected/api/v1/categories     - Create new category');
-console.log('  PATCH  /protected/api/v1/categories/:id - Update category');
-console.log('  DELETE /protected/api/v1/categories/:id - Delete category');
-console.log('');
-console.log('�💸 Transactions:');
-console.log('  POST   /protected/api/v1/transactions     - Create transaction');
-console.log('  GET    /protected/api/v1/transactions     - Get transactions (with filters)');
-console.log('  GET    /protected/api/v1/transactions/:id - Get transaction by ID');
-console.log('  PATCH  /protected/api/v1/transactions/:id - Update transaction');
-console.log('  DELETE /protected/api/v1/transactions/:id - Delete transaction');
-console.log('');
-console.log('📊 Budgets:');
-console.log('  POST   /protected/api/v1/budgets          - Create budget');
-console.log('  GET    /protected/api/v1/budgets          - Get budgets (with filters)');
-console.log('  GET    /protected/api/v1/budgets/:id      - Get budget by ID');
-console.log('  PATCH  /protected/api/v1/budgets/:id     - Update budget');
-console.log('  DELETE /protected/api/v1/budgets/:id     - Delete budget');
-console.log('');
-console.log('🏠 Home & Analytics:');
-console.log('  GET    /protected/api/v1/home             - Get home dashboard data');
-console.log('  GET    /protected/api/v1/recent-transactions - Get recent transactions');
-console.log('  GET    /protected/api/v1/analytics/summary - Get analytics summary');
-console.log('  GET    /protected/api/v1/analytics/by-category - Get analytics by category');
-console.log('  GET    /protected/api/v1/analytics/flow   - Get analytics flow');
-console.log('');
-console.log('� User Management (Admin Only):');
-console.log(
-  '  GET    /protected/api/v1/users           - Get all users (with search & pagination)'
-);
-console.log('  GET    /protected/api/v1/users/:id       - Get user by ID (with stats)');
-console.log('  DELETE /protected/api/v1/users/:id       - Delete user account');
-console.log('');
-console.log('�📖 API Documentation:');
-console.log(`  OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi`);
+logger.info(`
+🦊 Budget Buddy Backend is running at ${app.server?.hostname}:${app.server?.port}
+
+📚 Available API Endpoints:
+
+🔓 Public Routes:
+  GET    /health                     - Health check
+  POST   /api/v1/auth/register       - Register new user
+  POST   /api/v1/auth/login          - User login
+  POST   /api/v1/auth/logout         - User logout
+  GET    /api/v1/auth/profile        - Get user profile
+
+🔒 Protected Routes (Require JWT Token):
+📂 Categories:
+  GET    /protected/api/v1/categories     - Get all categories
+  GET    /protected/api/v1/categories/:id - Get category by ID
+  POST   /protected/api/v1/categories     - Create new category
+  PATCH  /protected/api/v1/categories/:id - Update category
+  DELETE /protected/api/v1/categories/:id - Delete category
+
+💸 Transactions:
+  POST   /protected/api/v1/transactions     - Create transaction
+  GET    /protected/api/v1/transactions     - Get transactions (with filters)
+  GET    /protected/api/v1/transactions/:id - Get transaction by ID
+  PATCH  /protected/api/v1/transactions/:id - Update transaction
+  DELETE /protected/api/v1/transactions/:id - Delete transaction
+
+📊 Budgets:
+  POST   /protected/api/v1/budgets          - Create budget
+  GET    /protected/api/v1/budgets          - Get budgets (with filters)
+  GET    /protected/api/v1/budgets/:id      - Get budget by ID
+  PATCH  /protected/api/v1/budgets/:id     - Update budget
+  DELETE /protected/api/v1/budgets/:id     - Delete budget
+
+🏠 Home & Analytics:
+  GET    /protected/api/v1/home             - Get home dashboard data
+  GET    /protected/api/v1/recent-transactions - Get recent transactions
+  GET    /protected/api/v1/analytics/summary - Get analytics summary
+  GET    /protected/api/v1/analytics/by-category - Get analytics by category
+  GET    /protected/api/v1/analytics/flow   - Get analytics flow
+
+👥 User Management (Admin Only):
+  GET    /protected/api/v1/users           - Get all users (with search & pagination)
+  GET    /protected/api/v1/users/:id       - Get user by ID (with stats)
+  DELETE /protected/api/v1/users/:id       - Delete user account
+
+📖 API Documentation:
+  OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi
+`);

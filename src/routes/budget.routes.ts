@@ -40,6 +40,7 @@ import { Elysia, t } from 'elysia';
 import { BudgetController } from '../controllers/budget.controller';
 import { CreateBudgetSchema, UpdateBudgetSchema } from '../schemas/api.schema';
 import { withAuth } from '../types/elysia.types';
+import logger from '../utils/logger';
 
 const budgetController = new BudgetController();
 
@@ -51,7 +52,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
       try {
         return await budgetController.createBudget(withAuth(context));
       } catch (error) {
-        console.error('Error in budget creation route:', error);
+        logger.error('Error in budget creation route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to create budget',
@@ -170,7 +171,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
       try {
         return await budgetController.getAllBudgets(withAuth(context));
       } catch (error) {
-        console.error('Error in get all budgets route:', error);
+        logger.error('Error in get all budgets route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve budgets',
@@ -278,7 +279,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
         }
         return await budgetController.getBudgetById(withAuth(context));
       } catch (error) {
-        console.error('Error in get budget by ID route:', error);
+        logger.error('Error in get budget by ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve budget',
@@ -400,7 +401,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
         }
         return await budgetController.updateBudget(withAuth(context));
       } catch (error) {
-        console.error('Error in update budget route:', error);
+        logger.error('Error in update budget route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to update budget',
@@ -569,7 +570,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
         }
         return await budgetController.deleteBudget(withAuth(context));
       } catch (error) {
-        console.error('Error in delete budget route:', error);
+        logger.error('Error in delete budget route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to delete budget',
@@ -678,7 +679,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
         }
         return await budgetController.getBudgetsByUserId(withAuth(context));
       } catch (error) {
-        console.error('Error in get budgets by user ID route:', error);
+        logger.error('Error in get budgets by user ID route:', error);
         return {
           success: false,
           message: error instanceof Error ? error.message : 'Failed to retrieve budgets',

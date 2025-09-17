@@ -23,8 +23,8 @@
 import { BudgetService } from '../services/budget.service';
 import type { AuthContext } from '../types/elysia.types';
 import type { CreateBudgetData, UpdateBudgetData } from '../models/budget.model';
-
 import { BudgetFilters } from '../models/budget.model';
+import logger from '../utils/logger';
 
 export class BudgetController {
   private budgetService: BudgetService;
@@ -72,7 +72,7 @@ export class BudgetController {
         data: budgets,
       };
     } catch (error) {
-      console.error('Get all budgets error:', error);
+      logger.error('Get all budgets error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -119,7 +119,7 @@ export class BudgetController {
         data: budget,
       };
     } catch (error) {
-      console.error('Get budget by ID error:', error);
+      logger.error('Get budget by ID error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -131,12 +131,12 @@ export class BudgetController {
 
   async createBudget(context: AuthContext) {
     try {
-      console.log('🔍 Budget - Creating budget...');
-      console.log('🔍 Budget - Context user:', context.user);
+      logger.info('🔍 Budget - Creating budget...');
+      logger.info('🔍 Budget - Context user:', context.user);
 
       const userId = context.user?.user_id;
       if (!userId) {
-        console.log('❌ Budget - No user ID found');
+        logger.info('❌ Budget - No user ID found');
         context.set.status = 401;
         return {
           success: false,
@@ -144,8 +144,8 @@ export class BudgetController {
         };
       }
 
-      console.log('🔍 Budget - User ID:', userId);
-      console.log('🔍 Budget - Request body:', context.body);
+      logger.info('🔍 Budget - User ID:', userId);
+      logger.info('🔍 Budget - Request body:', context.body);
 
       const { category_id, budget_amount, cycle_month } = context.body as CreateBudgetData;
 
@@ -159,11 +159,11 @@ export class BudgetController {
         cycle_month: formattedCycleMonth,
       };
 
-      console.log('🔍 Budget - Budget data to create:', budgetData);
+      logger.info('🔍 Budget - Budget data to create:', budgetData);
 
       const budget = await this.budgetService.createBudget(budgetData);
 
-      console.log('✅ Budget - Budget created successfully:', budget);
+      logger.info('✅ Budget - Budget created successfully:', budget);
 
       context.set.status = 201;
       return {
@@ -172,7 +172,7 @@ export class BudgetController {
         data: budget,
       };
     } catch (error) {
-      console.error('❌ Budget - Create budget error:', error);
+      logger.error('❌ Budget - Create budget error:', error);
 
       // Handle different error types with appropriate status codes
       if (error instanceof Error) {
@@ -253,7 +253,7 @@ export class BudgetController {
         data: budget,
       };
     } catch (error) {
-      console.error('Update budget error:', error);
+      logger.error('Update budget error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -299,7 +299,7 @@ export class BudgetController {
         message: 'Budget deleted successfully',
       };
     } catch (error) {
-      console.error('Delete budget error:', error);
+      logger.error('Delete budget error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -359,7 +359,7 @@ export class BudgetController {
         data: budgets,
       };
     } catch (error) {
-      console.error('Get budgets by user ID error:', error);
+      logger.error('Get budgets by user ID error:', error);
       context.set.status = 500;
       return {
         success: false,

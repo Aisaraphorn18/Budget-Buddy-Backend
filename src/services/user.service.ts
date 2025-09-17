@@ -20,7 +20,8 @@
  */
 
 import { supabase } from '../config/supabase';
-import { User } from '../models/user.model';
+import type { User } from '../models/user.model';
+import logger from '../utils/logger';
 
 interface UserFilters {
   page: number;
@@ -79,7 +80,7 @@ export class UserService {
         limit,
       };
     } catch (error) {
-      console.error('Error getting all users:', error);
+      logger.error('Error getting all users:', error);
       throw error;
     }
   }
@@ -108,7 +109,7 @@ export class UserService {
 
       return data;
     } catch (error) {
-      console.error('Error getting user by ID:', error);
+      logger.error('Error getting user by ID:', error);
       throw error;
     }
   }
@@ -160,7 +161,7 @@ export class UserService {
         last_login: lastLogin,
       };
     } catch (error) {
-      console.error('Error getting user stats:', error);
+      logger.error('Error getting user stats:', error);
       throw error;
     }
   }
@@ -211,7 +212,7 @@ export class UserService {
 
       return true;
     } catch (error) {
-      console.error('Error deleting user:', error);
+      logger.error('Error deleting user:', error);
       throw error;
     }
   }

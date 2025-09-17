@@ -18,6 +18,7 @@
  */
 
 import { supabase } from '../config/supabase';
+import logger from '../utils/logger';
 
 /**
  * User interface for authentication service
@@ -69,7 +70,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error('Error finding user by username:', error);
+      logger.error('Error finding user by username:', error);
       throw error;
     }
   }
@@ -95,7 +96,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error('Error finding user by email:', error);
+      logger.error('Error finding user by email:', error);
       throw error;
     }
   }
@@ -121,7 +122,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error('Error finding user by ID:', error);
+      logger.error('Error finding user by ID:', error);
       throw error;
     }
   }
@@ -144,7 +145,7 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      console.error('Error creating user:', error);
+      logger.error('Error creating user:', error);
       throw error;
     }
   }

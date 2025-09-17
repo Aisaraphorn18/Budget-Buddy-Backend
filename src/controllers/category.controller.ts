@@ -17,8 +17,9 @@
  */
 
 import { CategoryService } from '../services/category.service';
-import type { ElysiaContext, AuthContext } from '../types/elysia.types';
+import type { AuthContext } from '../types/elysia.types';
 import type { CreateCategoryData, UpdateCategoryData } from '../models/category.model';
+import logger from '../utils/logger';
 
 export class CategoryController {
   private categoryService: CategoryService;
@@ -34,7 +35,7 @@ export class CategoryController {
    * @param context - Elysia context (no authentication required)
    * @returns Array of all categories ordered by ID
    */
-  async getAllCategories(context: ElysiaContext) {
+  async getAllCategories(context: AuthContext) {
     try {
       const categories = await this.categoryService.getAllCategories();
 
@@ -45,7 +46,7 @@ export class CategoryController {
         data: categories,
       };
     } catch (error) {
-      console.error('Get all categories error:', error);
+      logger.error('Get all categories error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -62,7 +63,7 @@ export class CategoryController {
    * @param context - Elysia context with category ID parameter
    * @returns Category object or error if not found
    */
-  async getCategoryById(context: ElysiaContext) {
+  async getCategoryById(context: AuthContext) {
     try {
       const categoryId = parseInt(context.params.id);
 
@@ -90,7 +91,7 @@ export class CategoryController {
         data: category,
       };
     } catch (error) {
-      console.error('Get category by ID error:', error);
+      logger.error('Get category by ID error:', error);
       context.set.status = 500;
       return {
         success: false,
@@ -130,7 +131,7 @@ export class CategoryController {
         data: category,
       };
     } catch (error) {
-      console.error('Create category error:', error);
+      logger.error('Create category error:', error);
 
       // Handle duplicate category name
       if (error instanceof Error && error.message.includes('duplicate')) {
@@ -188,7 +189,7 @@ export class CategoryController {
         data: category,
       };
     } catch (error) {
-      console.error('Update category error:', error);
+      logger.error('Update category error:', error);
 
       if (error instanceof Error && error.message === 'Category not found') {
         context.set.status = 404;
@@ -255,7 +256,7 @@ export class CategoryController {
         },
       };
     } catch (error) {
-      console.error('Delete category error:', error);
+      logger.error('Delete category error:', error);
 
       if (error instanceof Error) {
         if (error.message.includes('existing transactions')) {

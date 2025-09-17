@@ -26,12 +26,13 @@
 
 import { Elysia, t } from 'elysia';
 import { UserController } from '../controllers/user.controller';
+import { withAuth } from '../types/elysia.types';
 
 const userController = new UserController();
 
 export const userRoutes = new Elysia({ prefix: '/api/v1/users' })
   // Get all users endpoint (admin only)
-  .get('/', async context => await userController.getAllUsers(context), {
+  .get('/', async context => await userController.getAllUsers(withAuth(context)), {
     query: t.Object({
       page: t.Optional(t.String({ description: 'Page number for pagination' })),
       limit: t.Optional(t.String({ description: 'Items per page (max 100)' })),
@@ -130,7 +131,7 @@ export const userRoutes = new Elysia({ prefix: '/api/v1/users' })
   })
 
   // Get specific user by ID endpoint (admin only)
-  .get('/:id', async context => await userController.getUserById(context), {
+  .get('/:id', async context => await userController.getUserById(withAuth(context)), {
     params: t.Object({
       id: t.String({ description: 'User ID' }),
     }),
@@ -203,7 +204,7 @@ export const userRoutes = new Elysia({ prefix: '/api/v1/users' })
   })
 
   // Delete user endpoint (admin only)
-  .delete('/:id', async context => await userController.deleteUser(context), {
+  .delete('/:id', async context => await userController.deleteUser(withAuth(context)), {
     params: t.Object({
       id: t.String({ description: 'User ID' }),
     }),
