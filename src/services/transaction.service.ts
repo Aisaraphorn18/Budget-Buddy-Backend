@@ -449,6 +449,7 @@ export class TransactionService {
    */
   async getFinancialSummary(
     userId: number,
+    monthFilter?: string,
     startDate?: string,
     endDate?: string
   ): Promise<{
@@ -459,11 +460,22 @@ export class TransactionService {
     try {
       let query = supabase.from('Transaction').select('type, amount').eq('user_id', userId);
 
-      if (startDate) {
-        query = query.gte('created_at', startDate);
-      }
-      if (endDate) {
-        query = query.lte('created_at', endDate);
+      // Handle month filter (YYYY-MM format)
+      if (monthFilter && monthFilter.match(/^\d{4}-\d{2}$/)) {
+        const [year, month] = monthFilter.split('-');
+        const startOfMonth = `${year}-${month}-01T00:00:00.000Z`;
+        const nextMonth = new Date(parseInt(year), parseInt(month), 1);
+        const endOfMonth = new Date(nextMonth.getTime() - 1).toISOString();
+
+        query = query.gte('created_at', startOfMonth).lte('created_at', endOfMonth);
+      } else {
+        // Use start/end date range if provided
+        if (startDate) {
+          query = query.gte('created_at', startDate);
+        }
+        if (endDate) {
+          query = query.lte('created_at', endDate);
+        }
       }
 
       const { data: transactions, error } = await query;

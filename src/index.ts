@@ -243,7 +243,11 @@ logger.info(`
   GET    /protected/api/v1/reports/expenses-by-category - Get expenses by category
   GET    /protected/api/v1/reports/monthly-close     - Get monthly close report
 
-👥 User Management (Admin Only):
+� Admin Only Routes:
+  GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)
+  GET    /protected/api/v1/budgets/user/:user_id      - Get budgets by user ID (admin)
+
+�👥 User Management (Admin Only):
   GET    /protected/api/v1/users           - Get all users (with search & pagination)
   GET    /protected/api/v1/users/:id       - Get user by ID (with stats)
   DELETE /protected/api/v1/users/:id       - Delete user account

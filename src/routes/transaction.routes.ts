@@ -764,17 +764,17 @@ export const transactionRoutes = new Elysia({ prefix: '/api/v1/transactions' })
         limit: t.Optional(t.String()),
       }),
       detail: {
-        tags: ['Transactions'],
-        summary: 'Get transactions by user ID',
+        tags: ['Transactions', 'Admin'],
+        summary: '👑 [ADMIN ONLY] Get transactions by user ID',
         description:
-          'Retrieve all transactions for a specific user with filtering and pagination (admin only)',
+          '🔒 ADMIN ONLY: Retrieve all transactions for a specific user with filtering and pagination. Requires admin privileges and user_id path parameter.',
         security: [{ bearerAuth: [] }],
         parameters: [
           {
             name: 'user_id',
             in: 'path',
             required: true,
-            description: 'User ID to get transactions for',
+            description: '👑 ADMIN ONLY: User ID to get transactions for',
             schema: {
               type: 'string',
               example: '1',

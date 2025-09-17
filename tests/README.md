@@ -1,6 +1,6 @@
 # 🧪 Budget Buddy Backend - Test Documentation# Testing Guide
 
-> Comprehensive testing guide for Budget Buddy Backend API - **312 tests** covering all services and endpoints## Overview
+> Comprehensive testing guide for Budget Buddy Backend API - **323 tests** covering all services and endpoints## Overview
 
 Budget Buddy Backend uses Bun's built-in test framework for testing. All tests are designed to run without real database connections, using mocks and stubs instead.
 
@@ -16,7 +16,7 @@ Budget Buddy Backend uses Bun's built-in test framework for testing. All tests a
 
 | **Integration Tests** | 6 files | 138 tests | 100% API Endpoints | ~144ms |├── unit/ # Unit tests for individual components
 
-| **Total** | 11 files | **312 tests** | 100% Complete | **~250ms** |│ └── category.service.bun.test.ts # CategoryService business logic tests
+| **Total** | 12 files | **323 tests** | 100% Complete | **~185ms** |│ └── category.service.bun.test.ts # CategoryService business logic tests
 
 ├── integration/ # Integration tests for API endpoints
 
@@ -504,13 +504,13 @@ class MockCategoryHttpClient {
 ### Basic Commands
 
 ```bash
-# Run all 312 tests
+# Run all 323 tests
 bun test
 
 # Run 174 unit tests
 bun test tests/unit/
 
-# Run 138 integration tests
+# Run 146 integration tests
 bun test tests/integration/
 
 # Run with timeout for comprehensive testing
@@ -543,8 +543,8 @@ bun test tests/integration/user.api.bun.test.ts        # 22 tests (Admin)
 ✓ 🏷️ Category API Integration Tests > POST /api/v1/categories > ✅ Successful Creation > should create new category with valid data - สร้างหมวดหมู่ใหม่ด้วยข้อมูลที่ถูกต้อง
 ✓ 📈 Reports API Integration Tests > GET /api/v1/reports/summary > 📄 Basic Functionality > should return financial summary - ดึงข้อมูลสรุปการเงิน
 
-312 pass, 0 fail, 847 expect() calls
-Ran 312 tests across 11 files. [235.00ms]
+323 pass, 0 fail, 875 expect() calls
+Ran 323 tests across 12 files. [185.00ms]
 ```
 
 ## 🛠️ Test Development Guidelines

@@ -696,16 +696,17 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
         category_id: t.Optional(t.String()),
       }),
       detail: {
-        tags: ['Budgets'],
-        summary: 'Get budgets by user ID',
-        description: 'Retrieve all budgets for a specific user with filtering (admin only)',
+        tags: ['Budgets', 'Admin'],
+        summary: '👑 [ADMIN ONLY] Get budgets by user ID',
+        description:
+          '🔒 ADMIN ONLY: Retrieve all budgets for a specific user with filtering. Requires admin privileges and user_id path parameter.',
         security: [{ bearerAuth: [] }],
         parameters: [
           {
             name: 'user_id',
             in: 'path',
             required: true,
-            description: 'User ID to get budgets for',
+            description: '👑 ADMIN ONLY: User ID to get budgets for',
             schema: {
               type: 'string',
               example: '1',

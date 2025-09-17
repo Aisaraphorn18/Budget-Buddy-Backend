@@ -7,7 +7,7 @@
 [![ElysiaJS](https://img.shields.io/badge/ElysiaJS-Latest-ff6b9d.svg)](https://elysiajs.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.io/)
 [![Bun](https://img.shields.io/badge/Bun-1.0+-yellow.svg)](https://bun.sh/)
-[![Tests](https://img.shields.io/badge/Tests-315%20Passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-323%20Passing-brightgreen.svg)](tests/)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## 📋 Table of Contents
@@ -39,7 +39,7 @@
 - 📈 **Financial Reports** - Comprehensive analytics and reporting
 - 🏷️ **Category Management** - Organize transactions with custom categories
 - 👥 **User Management** - Admin features for user administration
-- 🧪 **Comprehensive Testing** - 315 tests with 100% endpoint coverage
+- 🧪 **Comprehensive Testing** - 323 tests with 100% endpoint coverage
 - ⚡ **High Performance** - Built with Bun and ElysiaJS for speed
 - 🛡️ **Type Safety** - Full TypeScript implementation
 - 🔒 **Security First** - Input validation, CORS, and secure practices
@@ -168,16 +168,28 @@ POST /api/v1/auth/login
 
 # Protected routes require Authorization header
 Authorization: Bearer YOUR_JWT_TOKEN
+
+# 🔒 Security Note: All protected endpoints automatically use user_id from JWT token
+# No need to send user_id as parameter for regular operations
 ```
 
 ### Main Endpoints
 
 - 🔒 **Auth**: `/api/v1/auth/*` - User authentication and profile management
-- 🏷️ **Categories**: `/api/v1/categories/*` - Category CRUD operations
-- 💰 **Transactions**: `/api/v1/transactions/*` - Transaction management
-- 📊 **Budgets**: `/api/v1/budgets/*` - Budget tracking and analysis
-- 📈 **Reports**: `/api/v1/reports/*` - Financial analytics
-- 👥 **Users**: `/api/v1/users/*` - User management (admin only)
+- 🏷️ **Categories**: `/protected/api/v1/categories/*` - Category CRUD operations
+- 💰 **Transactions**: `/protected/api/v1/transactions/*` - Transaction management
+  - 👑 **Admin**: `/protected/api/v1/transactions/user/{user_id}` - Access any user's transactions
+- 📊 **Budgets**: `/protected/api/v1/budgets/*` - Budget tracking and analysis
+  - � **Admin**: `/protected/api/v1/budgets/user/{user_id}` - Access any user's budgets
+- �📈 **Reports**: `/protected/api/v1/reports/*` - Financial analytics
+- 👥 **Users**: `/protected/api/v1/users/*` - User management (admin only)
+
+### Security Features
+
+- ✅ **Token-based authentication** - User identity extracted from JWT
+- ✅ **Automatic user isolation** - Data filtered by authenticated user
+- ✅ **Admin-only endpoints** - Special routes for administrative access with `user_id` parameters
+- ✅ **No user_id parameters** - Regular endpoints use token validation only
 
 ### Quick Test
 
@@ -240,7 +252,7 @@ curl -X POST http://localhost:3000/api/v1/auth/login \
 #### Create Transaction
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/transactions \
+curl -X POST http://localhost:3000/protected/api/v1/transactions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -250,13 +262,17 @@ curl -X POST http://localhost:3000/api/v1/transactions \
     "description": "Coffee shop",
     "transaction_date": "2024-01-15"
   }'
+
+# 🔒 Note: user_id is automatically extracted from JWT token
 ```
 
 #### Get User Transactions
 
 ```bash
-curl -X GET "http://localhost:3000/api/v1/transactions?page=1&limit=10&type=expense" \
+curl -X GET "http://localhost:3000/protected/api/v1/transactions?page=1&limit=10&type=expense" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 🔒 Security: Only returns transactions for authenticated user
 ```
 
 ### Budget Management
@@ -264,7 +280,7 @@ curl -X GET "http://localhost:3000/api/v1/transactions?page=1&limit=10&type=expe
 #### Create Budget
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/budgets \
+curl -X POST http://localhost:3000/protected/api/v1/budgets \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -272,13 +288,17 @@ curl -X POST http://localhost:3000/api/v1/budgets \
     "budget_amount": 500.00,
     "cycle_month": "2024-01"
   }'
+
+# 🔒 Note: user_id is automatically extracted from JWT token
 ```
 
 #### Get Budget Overview
 
 ```bash
-curl -X GET http://localhost:3000/api/v1/budgets/overview \
+curl -X GET http://localhost:3000/protected/api/v1/budgets/overview \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 🔒 Security: Only returns budgets for authenticated user
 ```
 
 ### Category Management
@@ -286,22 +306,255 @@ curl -X GET http://localhost:3000/api/v1/budgets/overview \
 #### Create Category
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/categories \
+curl -X POST http://localhost:3000/protected/api/v1/categories \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
-    "category_name": "Entertainment",
-    "category_icon": "🎬"
+    "category_name": "Transportation",
+    "category_icon": "🚗"
   }'
+
+# 🔒 Note: user_id is automatically extracted from JWT token
+```
+
+### 👑 Admin API Examples
+
+#### Admin - Get User Transactions
+
+```bash
+# Get all transactions for a specific user (admin only)
+curl -X GET "http://localhost:3000/protected/api/v1/transactions/user/123?type=expense&limit=10" \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN"
+
+# 👑 Admin only: Access any user's transactions via user_id parameter
+```
+
+#### Admin - Get User Budgets
+
+```bash
+# Get all budgets for a specific user (admin only)
+curl -X GET "http://localhost:3000/protected/api/v1/budgets/user/123?cycle_month=2024-03" \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN"
+
+# 👑 Admin only: Access any user's budgets via user_id parameter
+```
+
+**Admin Response Example:**
+
+```json
+{
+  "success": true,
+  "message": "User budgets retrieved successfully",
+  "data": [
+    {
+      "budget_id": 1,
+      "user_id": 123,
+      "category_name": "Food",
+      "budget_amount": 5000,
+      "cycle_month": "2024-03",
+      "created_at": "2024-03-01T00:00:00Z"
+    }
+  ]
+}
 ```
 
 ### Reports and Analytics
 
+#### Dashboard Summary
+
+```bash
+# Get dashboard cards for home page
+curl -X GET http://localhost:3000/protected/api/v1/reports/dashboard \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Filter by month
+curl -X GET "http://localhost:3000/protected/api/v1/reports/dashboard?month=2024-03" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 🔒 Security: Only returns data for authenticated user
+```
+
 #### Financial Summary
 
 ```bash
-curl -X GET http://localhost:3000/api/v1/reports/summary \
+# Get monthly summary
+curl -X GET http://localhost:3000/protected/api/v1/reports/summary \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Get annual breakdown for charts
+curl -X GET "http://localhost:3000/protected/api/v1/reports/summary?range=year&year=2024" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 🔒 Note: user_id is automatically extracted from JWT token
+```
+
+#### Recent Transactions
+
+```bash
+# Get recent transactions for table display
+curl -X GET "http://localhost:3000/protected/api/v1/reports/recent-transactions?limit=10&page=1" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# 🔒 Security: Only returns transactions for authenticated user
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "cards": [
+      {
+        "type": "income",
+        "title": "Income",
+        "amount": 8900,
+        "formatted_amount": "8,900 B",
+        "color": "#10B981"
+      },
+      {
+        "type": "expense",
+        "title": "Expenses",
+        "amount": 2000,
+        "formatted_amount": "2,000 B",
+        "color": "#EF4444"
+      },
+      {
+        "type": "balance",
+        "title": "Balance",
+        "amount": 6900,
+        "formatted_amount": "6,900 B",
+        "color": "#3B82F6"
+      }
+    ],
+    "summary": {
+      "total_income": 8900,
+      "total_expense": 2000,
+      "net_balance": 6900,
+      "as_of": "2024-03"
+    }
+  }
+}
+```
+
+#### Enhanced Financial Summary
+
+```bash
+# Monthly summary
+curl -X GET "http://localhost:3000/api/v1/reports/summary?month=2024-03" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Annual breakdown for bar charts
+curl -X GET "http://localhost:3000/api/v1/reports/summary?range=year&year=2024" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Annual Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "type": "annual",
+    "year": "2024",
+    "monthly_breakdown": [
+      {
+        "month": "2024-01",
+        "month_name": "January",
+        "total_income": 25000,
+        "total_expense": 18500,
+        "net_balance": 6500
+      }
+      // ... 12 months
+    ],
+    "year_totals": {
+      "total_income": 300000,
+      "total_expense": 222000,
+      "net_balance": 78000
+    }
+  }
+}
+```
+
+#### Recent Transactions with Pagination
+
+```bash
+# Get recent transactions with pagination
+curl -X GET "http://localhost:3000/api/v1/reports/recent-transactions?limit=10&page=1" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "transactions": [
+      {
+        "transaction_id": 1,
+        "category_name": "Food",
+        "category_note": "Lunch at restaurant",
+        "type": "expense",
+        "amount": 350,
+        "formatted_amount": "-350 Baht",
+        "amount_color": "#EF4444",
+        "date": "2024-03-15",
+        "formatted_date": "Mar 15, 2024"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "total_pages": 5,
+      "total_count": 50,
+      "limit": 10,
+      "has_next": true,
+      "has_previous": false
+    },
+    "summary": {
+      "showing": 10,
+      "total": 50
+    }
+  }
+}
+```
+
+#### Enhanced Expenses by Category
+
+```bash
+# Get expenses with colors for pie charts
+curl -X GET http://localhost:3000/api/v1/reports/expenses-by-category \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "breakdown": [
+      {
+        "category_name": "Food",
+        "amount": 12500,
+        "percent": 41.67,
+        "color": "#FF6384"
+      },
+      {
+        "category_name": "Transport",
+        "amount": 8750,
+        "percent": 29.17,
+        "color": "#36A2EB"
+      }
+    ],
+    "total_expenses": 30000,
+    "summary": {
+      "total_amount": 30000,
+      "currency": "Baht",
+      "categories_count": 3
+    }
+  }
+}
 ```
 
 #### Income vs Expense Analysis
@@ -315,7 +568,7 @@ curl -X GET "http://localhost:3000/api/v1/reports/income-vs-expense?year=2024" \
 
 ### Comprehensive Test Suite
 
-- **315 Total Tests** (174 Unit + 138 Integration + 3 Setup)
+- **323 Total Tests** (174 Unit + 146 Integration + 3 Setup)
 - **100% API Coverage** - All endpoints tested
 - **Zero Database Dependencies** - Mock-based testing
 - **Lightning Fast** - Complete suite runs in ~149ms
@@ -457,12 +710,18 @@ The application follows a **layered architecture** pattern:
 - **Password hashing** using industry-standard algorithms
 - **Role-based access control** (User/Admin permissions)
 - **Protected routes** with middleware authentication
+- **User isolation** - All operations use user_id from JWT token for security
+- **Admin-only endpoints** - Special endpoints for admin access:
+  - `/protected/api/v1/transactions/user/{user_id}` - Admin access to any user's transactions
+  - `/protected/api/v1/budgets/user/{user_id}` - Admin access to any user's budgets
 
 ### Data Security
 - **Input validation** on all endpoints to prevent injection attacks
 - **SQL injection protection** through parameterized queries
 - **CORS configuration** to control cross-origin requests
 - **Rate limiting** to prevent abuse (configurable)
+- **Token-based user identification** - Regular endpoints use JWT token only
+- **Admin parameter validation** - Admin endpoints require both valid admin token and user_id parameter
 
 ### Security Headers
 ```typescript
@@ -1245,7 +1504,7 @@ curl -X GET "http://localhost:3000/api/v1/reports/by-category?start_date=2024-01
 
 ### ชุดทดสอบที่ครบถ้วน
 
-- **315 การทดสอบทั้งหมด** (174 Unit + 138 Integration + 3 Setup)
+- **323 การทดสอบทั้งหมด** (174 Unit + 146 Integration + 3 Setup)
 - **ครอบคลุม API 100%** - ทดสอบ endpoints ทั้งหมด
 - **ไม่ต้องพึ่งฐานข้อมูล** - การทดสอบแบบ Mock
 - **เร็วมาก** - ชุดทดสอบทั้งหมดรันใน ~149ms
@@ -1540,7 +1799,7 @@ git branch -d feature/new-feature
 - **Startup Time**: ~50ms ด้วย Bun runtime
 - **Response Time**: เฉลี่ย <10ms สำหรับ API calls
 - **Memory Usage**: ~30MB baseline memory footprint
-- **Test Execution**: 315 tests ใน ~149ms
+- **Test Execution**: 323 tests ใน ~185ms
 
 ### การปรับปรุงประสิทธิภาพ
 

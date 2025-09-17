@@ -56,11 +56,109 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 ### 🔒 Reports & Analytics
 
-- **GET** `/api/v1/reports/summary` - Financial summary
-- **GET** `/api/v1/reports/recent-transactions` - Recent transactions report
-- **GET** `/api/v1/reports/income-vs-expense` - Income vs expense analysis
-- **GET** `/api/v1/reports/expenses-by-category` - Expenses by category
-- **GET** `/api/v1/reports/monthly-close` - Monthly close report
+#### Dashboard Summary Cards
+
+- **GET** `/api/v1/reports/dashboard` - Get dashboard summary cards for home page
+
+**Query Parameters:**
+
+- `month` (optional): Format YYYY-MM, e.g., "2024-03"
+- `user_id` (optional): UUID for admin access to other user's data
+
+**Responses:**
+
+- **200** Success - Dashboard cards retrieved successfully
+- **400** Bad Request - Invalid month format or parameters
+- **401** Unauthorized - Invalid or missing JWT token
+- **500** Internal Server Error
+
+#### Enhanced Financial Summary
+
+- **GET** `/api/v1/reports/summary` - Get financial summary with annual breakdown support
+
+**Query Parameters:**
+
+- `month` (optional): Format YYYY-MM for monthly summary
+- `range` (optional): "year" for annual breakdown suitable for bar charts
+- `year` (optional): Format YYYY for annual data, e.g., "2024"
+- `user_id` (optional): UUID for admin access to other user's data
+
+**Responses:**
+
+- **200** Success - Financial summary retrieved successfully
+- **400** Bad Request - Invalid date format or parameters
+- **401** Unauthorized - Invalid or missing JWT token
+- **500** Internal Server Error
+
+#### Recent Transactions Report
+
+- **GET** `/api/v1/reports/recent-transactions` - Get paginated recent transactions with formatting
+
+**Query Parameters:**
+
+- `limit` (optional): Number of transactions to return (default: 10, max: 100)
+- `page` (optional): Page number for pagination (default: 1)
+- `user_id` (optional): UUID for admin access to other user's data
+
+**Responses:**
+
+- **200** Success - Recent transactions retrieved successfully
+- **400** Bad Request - Invalid pagination parameters
+- **401** Unauthorized - Invalid or missing JWT token
+- **500** Internal Server Error
+
+#### Income vs Expense Analysis
+
+- **GET** `/api/v1/reports/income-vs-expense` - Get income vs expense comparison
+
+**Query Parameters:**
+
+- `year` (optional): Format YYYY for yearly analysis
+- `month` (optional): Format YYYY-MM for monthly analysis
+- `user_id` (optional): UUID for admin access to other user's data
+
+**Responses:**
+
+- **200** Success - Income vs expense analysis retrieved successfully
+- **400** Bad Request - Invalid date format
+- **401** Unauthorized - Invalid or missing JWT token
+- **500** Internal Server Error
+
+#### Expenses by Category Analysis
+
+- **GET** `/api/v1/reports/expenses-by-category` - Get expenses breakdown by category with colors
+
+**Query Parameters:**
+
+- `month` (optional): Format YYYY-MM for specific month analysis
+- `user_id` (optional): UUID for admin access to other user's data
+
+**Responses:**
+
+- **200** Success - Expenses by category retrieved successfully
+- **400** Bad Request - Invalid month format
+- **401** Unauthorized - Invalid or missing JWT token
+- **500** Internal Server Error
+
+#### Monthly Close Report
+
+- **GET** `/api/v1/reports/monthly-close` - Get monthly closing report
+
+**Query Parameters:**
+
+- `month` (required): Format YYYY-MM for the month to close
+- `user_id` (optional): UUID for admin access to other user's data
+
+**Responses:**
+
+- **200** Success - Monthly close report retrieved successfully
+- **400** Bad Request - Missing or invalid month parameter
+- **401** Unauthorized - Invalid or missing JWT token
+- **500** Internal Server Error
+
+```
+?month=2024-03&user_id=uuid
+```
 
 ### 🔒 User Management (Admin Only)
 
