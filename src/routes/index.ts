@@ -27,7 +27,7 @@ import { authRoutes } from './auth.routes';
 import { categoryRoutes } from './category.routes';
 import { transactionRoutes } from './transaction.routes';
 import { budgetRoutes } from './budget.routes';
-import { homeRoutes } from './home.routes';
+import { reportsRoutes } from './reports.routes';
 import { userRoutes } from './user.routes';
 
 export {
@@ -36,6 +36,6 @@ export {
   categoryRoutes,
   transactionRoutes,
   budgetRoutes,
-  homeRoutes,
+  reportsRoutes,
   userRoutes,
 };

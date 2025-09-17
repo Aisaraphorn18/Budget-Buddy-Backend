@@ -12,6 +12,7 @@
 ## 📚 Table of Contents
 
 ### English Version
+
 - [✨ Features](#-features)
 - [🎯 Getting Started](#-getting-started)
   - [📋 Prerequisites](#-prerequisites)
@@ -37,6 +38,7 @@
 - [📄 License](#-license)
 
 ### Thai Version (ไทย)
+
 - [✨ คุณสมบัติ](#-คุณสมบัติ)
 - [🎯 เริ่มต้นใช้งาน](#-เริ่มต้นใช้งาน)
   - [📋 ความต้องการเบื้องต้น](#-ความต้องการเบื้องต้น)
@@ -48,21 +50,27 @@
 - [🏗️ สถาปัตยกรรมโปรเจค](#️-สถาปัตยกรรมโปรเจค)
 - [🛠️ เทคโนโลยีที่ใช้](#️-เทคโนโลยีที่ใช้)
 - [🧪 การพัฒนาและทดสอบ](#-การพัฒนาและทดสอบ)
-  - [🔧 เวิร์กโฟลว์การพัฒนา](#-เวิร์กโฟลว์การพัฒนา)
-  - [🧪 กลยุทธ์การทดสอบ](#-กลยุทธ์การทดสอบ)
-  - [📊 คุณภาพโค้ด](#-คุณภาพโค้ด)
-- [🛡️ คุณสมบัติด้านความปลอดภัย](#️-คุณสมบัติด้านความปลอดภัย)
-- [🚀 การ Deploy](#-การ-deploy)
-- [🚨 การแก้ไขปัญหา](#-การแก้ไขปัญหา)
-- [🤝 การมีส่วนร่วม](#-การมีส่วนร่วม)
-- [📞 การสนับสนุนและชุมชน](#-การสนับสนุนและชุมชน)
-- [📄 ใบอนุญาต](#-ใบอนุญาต)
 
 ### 📖 Detailed Documentation
-- **[📋 Complete API Documentation (English)](API_DOCUMENTATION_EN.md)** - Complete API reference in English
-- **[📋 เอกสาร API แบบสมบูรณ์ (ไทย)](API_DOCUMENTATION_TH.md)** - เอกสาร API ภาษาไทยแบบละเอียด
-- **[🧪 Testing Documentation](tests/README.md)** - Comprehensive testing guide and examples
+
+- **[📋 API Documentation Index (English)](docs/EN/README.md)** - Complete API reference with detailed routes
+- **[📋 เอกสาร API หลัก (ไทย)](docs/TH/README.md)** - เอกสาร API ภาษาไทยแบบละเอียด
 - **[🌐 Interactive API Explorer](http://localhost:3000/openapi)** - ทดสอบ API แบบ real-time
+
+#### 📚 API Route Documentation
+
+**🔓 Public Routes**
+
+- [🏥 Health Check](docs/EN/routes/health.md) | [ภาษาไทย](docs/TH/routes/health.md)
+- [🔑 Authentication](docs/EN/routes/auth.md) | [ภาษาไทย](docs/TH/routes/auth.md)
+
+**🔒 Protected Routes**
+
+- [📂 Categories](docs/EN/routes/categories.md) | [ภาษาไทย](docs/TH/routes/categories.md)
+- [💸 Transactions](docs/EN/routes/transactions.md) | [ภาษาไทย](docs/TH/routes/transactions.md)
+- [📊 Budgets](docs/EN/routes/budgets.md) | [ภาษาไทย](docs/TH/routes/budgets.md)
+- [📈 Reports & Analytics](docs/EN/routes/reports.md) | [ภาษาไทย](docs/TH/routes/reports.md)
+- [👥 User Management](docs/EN/routes/users.md) | [ภาษาไทย](docs/TH/routes/users.md)
 
 ---
 
@@ -71,13 +79,15 @@
 - 🔐 **JWT Authentication** - Secure authentication with Bearer tokens
 - 💸 **Transaction Management** - Complete CRUD operations for financial records
 - 📊 **Budget Tracking** - Set and monitor spending budgets by category
-- 📈 **Analytics Dashboard** - Comprehensive financial insights and reporting
+- 📈 **Reports & Analytics** - Comprehensive financial insights and reporting with 5 specialized endpoints
 - 🏷️ **Category Management** - Organize transactions with custom categories
+- 👥 **User Management** - Admin features for user administration
 - 🔍 **Advanced Filtering** - Filter by date range, category, amount, and type
 - 📄 **Pagination Support** - Efficient data loading with pagination
 - 📖 **OpenAPI Documentation** - Interactive API documentation with Swagger
 - 🚀 **High Performance** - Built with ElysiaJS for maximum speed
 - 🛡️ **Type Safety** - Full TypeScript implementation with comprehensive commenting
+- 📊 **Winston Logging** - Professional logging with configurable levels
 
 ## 🎯 Getting Started
 
@@ -99,11 +109,13 @@ cd budget-buddy-backend
 #### 📦 Install Dependencies
 
 **Using Bun (Recommended):**
+
 ```bash
 bun install
 ```
 
 **Using npm:**
+
 ```bash
 npm install
 ```
@@ -186,11 +198,13 @@ INSERT INTO Category (category_name) VALUES
 ### 🚀 Run Development Server
 
 **Using Bun (Recommended):**
+
 ```bash
 bun run dev
 ```
 
 **Using npm:**
+
 ```bash
 npm run dev
 ```
@@ -205,65 +219,65 @@ The Budget Buddy API provides comprehensive endpoints for personal finance manag
 
 #### 🔓 Public Endpoints (No Authentication Required)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check |
+| Method | Endpoint                | Description       |
+| ------ | ----------------------- | ----------------- |
+| `GET`  | `/health`               | Health check      |
 | `POST` | `/api/v1/auth/register` | Register new user |
-| `POST` | `/api/v1/auth/login` | User login |
-| `POST` | `/api/v1/auth/logout` | User logout |
-| `GET` | `/api/v1/auth/profile` | Get user profile |
+| `POST` | `/api/v1/auth/login`    | User login        |
+| `POST` | `/api/v1/auth/logout`   | User logout       |
+| `GET`  | `/api/v1/auth/profile`  | Get user profile  |
 
 #### 🔒 Protected Endpoints (JWT Authentication Required)
 
 **📁 Category Management**
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/protected/api/v1/categories` | Get all categories |
-| `GET` | `/protected/api/v1/categories/:id` | Get category by ID |
-| `POST` | `/protected/api/v1/categories` | Create new category |
-| `PATCH` | `/protected/api/v1/categories/:id` | Update category |
-| `DELETE` | `/protected/api/v1/categories/:id` | Delete category |
+| Method   | Endpoint                           | Description         |
+| -------- | ---------------------------------- | ------------------- |
+| `GET`    | `/protected/api/v1/categories`     | Get all categories  |
+| `GET`    | `/protected/api/v1/categories/:id` | Get category by ID  |
+| `POST`   | `/protected/api/v1/categories`     | Create new category |
+| `PATCH`  | `/protected/api/v1/categories/:id` | Update category     |
+| `DELETE` | `/protected/api/v1/categories/:id` | Delete category     |
 
 **💸 Transaction Management**
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/protected/api/v1/transactions` | Create new transaction |
-| `GET` | `/protected/api/v1/transactions` | Get transactions (with filtering) |
-| `GET` | `/protected/api/v1/transactions/:id` | Get transaction by ID |
-| `GET` | `/protected/api/v1/transactions/user/:user_id` | Get transactions by user ID (admin only) |
-| `PATCH` | `/protected/api/v1/transactions/:id` | Update transaction |
-| `DELETE` | `/protected/api/v1/transactions/:id` | Delete transaction |
+| Method   | Endpoint                                       | Description                              |
+| -------- | ---------------------------------------------- | ---------------------------------------- |
+| `POST`   | `/protected/api/v1/transactions`               | Create new transaction                   |
+| `GET`    | `/protected/api/v1/transactions`               | Get transactions (with filtering)        |
+| `GET`    | `/protected/api/v1/transactions/:id`           | Get transaction by ID                    |
+| `GET`    | `/protected/api/v1/transactions/user/:user_id` | Get transactions by user ID (admin only) |
+| `PATCH`  | `/protected/api/v1/transactions/:id`           | Update transaction                       |
+| `DELETE` | `/protected/api/v1/transactions/:id`           | Delete transaction                       |
 
 **📊 Budget Management**
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/protected/api/v1/budgets` | Create new budget |
-| `GET` | `/protected/api/v1/budgets` | Get budgets (with filtering) |
-| `GET` | `/protected/api/v1/budgets/:id` | Get budget by ID |
-| `GET` | `/protected/api/v1/budgets/user/:user_id` | Get budgets by user ID (admin only) |
-| `PATCH` | `/protected/api/v1/budgets/:id` | Update budget |
-| `DELETE` | `/protected/api/v1/budgets/:id` | Delete budget |
+| Method   | Endpoint                                  | Description                         |
+| -------- | ----------------------------------------- | ----------------------------------- |
+| `POST`   | `/protected/api/v1/budgets`               | Create new budget                   |
+| `GET`    | `/protected/api/v1/budgets`               | Get budgets (with filtering)        |
+| `GET`    | `/protected/api/v1/budgets/:id`           | Get budget by ID                    |
+| `GET`    | `/protected/api/v1/budgets/user/:user_id` | Get budgets by user ID (admin only) |
+| `PATCH`  | `/protected/api/v1/budgets/:id`           | Update budget                       |
+| `DELETE` | `/protected/api/v1/budgets/:id`           | Delete budget                       |
 
-**🏠 Home & Analytics**
+**🏠 Reports & Analytics**
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/protected/api/v1/home` | Get dashboard data |
-| `GET` | `/protected/api/v1/recent-transactions` | Get recent transactions |
-| `GET` | `/protected/api/v1/analytics/summary` | Get financial summary |
-| `GET` | `/protected/api/v1/analytics/by-category` | Get analytics by category |
-| `GET` | `/protected/api/v1/analytics/flow` | Get cash flow analytics |
+| Method | Endpoint                                         | Description                    |
+| ------ | ------------------------------------------------ | ------------------------------ |
+| `GET`  | `/protected/api/v1/reports/summary`              | Get financial summary          |
+| `GET`  | `/protected/api/v1/reports/recent-transactions`  | Get recent transactions        |
+| `GET`  | `/protected/api/v1/reports/income-vs-expense`    | Get income vs expense analysis |
+| `GET`  | `/protected/api/v1/reports/expenses-by-category` | Get expenses by category       |
+| `GET`  | `/protected/api/v1/reports/monthly-close`        | Get monthly close report       |
 
 **👥 User Management (Admin Only)**
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/protected/api/v1/users` | Get all users (with search & pagination) |
-| `GET` | `/protected/api/v1/users/:id` | Get user by ID (with stats) |
-| `DELETE` | `/protected/api/v1/users/:id` | Delete user account |
+| Method   | Endpoint                      | Description                              |
+| -------- | ----------------------------- | ---------------------------------------- |
+| `GET`    | `/protected/api/v1/users`     | Get all users (with search & pagination) |
+| `GET`    | `/protected/api/v1/users/:id` | Get user by ID (with stats)              |
+| `DELETE` | `/protected/api/v1/users/:id` | Delete user account                      |
 
 ### 🔑 Authentication
 
@@ -300,16 +314,19 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
 ### 📖 Interactive API Documentation
 
 Access the interactive Swagger documentation at:
+
 - **OpenAPI JSON**: `http://localhost:3000/openapi`
 - **Interactive Docs**: Built-in browsable API interface with ElysiaJS
 
 ### 🔍 Query Parameters
 
 #### Pagination
+
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 10, max: 100)
 
 #### Filtering (Transactions & Budgets)
+
 - `category_id`: Filter by category UUID
 - `type`: Filter by type ('income' or 'expense')
 - `start_date`: Filter from date (YYYY-MM-DD)
@@ -318,6 +335,7 @@ Access the interactive Swagger documentation at:
 - `max_amount`: Maximum amount
 
 #### Example with Filters
+
 ```bash
 GET /protected/api/v1/transactions?page=1&limit=20&type=expense&category_id=uuid&start_date=2024-01-01&end_date=2024-12-31
 ```
@@ -325,11 +343,13 @@ GET /protected/api/v1/transactions?page=1&limit=20&type=expense&category_id=uuid
 ### 🧪 Testing the API
 
 #### Health Check
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 #### Create a Transaction
+
 ```bash
 curl -X POST http://localhost:3000/protected/api/v1/transactions \
   -H "Content-Type: application/json" \
@@ -344,6 +364,7 @@ curl -X POST http://localhost:3000/protected/api/v1/transactions \
 ```
 
 #### Create a Budget
+
 ```bash
 curl -X POST http://localhost:3000/protected/api/v1/budgets \
   -H "Content-Type: application/json" \
@@ -419,6 +440,7 @@ Budget-Buddy-Backend/
 ## 🛠️ Technology Stack
 
 ### Core Technologies
+
 - **Runtime**: Bun (recommended) or Node.js 18+
 - **Framework**: ElysiaJS - High-performance TypeScript web framework
 - **Language**: TypeScript 5.0+ with strict type checking
@@ -426,6 +448,7 @@ Budget-Buddy-Backend/
 - **Authentication**: JSON Web Tokens (JWT)
 
 ### Key Dependencies
+
 - **@elysiajs/cors**: Cross-origin resource sharing
 - **@elysiajs/jwt**: JWT authentication plugin
 - **@supabase/supabase-js**: Supabase client library
@@ -433,6 +456,7 @@ Budget-Buddy-Backend/
 - **zod**: Schema validation and type safety
 
 ### Development Tools
+
 - **TypeScript**: Static type checking
 - **ESLint**: Code linting
 - **Prettier**: Code formatting
@@ -470,11 +494,13 @@ bun test:coverage
 Budget Buddy Backend uses **Bun's built-in test framework** for comprehensive testing without database dependencies:
 
 #### Test Types
+
 - **Unit Tests** - Test individual service methods in isolation
 - **Integration Tests** - Test API endpoints end-to-end
 - **Mock Testing** - All tests use mocked Supabase client (no real database operations)
 
 #### Test Coverage
+
 - ✅ CategoryService business logic
 - ✅ Category API endpoints (CRUD operations)
 - ✅ Authentication and authorization scenarios
@@ -482,6 +508,7 @@ Budget Buddy Backend uses **Bun's built-in test framework** for comprehensive te
 - ✅ HTTP status codes and response formats
 
 #### Test Structure
+
 ```
 tests/
 ├── unit/                          # Unit tests for services
@@ -495,11 +522,12 @@ tests/
 ```
 
 #### Running Specific Tests
+
 ```bash
 # Run CategoryService unit tests
 bun test tests/unit/category.service.bun.test.ts
 
-# Run Category API integration tests  
+# Run Category API integration tests
 bun test tests/integration/category.api.test.ts
 
 # Run all category-related tests
@@ -507,6 +535,7 @@ bun test tests/ --match="*category*"
 ```
 
 #### Mock Features
+
 - **No Database Operations** - All tests run without real INSERT/UPDATE/DELETE
 - **Controlled Responses** - Predictable test data and scenarios
 - **Authentication Mocking** - Test protected routes without real JWT tokens
@@ -530,6 +559,7 @@ prettier --write src/**/*.ts
 ### 🚨 Error Handling
 
 The API implements comprehensive error handling:
+
 - **400 Bad Request**: Invalid input data
 - **401 Unauthorized**: Missing or invalid JWT token
 - **403 Forbidden**: Insufficient permissions
@@ -557,18 +587,21 @@ The API implements comprehensive error handling:
 ## 🛡️ Security Features
 
 ### 🔐 Authentication & Authorization
+
 - **JWT-based authentication** with secure token generation
 - **Password hashing** using bcrypt with salt rounds
 - **Protected routes** requiring valid JWT tokens
 - **Token expiration** for enhanced security
 
 ### 🛡️ Data Protection
+
 - **Input validation** using Zod schemas
 - **SQL injection prevention** through parameterized queries
 - **CORS configuration** for cross-origin security
 - **Environment variable protection** for sensitive data
 
 ### 🔒 Best Practices
+
 - **Never store passwords in plain text**
 - **Secure JWT secret management**
 - **Database connection security** with SSL
@@ -579,11 +612,13 @@ The API implements comprehensive error handling:
 ### 📦 Build for Production
 
 **Using Bun:**
+
 ```bash
 bun run build
 ```
 
 **Using npm:**
+
 ```bash
 npm run build
 ```
@@ -602,16 +637,19 @@ PORT=3000
 ### ☁️ Deploy to Cloud Platforms
 
 #### Vercel Deployment
+
 1. Connect your GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Deploy with automatic builds
 
 #### Railway Deployment
+
 1. Connect repository to Railway
 2. Add environment variables
 3. Deploy with zero configuration
 
 #### Render Deployment
+
 1. Connect GitHub repository
 2. Set environment variables
 3. Configure build and start commands
@@ -619,6 +657,7 @@ PORT=3000
 ### 🐳 Docker Deployment
 
 Create a `Dockerfile`:
+
 ```dockerfile
 FROM oven/bun:latest
 
@@ -635,6 +674,7 @@ CMD ["bun", "run", "start"]
 ```
 
 Build and run:
+
 ```bash
 docker build -t budget-buddy-backend .
 docker run -p 3000:3000 budget-buddy-backend
@@ -645,6 +685,7 @@ docker run -p 3000:3000 budget-buddy-backend
 ### Common Issues
 
 #### 1. Connection Issues
+
 ```bash
 # Check environment variables
 cat .env
@@ -654,6 +695,7 @@ curl -H "apikey: YOUR_ANON_KEY" https://your-project.supabase.co/rest/v1/
 ```
 
 #### 2. JWT Token Issues
+
 ```bash
 # Verify JWT secret is set
 echo $JWT_SECRET
@@ -663,12 +705,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 #### 3. Database Schema Issues
+
 ```bash
 # Verify tables exist in Supabase
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 ```
 
 #### 4. Port Conflicts
+
 ```bash
 # Check if port 3000 is in use
 netstat -tulpn | grep :3000
@@ -733,6 +777,7 @@ PORT=3001 bun run dev
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ### MIT License Summary
+
 - ✅ Commercial use
 - ✅ Modification
 - ✅ Distribution
@@ -779,11 +824,13 @@ cd budget-buddy-backend
 ##### 📦 ติดตั้ง Dependencies
 
 **ใช้ Bun (แนะนำ):**
+
 ```bash
 bun install
 ```
 
 **ใช้ npm:**
+
 ```bash
 npm install
 ```
@@ -866,11 +913,13 @@ INSERT INTO Category (category_name) VALUES
 #### �🚀 เริ่มต้น Development Server
 
 **ใช้ Bun (แนะนำ):**
+
 ```bash
 bun run dev
 ```
 
 **ใช้ npm:**
+
 ```bash
 npm run dev
 ```
@@ -881,65 +930,65 @@ npm run dev
 
 #### 🔓 Public Endpoints (ไม่ต้องยืนยันตัวตน)
 
-| Method | Endpoint | คำอธิบาย |
-|--------|----------|----------|
-| `GET` | `/health` | ตรวจสอบสถานะเซิร์ฟเวอร์ |
-| `POST` | `/api/v1/auth/register` | สมัครสมาชิกใหม่ |
-| `POST` | `/api/v1/auth/login` | เข้าสู่ระบบ |
-| `POST` | `/api/v1/auth/logout` | ออกจากระบบ |
-| `GET` | `/api/v1/auth/profile` | ดูโปรไฟล์ผู้ใช้ |
+| Method | Endpoint                | คำอธิบาย                |
+| ------ | ----------------------- | ----------------------- |
+| `GET`  | `/health`               | ตรวจสอบสถานะเซิร์ฟเวอร์ |
+| `POST` | `/api/v1/auth/register` | สมัครสมาชิกใหม่         |
+| `POST` | `/api/v1/auth/login`    | เข้าสู่ระบบ             |
+| `POST` | `/api/v1/auth/logout`   | ออกจากระบบ              |
+| `GET`  | `/api/v1/auth/profile`  | ดูโปรไฟล์ผู้ใช้         |
 
 #### 🔒 Protected Endpoints (ต้องยืนยันตัวตนด้วย JWT)
 
 **📁 จัดการหมวดหมู่**
 
-| Method | Endpoint | คำอธิบาย |
-|--------|----------|----------|
-| `GET` | `/protected/api/v1/categories` | ดูหมวดหมู่ทั้งหมด |
-| `GET` | `/protected/api/v1/categories/:id` | ดูหมวดหมู่ตาม ID |
-| `POST` | `/protected/api/v1/categories` | สร้างหมวดหมู่ใหม่ |
-| `PATCH` | `/protected/api/v1/categories/:id` | แก้ไขหมวดหมู่ |
-| `DELETE` | `/protected/api/v1/categories/:id` | ลบหมวดหมู่ |
+| Method   | Endpoint                           | คำอธิบาย          |
+| -------- | ---------------------------------- | ----------------- |
+| `GET`    | `/protected/api/v1/categories`     | ดูหมวดหมู่ทั้งหมด |
+| `GET`    | `/protected/api/v1/categories/:id` | ดูหมวดหมู่ตาม ID  |
+| `POST`   | `/protected/api/v1/categories`     | สร้างหมวดหมู่ใหม่ |
+| `PATCH`  | `/protected/api/v1/categories/:id` | แก้ไขหมวดหมู่     |
+| `DELETE` | `/protected/api/v1/categories/:id` | ลบหมวดหมู่        |
 
 **💸 จัดการรายการเงิน**
 
-| Method | Endpoint | คำอธิบาย |
-|--------|----------|----------|
-| `POST` | `/protected/api/v1/transactions` | สร้างรายการเงินใหม่ |
-| `GET` | `/protected/api/v1/transactions` | ดูรายการเงิน (มีการกรอง) |
-| `GET` | `/protected/api/v1/transactions/:id` | ดูรายการเงินตาม ID |
-| `GET` | `/protected/api/v1/transactions/user/:user_id` | ดูรายการเงินตาม user ID (admin เท่านั้น) |
-| `PATCH` | `/protected/api/v1/transactions/:id` | แก้ไขรายการเงิน |
-| `DELETE` | `/protected/api/v1/transactions/:id` | ลบรายการเงิน |
+| Method   | Endpoint                                       | คำอธิบาย                                 |
+| -------- | ---------------------------------------------- | ---------------------------------------- |
+| `POST`   | `/protected/api/v1/transactions`               | สร้างรายการเงินใหม่                      |
+| `GET`    | `/protected/api/v1/transactions`               | ดูรายการเงิน (มีการกรอง)                 |
+| `GET`    | `/protected/api/v1/transactions/:id`           | ดูรายการเงินตาม ID                       |
+| `GET`    | `/protected/api/v1/transactions/user/:user_id` | ดูรายการเงินตาม user ID (admin เท่านั้น) |
+| `PATCH`  | `/protected/api/v1/transactions/:id`           | แก้ไขรายการเงิน                          |
+| `DELETE` | `/protected/api/v1/transactions/:id`           | ลบรายการเงิน                             |
 
 **📊 จัดการงบประมาณ**
 
-| Method | Endpoint | คำอธิบาย |
-|--------|----------|----------|
-| `POST` | `/protected/api/v1/budgets` | สร้างงบประมาณใหม่ |
-| `GET` | `/protected/api/v1/budgets` | ดูงบประมาณ (มีการกรอง) |
-| `GET` | `/protected/api/v1/budgets/:id` | ดูงบประมาณตาม ID |
-| `GET` | `/protected/api/v1/budgets/user/:user_id` | ดูงบประมาณตาม user ID (admin เท่านั้น) |
-| `PATCH` | `/protected/api/v1/budgets/:id` | แก้ไขงบประมาณ |
-| `DELETE` | `/protected/api/v1/budgets/:id` | ลบงบประมาณ |
+| Method   | Endpoint                                  | คำอธิบาย                               |
+| -------- | ----------------------------------------- | -------------------------------------- |
+| `POST`   | `/protected/api/v1/budgets`               | สร้างงบประมาณใหม่                      |
+| `GET`    | `/protected/api/v1/budgets`               | ดูงบประมาณ (มีการกรอง)                 |
+| `GET`    | `/protected/api/v1/budgets/:id`           | ดูงบประมาณตาม ID                       |
+| `GET`    | `/protected/api/v1/budgets/user/:user_id` | ดูงบประมาณตาม user ID (admin เท่านั้น) |
+| `PATCH`  | `/protected/api/v1/budgets/:id`           | แก้ไขงบประมาณ                          |
+| `DELETE` | `/protected/api/v1/budgets/:id`           | ลบงบประมาณ                             |
 
-**🏠 หน้าหลักและการวิเคราะห์**
+**🏠 รายงานและการวิเคราะห์**
 
-| Method | Endpoint | คำอธิบาย |
-|--------|----------|----------|
-| `GET` | `/protected/api/v1/home` | ข้อมูลแดชบอร์ด |
-| `GET` | `/protected/api/v1/recent-transactions` | รายการเงินล่าสุด |
-| `GET` | `/protected/api/v1/analytics/summary` | สรุปการเงิน |
-| `GET` | `/protected/api/v1/analytics/by-category` | วิเคราะห์ตามหมวดหมู่ |
-| `GET` | `/protected/api/v1/analytics/flow` | วิเคราะห์กระแสเงินสด |
+| Method | Endpoint                                         | คำอธิบาย                  |
+| ------ | ------------------------------------------------ | ------------------------- |
+| `GET`  | `/protected/api/v1/reports/summary`              | สรุปการเงิน               |
+| `GET`  | `/protected/api/v1/reports/recent-transactions`  | ธุรกรรมล่าสุด             |
+| `GET`  | `/protected/api/v1/reports/income-vs-expense`    | เปรียบเทียบรายรับ-รายจ่าย |
+| `GET`  | `/protected/api/v1/reports/expenses-by-category` | รายจ่ายตามหมวดหมู่        |
+| `GET`  | `/protected/api/v1/reports/monthly-close`        | รายงานปิดเดือน            |
 
 **👥 จัดการผู้ใช้ (Admin เท่านั้น)**
 
-| Method | Endpoint | คำอธิบาย |
-|--------|----------|----------|
-| `GET` | `/protected/api/v1/users` | ดูผู้ใช้ทั้งหมด (มีค้นหาและแบ่งหน้า) |
-| `GET` | `/protected/api/v1/users/:id` | ดูผู้ใช้ตาม ID (พร้อมสถิติ) |
-| `DELETE` | `/protected/api/v1/users/:id` | ลบบัญชีผู้ใช้ |
+| Method   | Endpoint                      | คำอธิบาย                             |
+| -------- | ----------------------------- | ------------------------------------ |
+| `GET`    | `/protected/api/v1/users`     | ดูผู้ใช้ทั้งหมด (มีค้นหาและแบ่งหน้า) |
+| `GET`    | `/protected/api/v1/users/:id` | ดูผู้ใช้ตาม ID (พร้อมสถิติ)          |
+| `DELETE` | `/protected/api/v1/users/:id` | ลบบัญชีผู้ใช้                        |
 
 #### 🔑 การยืนยันตัวตน
 
@@ -976,16 +1025,19 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
 #### 📖 เอกสาร API แบบ Interactive
 
 เข้าถึงเอกสาร Swagger ได้ที่:
+
 - **OpenAPI JSON**: `http://localhost:3000/openapi`
 - **Interactive Docs**: อินเทอร์เฟซแบบ browsable ที่มาพร้อมกับ ElysiaJS
 
 #### 🔍 Query Parameters
 
 ##### Pagination
+
 - `page`: หมายเลขหน้า (ค่าเริ่มต้น: 1)
 - `limit`: จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 10, สูงสุด: 100)
 
 ##### การกรอง (Transactions & Budgets)
+
 - `category_id`: กรองตาม UUID ของหมวดหมู่
 - `type`: กรองตามประเภท ('income' หรือ 'expense')
 - `start_date`: กรองจากวันที่ (YYYY-MM-DD)
@@ -994,6 +1046,7 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
 - `max_amount`: จำนวนเงินสูงสุด
 
 ##### ตัวอย่างการใช้ Filter
+
 ```bash
 GET /protected/api/v1/transactions?page=1&limit=20&type=expense&category_id=uuid&start_date=2024-01-01&end_date=2024-12-31
 ```
@@ -1001,11 +1054,13 @@ GET /protected/api/v1/transactions?page=1&limit=20&type=expense&category_id=uuid
 #### 🧪 ทดสอบ API
 
 ##### Health Check
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 ##### สร้างรายการเงิน
+
 ```bash
 curl -X POST http://localhost:3000/protected/api/v1/transactions \
   -H "Content-Type: application/json" \
@@ -1020,6 +1075,7 @@ curl -X POST http://localhost:3000/protected/api/v1/transactions \
 ```
 
 ##### สร้างงบประมาณ
+
 ```bash
 curl -X POST http://localhost:3000/protected/api/v1/budgets \
   -H "Content-Type: application/json" \
@@ -1095,6 +1151,7 @@ Budget-Buddy-Backend/
 ### 🛠️ เทคโนโลยีที่ใช้
 
 #### เทคโนโลยีหลัก
+
 - **Runtime**: Bun (แนะนำ) หรือ Node.js 18+
 - **Framework**: ElysiaJS - เว็บเฟรมเวิร์ก TypeScript ประสิทธิภาพสูง
 - **Language**: TypeScript 5.0+ พร้อมการตรวจสอบประเภทที่เข้มงวด
@@ -1102,6 +1159,7 @@ Budget-Buddy-Backend/
 - **Authentication**: JSON Web Tokens (JWT)
 
 #### Dependencies สำคัญ
+
 - **@elysiajs/cors**: การแบ่งปันทรัพยากรข้ามต้นทาง
 - **@elysiajs/jwt**: ปลั๊กอิน JWT authentication
 - **@supabase/supabase-js**: ไลบรารีไคลเอนต์ Supabase
@@ -1109,6 +1167,7 @@ Budget-Buddy-Backend/
 - **zod**: การตรวจสอบ schema และความปลอดภัยของประเภท
 
 #### เครื่องมือพัฒนา
+
 - **TypeScript**: การตรวจสอบประเภทแบบ static
 - **ESLint**: Code linting
 - **Prettier**: การจัดรูปแบบโค้ด
@@ -1146,11 +1205,13 @@ bun test:coverage
 Budget Buddy Backend ใช้ **เฟรมเวิร์กการทดสอบของ Bun** สำหรับการทดสอบที่ครอบคลุมโดยไม่พึ่งพาฐานข้อมูล:
 
 ##### ประเภทการทดสอบ
+
 - **Unit Tests** - ทดสอบเมธอดของ service แต่ละตัวแยกกัน
 - **Integration Tests** - ทดสอบ API endpoints แบบ end-to-end
 - **Mock Testing** - การทดสอบทั้งหมดใช้ mock Supabase client (ไม่มีการใช้ฐานข้อมูลจริง)
 
 ##### ขอบเขตการทดสอบ
+
 - ✅ Business logic ของ CategoryService
 - ✅ Category API endpoints (การดำเนินการ CRUD)
 - ✅ สถานการณ์การยืนยันตัวตนและการอนุญาต
@@ -1158,6 +1219,7 @@ Budget Buddy Backend ใช้ **เฟรมเวิร์กการทด�
 - ✅ HTTP status codes และรูปแบบการตอบสนอง
 
 ##### โครงสร้างการทดสอบ
+
 ```
 tests/
 ├── unit/                          # Unit tests สำหรับ services
@@ -1171,11 +1233,12 @@ tests/
 ```
 
 ##### การรันการทดสอบเฉพาะ
+
 ```bash
 # รัน CategoryService unit tests
 bun test tests/unit/category.service.bun.test.ts
 
-# รัน Category API integration tests  
+# รัน Category API integration tests
 bun test tests/integration/category.api.test.ts
 
 # รันการทดสอบที่เกี่ยวข้องกับ category ทั้งหมด
@@ -1183,6 +1246,7 @@ bun test tests/ --match="*category*"
 ```
 
 ##### คุณสมบัติ Mock
+
 - **ไม่มีการดำเนินการฐานข้อมูล** - การทดสอบทั้งหมดรันโดยไม่ต้องทำ INSERT/UPDATE/DELETE จริง
 - **การตอบสนองที่ควบคุมได้** - ข้อมูลการทดสอบและสถานการณ์ที่คาดเดาได้
 - **การ Mock การยืนยันตัวตน** - ทดสอบเส้นทางที่ได้รับการป้องกันโดยไม่ต้องใช้ JWT tokens จริง
@@ -1206,6 +1270,7 @@ prettier --write src/**/*.ts
 #### 🚨 การจัดการข้อผิดพลาด
 
 API ใช้การจัดการข้อผิดพลาดที่ครอบคลุม:
+
 - **400 Bad Request**: ข้อมูลอินพุตไม่ถูกต้อง
 - **401 Unauthorized**: ขาด JWT token หรือไม่ถูกต้อง
 - **403 Forbidden**: สิทธิ์ไม่เพียงพอ
@@ -1233,18 +1298,21 @@ API ใช้การจัดการข้อผิดพลาดที่�
 ### 🛡️ คุณสมบัติด้านความปลอดภัย
 
 #### 🔐 การยืนยันตัวตนและการอนุญาต
+
 - **การยืนยันตัวตนตาม JWT** พร้อมการสร้างโทเค็นที่ปลอดภัย
 - **การแฮชรหัสผ่าน** โดยใช้ bcrypt พร้อม salt rounds
 - **เส้นทางที่ได้รับการป้องกัน** ต้องใช้ JWT tokens ที่ถูกต้อง
 - **การหมดอายุของโทเค็น** เพื่อความปลอดภัยที่เพิ่มขึ้น
 
 #### 🛡️ การป้องกันข้อมูล
+
 - **การตรวจสอบอินพุต** โดยใช้ Zod schemas
 - **การป้องกัน SQL injection** ผ่านพารามิเตอร์ query
 - **การกำหนดค่า CORS** สำหรับความปลอดภัยข้ามต้นทาง
 - **การป้องกันตัวแปรสภาพแวดล้อม** สำหรับข้อมูลที่ละเอียดอ่อน
 
 #### 🔒 แนวปฏิบัติที่ดีที่สุด
+
 - **ไม่เก็บรหัสผ่านในรูปแบบข้อความธรรมดา**
 - **การจัดการ JWT secret ที่ปลอดภัย**
 - **ความปลอดภัยการเชื่อมต่อฐานข้อมูล** ด้วย SSL
@@ -1255,11 +1323,13 @@ API ใช้การจัดการข้อผิดพลาดที่�
 #### 📦 สร้างสำหรับ Production
 
 **ใช้ Bun:**
+
 ```bash
 bun run build
 ```
 
 **ใช้ npm:**
+
 ```bash
 npm run build
 ```
@@ -1278,16 +1348,19 @@ PORT=3000
 #### ☁️ Deploy ไป Cloud Platforms
 
 ##### การ Deploy ด้วย Vercel
+
 1. เชื่อมต่อ GitHub repository ของคุณกับ Vercel
 2. ตั้งค่าตัวแปรสภาพแวดล้อมใน Vercel dashboard
 3. Deploy ด้วยการสร้างอัตโนมัติ
 
 ##### การ Deploy ด้วย Railway
+
 1. เชื่อมต่อ repository กับ Railway
 2. เพิ่มตัวแปรสภาพแวดล้อม
 3. Deploy ด้วยการกำหนดค่าศูนย์
 
 ##### การ Deploy ด้วย Render
+
 1. เชื่อมต่อ GitHub repository
 2. ตั้งค่าตัวแปรสภาพแวดล้อม
 3. กำหนดค่าคำสั่ง build และ start
@@ -1295,6 +1368,7 @@ PORT=3000
 #### 🐳 การ Deploy ด้วย Docker
 
 สร้าง `Dockerfile`:
+
 ```dockerfile
 FROM oven/bun:latest
 
@@ -1311,6 +1385,7 @@ CMD ["bun", "run", "start"]
 ```
 
 Build และ run:
+
 ```bash
 docker build -t budget-buddy-backend .
 docker run -p 3000:3000 budget-buddy-backend
@@ -1321,6 +1396,7 @@ docker run -p 3000:3000 budget-buddy-backend
 #### ปัญหาที่พบบ่อย
 
 ##### 1. ปัญหาการเชื่อมต่อ
+
 ```bash
 # ตรวจสอบตัวแปรสภาพแวดล้อม
 cat .env
@@ -1330,6 +1406,7 @@ curl -H "apikey: YOUR_ANON_KEY" https://your-project.supabase.co/rest/v1/
 ```
 
 ##### 2. ปัญหา JWT Token
+
 ```bash
 # ตรวจสอบว่าตั้งค่า JWT secret แล้ว
 echo $JWT_SECRET
@@ -1339,12 +1416,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ##### 3. ปัญหา Database Schema
+
 ```bash
 # ตรวจสอบว่าตารางมีอยู่ใน Supabase
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 ```
 
 ##### 4. ความขุ่นแปลงของ Port
+
 ```bash
 # ตรวจสอบว่า port 3000 ถูกใช้งานหรือไม่
 netstat -tulpn | grep :3000
@@ -1409,6 +1488,7 @@ PORT=3001 bun run dev
 โปรเจคนี้ได้รับอนุญาตภายใต้ **MIT License** - ดูไฟล์ [LICENSE](LICENSE) สำหรับรายละเอียด
 
 #### สรุป MIT License
+
 - ✅ การใช้เชิงพาณิชย์
 - ✅ การดัดแปลง
 - ✅ การกระจาย
@@ -1423,6 +1503,8 @@ PORT=3001 bun run dev
 ### 🌟 ขอบคุณที่ใช้ Budget Buddy Backend API! 🌟
 
 สร้างด้วย ❤️ โดยทีม Budget Buddy
+
+**[📖 API Documentation (TH)](docs/TH/API_DOCUMENTATION.md)** • **[📖 API Documentation (EN)](docs/EN/API_DOCUMENTATION.md)** • **[🌐 Interactive API Explorer](http://localhost:3000/openapi)**
 
 **[⭐ Star repo นี้](https://github.com/your-username/budget-buddy-backend)** • **[🐛 รายงานบัก](https://github.com/your-username/budget-buddy-backend/issues)** • **[💡 ขอคุณสมบัติ](https://github.com/your-username/budget-buddy-backend/issues)**
 

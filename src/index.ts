@@ -43,7 +43,7 @@ import {
   categoryRoutes, // Category management (public read-only)
   transactionRoutes, // Transaction CRUD operations (protected)
   budgetRoutes, // Budget management (protected)
-  homeRoutes, // Dashboard and analytics (protected)
+  reportsRoutes, // Reports and analytics (protected)
   userRoutes, // User management (protected, admin-only)
 } from './routes';
 import logger from './utils/logger';
@@ -81,8 +81,8 @@ const app = new Elysia()
           },
           { name: 'Budgets', description: 'Budget management operations' },
           {
-            name: 'Home & Analytics',
-            description: 'Dashboard and analytics operations',
+            name: 'Reports',
+            description: 'Report and analytics operations',
           },
           {
             name: 'User Management',
@@ -162,7 +162,7 @@ const app = new Elysia()
         .use(categoryRoutes) // Category management operations
         .use(transactionRoutes) // Transaction CRUD operations
         .use(budgetRoutes) // Budget management operations
-        .use(homeRoutes) // Dashboard and analytics operations
+        .use(reportsRoutes) // Reports and analytics operations
         .use(userRoutes) // User management operations (admin-only)
   )
 
@@ -236,12 +236,12 @@ logger.info(`
   PATCH  /protected/api/v1/budgets/:id     - Update budget
   DELETE /protected/api/v1/budgets/:id     - Delete budget
 
-🏠 Home & Analytics:
-  GET    /protected/api/v1/home             - Get home dashboard data
-  GET    /protected/api/v1/recent-transactions - Get recent transactions
-  GET    /protected/api/v1/analytics/summary - Get analytics summary
-  GET    /protected/api/v1/analytics/by-category - Get analytics by category
-  GET    /protected/api/v1/analytics/flow   - Get analytics flow
+🏠 Reports & Analytics:
+  GET    /protected/api/v1/reports/summary           - Get financial summary
+  GET    /protected/api/v1/reports/recent-transactions - Get recent transactions
+  GET    /protected/api/v1/reports/income-vs-expense - Get income vs expense analysis
+  GET    /protected/api/v1/reports/expenses-by-category - Get expenses by category
+  GET    /protected/api/v1/reports/monthly-close     - Get monthly close report
 
 👥 User Management (Admin Only):
   GET    /protected/api/v1/users           - Get all users (with search & pagination)
