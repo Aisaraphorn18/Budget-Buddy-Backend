@@ -21,7 +21,13 @@
  */
 
 import { supabase } from '../config/supabase';
-import { Budget, CreateBudgetData, UpdateBudgetData, BudgetFilters } from '../models/budget.model';
+import {
+  Budget,
+  CreateBudgetData,
+  UpdateBudgetData,
+  BudgetFilters,
+  BudgetWithCategory,
+} from '../models/budget.model';
 
 export class BudgetService {
   /**
@@ -302,12 +308,23 @@ export class BudgetService {
       const endDate = `${cycleMonth}-31`;
 
       const results = await Promise.all(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         budgets.map(async (budget: any) => {
+          // Cast to proper type for processing
+          const budgetWithCategory: BudgetWithCategory = {
+            budget_id: budget.budget_id,
+            category_id: budget.category_id,
+            budget_amount: budget.budget_amount,
+            Category: {
+              category_name: budget.Category[0]?.category_name || '',
+            },
+          };
+
           const { data: transactions, error: transactionError } = await supabase
             .from('Transaction')
             .select('amount')
             .eq('user_id', userId)
-            .eq('category_id', budget.category_id)
+            .eq('category_id', budgetWithCategory.category_id)
             .eq('type', 'expense')
             .gte('created_at', startDate)
             .lte('created_at', endDate);
@@ -321,15 +338,17 @@ export class BudgetService {
             0
           );
 
-          const remainingAmount = budget.budget_amount - spentAmount;
+          const remainingAmount = budgetWithCategory.budget_amount - spentAmount;
           const percentageUsed =
-            budget.budget_amount > 0 ? (spentAmount / budget.budget_amount) * 100 : 0;
+            budgetWithCategory.budget_amount > 0
+              ? (spentAmount / budgetWithCategory.budget_amount) * 100
+              : 0;
 
           return {
-            budget_id: budget.budget_id,
-            category_id: budget.category_id,
-            category_name: budget.Category?.category_name || 'Unknown',
-            budget_amount: budget.budget_amount,
+            budget_id: budgetWithCategory.budget_id,
+            category_id: budgetWithCategory.category_id,
+            category_name: budgetWithCategory.Category?.category_name || 'Unknown',
+            budget_amount: budgetWithCategory.budget_amount,
             spent_amount: spentAmount,
             remaining_amount: remainingAmount,
             percentage_used: Math.round(percentageUsed * 100) / 100,
@@ -379,8 +398,8 @@ export class BudgetService {
       const budgetOverview = budgets.map(budget => {
         const spending =
           budget.transactions
-            ?.filter((t: any) => t.amount < 0) // Only expense transactions
-            .reduce((sum: number, t: any) => sum + Math.abs(t.amount), 0) || 0;
+            ?.filter((t: { amount: number }) => t.amount < 0) // Only expense transactions
+            .reduce((sum: number, t: { amount: number }) => sum + Math.abs(t.amount), 0) || 0;
 
         return {
           ...budget,

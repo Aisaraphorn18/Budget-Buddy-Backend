@@ -1,7 +1,11 @@
 /**
  * Home & Analytics Routes
  *
- * Defines HTTP endpoints for dashboard and analytics functionality in Budget Buddy.
+ * Defines HTTP en        return await homeController.getHomeData(withAuth(context));
+      } catch (error) {
+        console.error('Error in get home data route:', error);i        return await homeController.getHomeDataByUserId(withAuth(context));
+      } catch (error) {
+        console.error('Error in get home data by user ID route:', error); for dashboard and analytics functionality in Budget Buddy.
  * All home routes are protected and require JWT authentication.
  * These endpoints provide comprehensive financial insights, summaries,
  * and dashboard data to help users understand their financial situation.
@@ -40,6 +44,7 @@
 
 import { Elysia, t } from 'elysia';
 import { HomeController } from '../controllers/home.controller';
+import { withAuth } from '../types/elysia.types';
 
 const homeController = new HomeController();
 
@@ -49,7 +54,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
     '/home',
     async context => {
       try {
-        return await homeController.getHomeData(context);
+        return await homeController.getHomeData(withAuth(context));
       } catch (error) {
         console.error('Error in home data route:', error);
         return {
@@ -75,7 +80,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
     '/recent-transactions',
     async context => {
       try {
-        return await homeController.getRecentTransactions(context);
+        return await homeController.getRecentTransactions(withAuth(context));
       } catch (error) {
         console.error('Error in recent transactions route:', error);
         return {
@@ -104,7 +109,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
     '/analytics/summary',
     async context => {
       try {
-        return await homeController.getAnalyticsSummary(context);
+        return await homeController.getAnalyticsSummary(withAuth(context));
       } catch (error) {
         console.error('Error in analytics summary route:', error);
         return {
@@ -133,7 +138,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
     '/analytics/by-category',
     async context => {
       try {
-        return await homeController.getAnalyticsByCategory(context);
+        return await homeController.getAnalyticsByCategory(withAuth(context));
       } catch (error) {
         console.error('Error in analytics by category route:', error);
         return {
@@ -163,7 +168,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
     '/analytics/flow',
     async context => {
       try {
-        return await homeController.getAnalyticsFlow(context);
+        return await homeController.getAnalyticsFlow(withAuth(context));
       } catch (error) {
         console.error('Error in analytics flow route:', error);
         return {
@@ -202,7 +207,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
             data: null,
           };
         }
-        return await homeController.getHomeDataByUserId(context);
+        return await homeController.getHomeDataByUserId(withAuth(context));
       } catch (error) {
         console.error('Error in home data by user ID route:', error);
         return {
@@ -239,7 +244,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
             data: null,
           };
         }
-        return await homeController.getRecentTransactionsByUserId(context);
+        return await homeController.getRecentTransactionsByUserId(withAuth(context));
       } catch (error) {
         console.error('Error in recent transactions by user ID route:', error);
         return {
@@ -274,7 +279,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         if (!userId || userId.trim() === '') {
           return { success: false, message: 'Invalid user ID. User ID is required.', data: null };
         }
-        return await homeController.getAnalyticsSummaryByUserId(context);
+        return await homeController.getAnalyticsSummaryByUserId(withAuth(context));
       } catch (error) {
         console.error('Error in analytics summary by user ID route:', error);
         return {
@@ -309,7 +314,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         if (!userId || userId.trim() === '') {
           return { success: false, message: 'Invalid user ID. User ID is required.', data: null };
         }
-        return await homeController.getAnalyticsByCategoryByUserId(context);
+        return await homeController.getAnalyticsByCategoryByUserId(withAuth(context));
       } catch (error) {
         console.error('Error in analytics by category by user ID route:', error);
         return {
@@ -345,7 +350,7 @@ export const homeRoutes = new Elysia({ prefix: '/api/v1' })
         if (!userId || userId.trim() === '') {
           return { success: false, message: 'Invalid user ID. User ID is required.', data: null };
         }
-        return await homeController.getAnalyticsFlowByUserId(context);
+        return await homeController.getAnalyticsFlowByUserId(withAuth(context));
       } catch (error) {
         console.error('Error in analytics flow by user ID route:', error);
         return {

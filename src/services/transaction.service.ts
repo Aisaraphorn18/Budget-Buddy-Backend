@@ -413,6 +413,7 @@ export class TransactionService {
       // Group by category
       const categoryMap = new Map();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (data || []).forEach((transaction: any) => {
         const categoryId = transaction.category_id;
         const categoryName = transaction.Category?.category_name || 'Unknown';
@@ -540,6 +541,7 @@ export class TransactionService {
 
       transactions?.forEach(transaction => {
         const categoryId = transaction.category_id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const categoryName = (transaction as any).Category?.category_name || 'Unknown';
 
         if (!categoryMap.has(categoryId)) {

@@ -17,6 +17,8 @@
  */
 
 import { CategoryService } from '../services/category.service';
+import type { ElysiaContext, AuthContext } from '../types/elysia.types';
+import type { CreateCategoryData, UpdateCategoryData } from '../models/category.model';
 
 export class CategoryController {
   private categoryService: CategoryService;
@@ -32,7 +34,7 @@ export class CategoryController {
    * @param context - Elysia context (no authentication required)
    * @returns Array of all categories ordered by ID
    */
-  async getAllCategories(context: any) {
+  async getAllCategories(context: ElysiaContext) {
     try {
       const categories = await this.categoryService.getAllCategories();
 
@@ -60,7 +62,7 @@ export class CategoryController {
    * @param context - Elysia context with category ID parameter
    * @returns Category object or error if not found
    */
-  async getCategoryById(context: any) {
+  async getCategoryById(context: ElysiaContext) {
     try {
       const categoryId = parseInt(context.params.id);
 
@@ -105,11 +107,11 @@ export class CategoryController {
    * @param context - Elysia context with category data in body
    * @returns Created category object or error
    */
-  async createCategory(context: any) {
+  async createCategory(context: AuthContext) {
     try {
-      const categoryData = context.body;
+      const { category_name } = context.body as CreateCategoryData;
 
-      if (!categoryData.category_name || categoryData.category_name.trim() === '') {
+      if (!category_name || category_name.trim() === '') {
         context.set.status = 400;
         return {
           success: false,
@@ -118,7 +120,7 @@ export class CategoryController {
       }
 
       const category = await this.categoryService.createCategory({
-        category_name: categoryData.category_name.trim(),
+        category_name: category_name.trim(),
       });
 
       context.set.status = 201;
@@ -155,10 +157,10 @@ export class CategoryController {
    * @param context - Elysia context with category ID and update data
    * @returns Updated category object or error
    */
-  async updateCategory(context: any) {
+  async updateCategory(context: AuthContext) {
     try {
       const categoryId = parseInt(context.params.id);
-      const updateData = context.body;
+      const updateData = context.body as UpdateCategoryData;
 
       if (isNaN(categoryId)) {
         context.set.status = 400;
@@ -221,7 +223,7 @@ export class CategoryController {
    * @param context - Elysia context with category ID parameter
    * @returns Success message or error
    */
-  async deleteCategory(context: any) {
+  async deleteCategory(context: AuthContext) {
     try {
       const categoryId = parseInt(context.params.id);
 

@@ -39,6 +39,7 @@
 import { Elysia, t } from 'elysia';
 import { BudgetController } from '../controllers/budget.controller';
 import { CreateBudgetSchema, UpdateBudgetSchema } from '../schemas/api.schema';
+import { withAuth } from '../types/elysia.types';
 
 const budgetController = new BudgetController();
 
@@ -48,7 +49,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
     '/',
     async context => {
       try {
-        return await budgetController.createBudget(context);
+        return await budgetController.createBudget(withAuth(context));
       } catch (error) {
         console.error('Error in budget creation route:', error);
         return {
@@ -167,7 +168,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
     '/',
     async context => {
       try {
-        return await budgetController.getAllBudgets(context);
+        return await budgetController.getAllBudgets(withAuth(context));
       } catch (error) {
         console.error('Error in get all budgets route:', error);
         return {
@@ -275,7 +276,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
             data: null,
           };
         }
-        return await budgetController.getBudgetById(context);
+        return await budgetController.getBudgetById(withAuth(context));
       } catch (error) {
         console.error('Error in get budget by ID route:', error);
         return {
@@ -397,7 +398,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
             data: null,
           };
         }
-        return await budgetController.updateBudget(context);
+        return await budgetController.updateBudget(withAuth(context));
       } catch (error) {
         console.error('Error in update budget route:', error);
         return {
@@ -566,7 +567,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
             data: null,
           };
         }
-        return await budgetController.deleteBudget(context);
+        return await budgetController.deleteBudget(withAuth(context));
       } catch (error) {
         console.error('Error in delete budget route:', error);
         return {
@@ -675,7 +676,7 @@ export const budgetRoutes = new Elysia({ prefix: '/api/v1/budgets' })
             data: null,
           };
         }
-        return await budgetController.getBudgetsByUserId(context);
+        return await budgetController.getBudgetsByUserId(withAuth(context));
       } catch (error) {
         console.error('Error in get budgets by user ID route:', error);
         return {

@@ -56,3 +56,16 @@ export interface BudgetFilters {
   cycle_month?: string; // Filter by specific month (YYYY-MM)
   category_id?: number; // Filter by category
 }
+
+/**
+ * Budget with category information
+ * Used for queries that join budget and category tables
+ */
+export interface BudgetWithCategory {
+  budget_id: number;
+  category_id: number;
+  budget_amount: number;
+  Category?: {
+    category_name: string;
+  };
+}

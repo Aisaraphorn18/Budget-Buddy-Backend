@@ -29,6 +29,7 @@ import { jwt } from '@elysiajs/jwt';
 import { bearer } from '@elysiajs/bearer';
 import { AuthController } from '../controllers/auth.controller';
 import { LoginRequestSchema, RegisterRequestSchema } from '../schemas/auth.schema';
+import { withAuth } from '../types/elysia.types';
 
 const authController = new AuthController();
 
@@ -45,7 +46,7 @@ export const authRoutes = new Elysia({ prefix: '/api/v1/auth' })
   .use(bearer())
 
   // User Registration Endpoint
-  .post('/register', async context => await authController.register(context), {
+  .post('/register', async context => await authController.register(withAuth(context)), {
     body: RegisterRequestSchema,
     detail: {
       tags: ['Authentication'],
@@ -55,7 +56,7 @@ export const authRoutes = new Elysia({ prefix: '/api/v1/auth' })
   })
 
   // User Login Endpoint
-  .post('/login', async context => await authController.login(context), {
+  .post('/login', async context => await authController.login(withAuth(context)), {
     body: LoginRequestSchema,
     detail: {
       tags: ['Authentication'],
@@ -65,7 +66,7 @@ export const authRoutes = new Elysia({ prefix: '/api/v1/auth' })
   })
 
   // User Logout Endpoint
-  .post('/logout', async context => await authController.logout(context), {
+  .post('/logout', async context => await authController.logout(withAuth(context)), {
     detail: {
       tags: ['Authentication'],
       summary: 'User logout',
@@ -74,7 +75,7 @@ export const authRoutes = new Elysia({ prefix: '/api/v1/auth' })
   })
 
   // User Profile Endpoint (Protected)
-  .get('/profile', async context => await authController.getProfile(context), {
+  .get('/profile', async context => await authController.getProfile(withAuth(context)), {
     headers: t.Object({
       authorization: t.String({ description: 'Bearer JWT token' }),
     }),

@@ -1,7 +1,9 @@
 /**
  * User Management Controller
  *
- * HTTP request handler for user management endpoints in Budget Buddy.
+ * HTTP request      const page = context.query.page ? parseInt(Array.isArray(context.query.page) ? context.query.page[0] : context.query.page) : 1;
+      const limit = Math.min(context.query.limit ? parseInt(Array.isArray(context.query.limit) ? context.query.limit[0] : context.query.limit) : 20, 100);
+      const search = Array.isArray(context.query.search) ? context.query.search[0] : context.query.search;ndler for user management endpoints in Budget Buddy.
  * Provides administrative functionality for managing users, viewing user data,
  * and performing user-related operations.
  *
@@ -21,6 +23,7 @@
  */
 
 import { UserService } from '../services/user.service';
+import type { AuthContext } from '../types/elysia.types';
 
 export class UserController {
   private userService: UserService;
@@ -36,7 +39,7 @@ export class UserController {
    * @param context - Elysia context with user info and query parameters
    * @returns Paginated list of users with metadata
    */
-  async getAllUsers(context: any) {
+  async getAllUsers(context: AuthContext) {
     try {
       // TODO: Add admin role validation here
       const currentUserId = context.user?.user_id;
@@ -49,9 +52,20 @@ export class UserController {
       }
 
       // Parse query parameters
-      const page = context.query.page ? parseInt(context.query.page) : 1;
-      const limit = Math.min(context.query.limit ? parseInt(context.query.limit) : 20, 100);
-      const search = context.query.search || '';
+      const page = context.query.page
+        ? parseInt(Array.isArray(context.query.page) ? context.query.page[0] : context.query.page)
+        : 1;
+      const limit = Math.min(
+        context.query.limit
+          ? parseInt(
+              Array.isArray(context.query.limit) ? context.query.limit[0] : context.query.limit
+            )
+          : 20,
+        100
+      );
+      const search = Array.isArray(context.query.search)
+        ? context.query.search[0]
+        : context.query.search || '';
 
       const result = await this.userService.getAllUsers({ page, limit, search });
 
@@ -86,7 +100,7 @@ export class UserController {
    * @param context - Elysia context with user info and user ID parameter
    * @returns User object with statistics or error if not found
    */
-  async getUserById(context: any) {
+  async getUserById(context: AuthContext) {
     try {
       // TODO: Add admin role validation here
       const currentUserId = context.user?.user_id;
@@ -147,7 +161,7 @@ export class UserController {
    * @param context - Elysia context with user info and user ID parameter
    * @returns Success message or error if not found
    */
-  async deleteUser(context: any) {
+  async deleteUser(context: AuthContext) {
     try {
       // TODO: Add admin role validation here
       const currentUserId = context.user?.user_id;

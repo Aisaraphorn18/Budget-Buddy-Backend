@@ -22,6 +22,7 @@
 
 import { BudgetService } from '../services/budget.service';
 import type { AuthContext } from '../types/elysia.types';
+import type { CreateBudgetData, UpdateBudgetData } from '../models/budget.model';
 
 import { BudgetFilters } from '../models/budget.model';
 
@@ -81,7 +82,7 @@ export class BudgetController {
     }
   }
 
-  async getBudgetById(context: any) {
+  async getBudgetById(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -128,7 +129,7 @@ export class BudgetController {
     }
   }
 
-  async createBudget(context: any) {
+  async createBudget(context: AuthContext) {
     try {
       console.log('🔍 Budget - Creating budget...');
       console.log('🔍 Budget - Context user:', context.user);
@@ -146,7 +147,7 @@ export class BudgetController {
       console.log('🔍 Budget - User ID:', userId);
       console.log('🔍 Budget - Request body:', context.body);
 
-      const { category_id, budget_amount, cycle_month } = context.body;
+      const { category_id, budget_amount, cycle_month } = context.body as CreateBudgetData;
 
       // แปลง cycle_month จาก YYYY-MM เป็น YYYY-MM-01 สำหรับ database date field
       const formattedCycleMonth = cycle_month.includes('-01') ? cycle_month : `${cycle_month}-01`;
@@ -214,7 +215,7 @@ export class BudgetController {
     }
   }
 
-  async updateBudget(context: any) {
+  async updateBudget(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -235,7 +236,7 @@ export class BudgetController {
         };
       }
 
-      const updateData = context.body;
+      const updateData = context.body as UpdateBudgetData;
       const budget = await this.budgetService.updateBudget(budgetId, userId, updateData);
 
       if (!budget) {
@@ -262,7 +263,7 @@ export class BudgetController {
     }
   }
 
-  async deleteBudget(context: any) {
+  async deleteBudget(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -315,7 +316,7 @@ export class BudgetController {
    * @param context - Elysia context with user_id parameter and query parameters
    * @returns Array of budget records for the specified user
    */
-  async getBudgetsByUserId(context: any) {
+  async getBudgetsByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation here
       const currentUserId = context.user?.user_id;
@@ -338,8 +339,16 @@ export class BudgetController {
       }
 
       const filters: BudgetFilters = {
-        cycle_month: context.query.cycle_month,
-        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined,
+        cycle_month: Array.isArray(context.query.cycle_month)
+          ? context.query.cycle_month[0]
+          : context.query.cycle_month,
+        category_id: context.query.category_id
+          ? parseInt(
+              Array.isArray(context.query.category_id)
+                ? context.query.category_id[0]
+                : context.query.category_id
+            )
+          : undefined,
       };
 
       const budgets = await this.budgetService.getAllBudgets(targetUserId, filters);

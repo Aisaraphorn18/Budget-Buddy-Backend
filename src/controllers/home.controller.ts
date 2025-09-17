@@ -30,6 +30,7 @@
 import { TransactionService } from '../services/transaction.service';
 import { BudgetService } from '../services/budget.service';
 import { AuthService } from '../services/auth.service';
+import type { AuthContext } from '../types/elysia.types';
 
 export class HomeController {
   private transactionService: TransactionService;
@@ -49,9 +50,9 @@ export class HomeController {
    * @param context - Elysia context with authenticated user info
    * @returns Comprehensive dashboard data including user info, transactions, and budgets
    */
-  async getHomeData(context: any) {
+  async getHomeData(context: AuthContext) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -108,9 +109,9 @@ export class HomeController {
     }
   }
 
-  async getRecentTransactions(context: any) {
+  async getRecentTransactions(context: AuthContext) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -119,7 +120,11 @@ export class HomeController {
         };
       }
 
-      const limit = context.query.limit ? parseInt(context.query.limit) : 10;
+      const limit = context.query.limit
+        ? parseInt(
+            Array.isArray(context.query.limit) ? context.query.limit[0] : context.query.limit
+          )
+        : 10;
       const transactions = await this.transactionService.getRecentTransactions(userId, limit);
 
       return {
@@ -138,9 +143,9 @@ export class HomeController {
     }
   }
 
-  async getAnalyticsSummary(context: any) {
+  async getAnalyticsSummary(context: AuthContext) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -149,8 +154,12 @@ export class HomeController {
         };
       }
 
-      const startDate = context.query.start_date;
-      const endDate = context.query.end_date;
+      const startDate = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const endDate = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
 
       const summary = await this.transactionService.getTransactionsSummary(
         userId,
@@ -174,9 +183,9 @@ export class HomeController {
     }
   }
 
-  async getAnalyticsByCategory(context: any) {
+  async getAnalyticsByCategory(context: AuthContext) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -185,8 +194,12 @@ export class HomeController {
         };
       }
 
-      const startDate = context.query.start_date;
-      const endDate = context.query.end_date;
+      const startDate = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const endDate = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
 
       const categoryAnalytics = await this.transactionService.getTransactionsByCategory(
         userId,
@@ -210,9 +223,9 @@ export class HomeController {
     }
   }
 
-  async getAnalyticsFlow(context: any) {
+  async getAnalyticsFlow(context: AuthContext) {
     try {
-      const userId = context.user?.userId;
+      const userId = context.user?.user_id;
       if (!userId) {
         context.set.status = 401;
         return {
@@ -221,9 +234,15 @@ export class HomeController {
         };
       }
 
-      const startDate = context.query.start_date;
-      const endDate = context.query.end_date;
-      const groupBy = context.query.group_by || 'daily'; // daily, monthly
+      const startDate = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const endDate = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
+      const groupBy = Array.isArray(context.query.group_by)
+        ? context.query.group_by[0]
+        : context.query.group_by || 'daily';
 
       // This would need more complex implementation for timeline grouping
       // For now, return basic summary
@@ -254,7 +273,7 @@ export class HomeController {
   }
 
   // Admin methods - Get data by user ID
-  async getHomeDataByUserId(context: any) {
+  async getHomeDataByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation
       const currentUserId = context.user?.user_id;
@@ -323,7 +342,7 @@ export class HomeController {
     }
   }
 
-  async getRecentTransactionsByUserId(context: any) {
+  async getRecentTransactionsByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation
       const currentUserId = context.user?.user_id;
@@ -344,7 +363,10 @@ export class HomeController {
         };
       }
 
-      const limit = context.query.limit ? parseInt(context.query.limit) : 10;
+      const limitStr = Array.isArray(context.query.limit)
+        ? context.query.limit[0]
+        : context.query.limit;
+      const limit = limitStr ? parseInt(limitStr) : 10;
       const transactions = await this.transactionService.getRecentTransactions(targetUserId, limit);
 
       return {
@@ -363,7 +385,7 @@ export class HomeController {
     }
   }
 
-  async getAnalyticsSummaryByUserId(context: any) {
+  async getAnalyticsSummaryByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation
       const currentUserId = context.user?.user_id;
@@ -384,7 +406,12 @@ export class HomeController {
         };
       }
 
-      const { start_date, end_date } = context.query;
+      const start_date = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const end_date = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
       const summary = await this.transactionService.getFinancialSummary(
         targetUserId,
         start_date,
@@ -407,7 +434,7 @@ export class HomeController {
     }
   }
 
-  async getAnalyticsByCategoryByUserId(context: any) {
+  async getAnalyticsByCategoryByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation
       const currentUserId = context.user?.user_id;
@@ -428,7 +455,12 @@ export class HomeController {
         };
       }
 
-      const { start_date, end_date } = context.query;
+      const start_date = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const end_date = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
       const analytics = await this.transactionService.getAnalyticsByCategory(
         targetUserId,
         start_date,
@@ -451,7 +483,7 @@ export class HomeController {
     }
   }
 
-  async getAnalyticsFlowByUserId(context: any) {
+  async getAnalyticsFlowByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation
       const currentUserId = context.user?.user_id;

@@ -21,7 +21,8 @@
  */
 
 import { TransactionService } from '../services/transaction.service';
-import { TransactionFilters } from '../models/transaction.model';
+import { TransactionFilters, UpdateTransactionData } from '../models/transaction.model';
+import type { AuthContext } from '../types/elysia.types';
 
 export class TransactionController {
   private transactionService: TransactionService;
@@ -37,7 +38,7 @@ export class TransactionController {
    * @param context - Elysia context with user info and query parameters
    * @returns Paginated list of transactions with metadata
    */
-  async getAllTransactions(context: any) {
+  async getAllTransactions(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -48,13 +49,32 @@ export class TransactionController {
         };
       }
 
+      const typeParam = Array.isArray(context.query.type)
+        ? context.query.type[0]
+        : context.query.type;
+      const categoryIdParam = Array.isArray(context.query.category_id)
+        ? context.query.category_id[0]
+        : context.query.category_id;
+      const startDateParam = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const endDateParam = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
+      const pageParam = Array.isArray(context.query.page)
+        ? context.query.page[0]
+        : context.query.page;
+      const limitParam = Array.isArray(context.query.limit)
+        ? context.query.limit[0]
+        : context.query.limit;
+
       const filters: TransactionFilters = {
-        type: context.query.type,
-        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined,
-        start_date: context.query.start_date,
-        end_date: context.query.end_date,
-        page: context.query.page ? parseInt(context.query.page) : 1,
-        limit: context.query.limit ? parseInt(context.query.limit) : 20,
+        type: typeParam as 'income' | 'expense' | undefined,
+        category_id: categoryIdParam ? parseInt(categoryIdParam) : undefined,
+        start_date: startDateParam,
+        end_date: endDateParam,
+        page: pageParam ? parseInt(pageParam) : 1,
+        limit: limitParam ? parseInt(limitParam) : 20,
       };
 
       const result = await this.transactionService.getAllTransactions(userId, filters);
@@ -111,7 +131,7 @@ export class TransactionController {
    * @param context - Elysia context with user info and transaction ID parameter
    * @returns Transaction object or error if not found/unauthorized
    */
-  async getTransactionById(context: any) {
+  async getTransactionById(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -183,7 +203,7 @@ export class TransactionController {
    * @param context - Elysia context with user info and transaction data in body
    * @returns Created transaction object or validation error
    */
-  async createTransaction(context: any) {
+  async createTransaction(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       console.log(context.user);
@@ -195,7 +215,12 @@ export class TransactionController {
         };
       }
 
-      const { category_id, type, amount, note } = context.body;
+      const { category_id, type, amount, note } = context.body as {
+        category_id: number;
+        type: 'income' | 'expense';
+        amount: number;
+        note?: string;
+      };
 
       const transactionData = {
         user_id: userId,
@@ -253,7 +278,7 @@ export class TransactionController {
     }
   }
 
-  async updateTransaction(context: any) {
+  async updateTransaction(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -274,7 +299,7 @@ export class TransactionController {
         };
       }
 
-      const updateData = context.body;
+      const updateData = context.body as UpdateTransactionData;
       const transaction = await this.transactionService.updateTransaction(
         transactionId,
         userId,
@@ -305,7 +330,7 @@ export class TransactionController {
     }
   }
 
-  async deleteTransaction(context: any) {
+  async deleteTransaction(context: AuthContext) {
     try {
       const userId = context.user?.user_id;
       if (!userId) {
@@ -358,7 +383,7 @@ export class TransactionController {
    * @param context - Elysia context with user_id parameter and query parameters
    * @returns Paginated list of user's transactions with metadata
    */
-  async getTransactionsByUserId(context: any) {
+  async getTransactionsByUserId(context: AuthContext) {
     try {
       // TODO: Add admin role validation here
       const currentUserId = context.user?.user_id;
@@ -380,13 +405,32 @@ export class TransactionController {
         };
       }
 
+      const typeParam = Array.isArray(context.query.type)
+        ? context.query.type[0]
+        : context.query.type;
+      const categoryIdParam = Array.isArray(context.query.category_id)
+        ? context.query.category_id[0]
+        : context.query.category_id;
+      const startDateParam = Array.isArray(context.query.start_date)
+        ? context.query.start_date[0]
+        : context.query.start_date;
+      const endDateParam = Array.isArray(context.query.end_date)
+        ? context.query.end_date[0]
+        : context.query.end_date;
+      const pageParam = Array.isArray(context.query.page)
+        ? context.query.page[0]
+        : context.query.page;
+      const limitParam = Array.isArray(context.query.limit)
+        ? context.query.limit[0]
+        : context.query.limit;
+
       const filters: TransactionFilters = {
-        type: context.query.type,
-        category_id: context.query.category_id ? parseInt(context.query.category_id) : undefined,
-        start_date: context.query.start_date,
-        end_date: context.query.end_date,
-        page: context.query.page ? parseInt(context.query.page) : 1,
-        limit: context.query.limit ? parseInt(context.query.limit) : 20,
+        type: typeParam as 'income' | 'expense' | undefined,
+        category_id: categoryIdParam ? parseInt(categoryIdParam) : undefined,
+        start_date: startDateParam,
+        end_date: endDateParam,
+        page: pageParam ? parseInt(pageParam) : 1,
+        limit: limitParam ? parseInt(limitParam) : 20,
       };
 
       const result = await this.transactionService.getAllTransactions(targetUserId, filters);

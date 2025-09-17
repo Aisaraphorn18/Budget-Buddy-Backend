@@ -26,6 +26,7 @@
 
 import { Elysia } from 'elysia';
 import { CategoryController } from '../controllers/category.controller';
+import { withAuth } from '../types/elysia.types';
 
 const categoryController = new CategoryController();
 
@@ -202,7 +203,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
     '/',
     async context => {
       try {
-        return await categoryController.createCategory(context);
+        return await categoryController.createCategory(withAuth(context));
       } catch (error) {
         console.error('Error in create category route:', error);
         return {
@@ -310,7 +311,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
             data: null,
           };
         }
-        return await categoryController.updateCategory(context);
+        return await categoryController.updateCategory(withAuth(context));
       } catch (error) {
         console.error('Error in update category route:', error);
         return {
@@ -444,7 +445,7 @@ export const categoryRoutes = new Elysia({ prefix: '/api/v1/categories' })
             data: null,
           };
         }
-        return await categoryController.deleteCategory(context);
+        return await categoryController.deleteCategory(withAuth(context));
       } catch (error) {
         console.error('Error in delete category route:', error);
         return {

@@ -33,7 +33,7 @@ export default [
     rules: {
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',
 
       // General rules
@@ -51,7 +51,7 @@ export default [
           tabWidth: 2,
           trailingComma: 'es5',
           printWidth: 100,
-          endOfLine: 'lf',
+          endOfLine: 'auto',
         },
       ],
     },
@@ -69,6 +69,18 @@ export default [
         __dirname: 'readonly',
         __filename: 'readonly',
       },
+    },
+  },
+  {
+    files: [
+      'tests/**/*.{ts,tsx}',
+      '**/*.test.ts',
+      '**/*.spec.ts',
+      'tests/**/*.mock.ts',
+      'tests/mocks/**/*.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {
