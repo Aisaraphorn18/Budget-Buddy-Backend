@@ -198,8 +198,11 @@ const app = new Elysia()
     };
   })
 
-  // Start the server on port 3000
-  .listen(process.env.PORT ?? 3000);
+  // Start the server - Railway will provide PORT via environment variable
+  .listen({
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    hostname: '0.0.0.0', // Listen on all network interfaces for Railway
+  });
 
 // API Endpoint Documentation - Provides a comprehensive list of all available endpoints
 logger.info(`
