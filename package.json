@@ -3,6 +3,7 @@
   "version": "1.0.50",
   "type": "module",
   "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun",
     "build:production": "bun build --compile --minify-whitespace --minify-syntax --target bun --outfile server ./src/index.ts",
     "build:clean": "rm -rf dist && rm -f server && bun run build",
     "build:clean:production": "rm -rf dist && rm -f server && bun run build:production",

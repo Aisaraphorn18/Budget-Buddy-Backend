@@ -45,8 +45,8 @@ import {
   budgetRoutes, // Budget management (protected)
   reportsRoutes, // Reports and analytics (protected)
   userRoutes, // User management (protected, admin-only)
-} from './routes/index.js';
-import logger from './utils/logger.js';
+} from './routes';
+import logger from './utils/logger';
 // Initialize Elysia application with comprehensive middleware setup
 const app = new Elysia()
   // JWT Configuration - Handles token generation and validation
@@ -196,14 +196,13 @@ const app = new Elysia()
       message: 'Internal server error',
       data: null,
     };
-  });
+  })
 
-// Start the server locally (skip on Vercel)
-if (typeof Bun !== 'undefined') {
-  app.listen(process.env.PORT ?? 3000);
+  // Start the server on port 3000
+  .listen(process.env.PORT ?? 3000);
 
-  // API Endpoint Documentation - Provides a comprehensive list of all available endpoints
-  logger.info(`
+// API Endpoint Documentation - Provides a comprehensive list of all available endpoints
+logger.info(`
 🦊 Budget Buddy Backend is running at ${app.server?.hostname}:${app.server?.port}
 
 📚 Available API Endpoints:
@@ -244,19 +243,17 @@ if (typeof Bun !== 'undefined') {
   GET    /protected/api/v1/reports/expenses-by-category - Get expenses by category
   GET    /protected/api/v1/reports/monthly-close     - Get monthly close report
 
-👑 Admin Only Routes:
+� Admin Only Routes:
   GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)
   GET    /protected/api/v1/budgets/user/:user_id      - Get budgets by user ID (admin)
 
-👥 User Management (Admin Only):
+�👥 User Management (Admin Only):
   GET    /protected/api/v1/users           - Get all users (with search & pagination)
   GET    /protected/api/v1/users/:id       - Get user by ID (with stats)
   DELETE /protected/api/v1/users/:id       - Delete user account
 
 📖 API Documentation:
   OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi
-  `);
-}
+`);
 
-// Export default for Vercel
 export default app;
