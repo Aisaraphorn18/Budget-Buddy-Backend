@@ -199,7 +199,7 @@ const app = new Elysia()
   })
 
   // Start the server on port 3000
-  .listen(3000);
+  .listen(process.env.PORT ?? 3000);
 
 // API Endpoint Documentation - Provides a comprehensive list of all available endpoints
 logger.info(`
