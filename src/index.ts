@@ -47,6 +47,7 @@ import {
   userRoutes, // User management (protected, admin-only)
 } from './routes';
 import logger from './utils/logger';
+import { csrfPlugin } from './middleware/csrf';
 // Initialize Elysia application with comprehensive middleware setup
 const app = new Elysia()
   // JWT Configuration - Handles token generation and validation
@@ -109,10 +110,13 @@ const app = new Elysia()
         ? process.env.ALLOWED_ORIGINS.split(',') // Multiple origins from env: "http://localhost:3000,https://yourdomain.com"
         : true, // Development: allow all origins
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
       credentials: true, // Allow cookies and authentication headers
     })
   )
+
+  // CSRF Protection - Prevents Cross-Site Request Forgery attacks
+  .use(csrfPlugin)
 
   // Route Registration
   // Public routes (no authentication required)
