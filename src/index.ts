@@ -133,21 +133,18 @@ const app = new Elysia()
       hasSessionCookie: !!cookie.session_id?.value,
     });
 
-    // Skip CSRF check for safe methods
-    if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-      logger.info('✅ CSRF Skip: Safe method');
+    // Skip CSRF ONLY for specific whitelisted endpoints
+    // Only these GET endpoints are allowed without CSRF token
+    const csrfWhitelist = ['/health', '/api/v1/csrf-token'];
+
+    if (method === 'GET' && csrfWhitelist.includes(pathname)) {
+      logger.info('✅ CSRF Skip: Whitelisted GET endpoint:', pathname);
       return;
     }
 
-    // Skip CSRF check for health endpoint
-    if (pathname === '/health') {
-      logger.info('✅ CSRF Skip: Health endpoint');
-      return;
-    }
-
-    // Skip CSRF check for CSRF token endpoint itself
-    if (pathname === '/api/v1/csrf-token') {
-      logger.info('✅ CSRF Skip: CSRF token endpoint');
+    // Skip CSRF check for OPTIONS (CORS preflight)
+    if (method === 'OPTIONS') {
+      logger.info('✅ CSRF Skip: OPTIONS preflight');
       return;
     }
 
@@ -163,7 +160,8 @@ const app = new Elysia()
       return;
     }
 
-    // For Railway and Vercel (production/uat/undefined), require CSRF
+    // For Railway and Vercel (production/uat/undefined), require CSRF for ALL requests
+    // This includes: POST, PUT, DELETE, and ALL GET requests except whitelisted ones
     logger.info('🔒 CSRF Required for production/deployment');
 
     const csrfToken = headers['x-csrf-token'];
