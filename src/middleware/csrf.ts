@@ -69,7 +69,7 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
       cookie.session_id.value = sessionId;
       cookie.session_id.httpOnly = true;
       cookie.session_id.secure = process.env.NODE_ENV === 'production';
-      cookie.session_id.sameSite = 'strict';
+      cookie.session_id.sameSite = process.env.NODE_ENV === 'production' ? 'none' : 'lax'; // 'none' for cross-site with HTTPS
       cookie.session_id.maxAge = 60 * 60; // 1 hour
     }
 
