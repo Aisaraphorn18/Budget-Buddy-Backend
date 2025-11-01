@@ -45,8 +45,8 @@ import {
   budgetRoutes, // Budget management (protected)
   reportsRoutes, // Reports and analytics (protected)
   userRoutes, // User management (protected, admin-only)
-} from './routes';
-import logger from './utils/logger';
+} from './routes/index.js';
+import logger from './utils/logger.js';
 // Initialize Elysia application with comprehensive middleware setup
 const app = new Elysia()
   // JWT Configuration - Handles token generation and validation
