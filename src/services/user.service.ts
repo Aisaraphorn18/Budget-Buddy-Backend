@@ -29,7 +29,7 @@ interface UserFilters {
   search: string;
 }
 
-interface UserStats {
+export interface UserStats {
   total_transactions: number;
   total_budgets: number;
   last_login?: string;
