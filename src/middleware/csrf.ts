@@ -98,20 +98,20 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
         return {};
       }
 
-      const pathname = new globalThis.URL(request.url).pathname;
+      const url = new globalThis.URL(request.url);
+      const pathname = url.pathname;
 
       // Skip CSRF check for health endpoint
       if (pathname === '/health') {
         return {};
       }
 
-      // Skip CSRF only for localhost (local development)
-      // Dev, UAT, Production environments must use CSRF
-      const origin = headers.origin || headers.referer || '';
-      const isLocalhost =
-        origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('0.0.0.0');
+      // Skip CSRF only when NOT in production or UAT
+      // Only local/dev environments skip CSRF, production/UAT must use CSRF
+      const nodeEnv = process.env.NODE_ENV?.toLowerCase();
+      const skipCsrf = nodeEnv !== 'production' && nodeEnv !== 'uat';
 
-      if (isLocalhost) {
+      if (skipCsrf) {
         return {};
       }
 
