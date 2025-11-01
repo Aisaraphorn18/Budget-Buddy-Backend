@@ -93,14 +93,25 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
     }) => {
       const method = request.method;
 
-      // Skip CSRF check for safe methods and public routes
+      // Skip CSRF check for safe methods
       if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
         return {};
       }
 
-      // Skip CSRF check for auth endpoints (they use JWT)
       const pathname = new globalThis.URL(request.url).pathname;
-      if (pathname.includes('/api/v1/auth/') || pathname === '/health') {
+
+      // Skip CSRF check for health endpoint
+      if (pathname === '/health') {
+        return {};
+      }
+
+      // Skip CSRF only for localhost (local development)
+      // Dev, UAT, Production environments must use CSRF
+      const origin = headers.origin || headers.referer || '';
+      const isLocalhost =
+        origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('0.0.0.0');
+
+      if (isLocalhost) {
         return {};
       }
 
