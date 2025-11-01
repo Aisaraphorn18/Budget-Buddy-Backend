@@ -60,14 +60,16 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
     //   cookie.session_id.maxAge = 60 * 60; // 1 hour
     // }
 
-    const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'uat';
+    const isLocal =
+      process.env.NODE_ENV?.toLowerCase() === 'development' ||
+      process.env.NODE_ENV?.toLowerCase() === 'local';
 
     // Set session cookie using Elysia cookie API
     cookie.session_id.set({
       value: sessionId,
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
+      secure: !isLocal, // Secure in production/deployment
+      sameSite: !isLocal ? 'none' : 'lax', // 'none' for cross-site in production
       maxAge: 60 * 60, // 1 hour
       path: '/',
     });
@@ -96,14 +98,16 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
       return {};
     }
 
-    // Skip CSRF only when NOT in production or UAT
-    // Only local/dev environments skip CSRF, production/UAT must use CSRF
+    // Skip CSRF only in development/local environment
+    // Railway and Vercel deployments MUST use CSRF protection
     const nodeEnv = process.env.NODE_ENV?.toLowerCase();
-    const isProduction = nodeEnv === 'production' || nodeEnv === 'uat';
+    const isLocal = nodeEnv === 'development' || nodeEnv === 'local';
 
-    if (!isProduction) {
-      return {};
+    if (isLocal) {
+      return {}; // Only skip CSRF in local development
     }
+
+    // For Railway and Vercel (production/uat/undefined), require CSRF
 
     const csrfToken = headers['x-csrf-token'];
     const sessionId = cookie.session_id?.value as string | undefined;
