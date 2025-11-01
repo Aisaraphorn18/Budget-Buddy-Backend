@@ -47,7 +47,7 @@ import {
   userRoutes, // User management (protected, admin-only)
 } from './routes';
 import logger from './utils/logger';
-import { csrfPlugin } from './middleware/csrf';
+import { csrfPlugin, csrfTokens } from './middleware/csrf';
 // Initialize Elysia application with comprehensive middleware setup
 const app = new Elysia()
   // JWT Configuration - Handles token generation and validation
@@ -117,6 +117,82 @@ const app = new Elysia()
 
   // CSRF Protection - Prevents Cross-Site Request Forgery attacks
   .use(csrfPlugin)
+
+  // CSRF Validation Middleware - Applied globally to all routes
+  .onBeforeHandle(({ request, cookie, headers }) => {
+    const method = request.method;
+    const url = new globalThis.URL(request.url);
+    const pathname = url.pathname;
+
+    // Debug log
+    logger.info('🛡️ [GLOBAL] CSRF Middleware:', {
+      method,
+      pathname,
+      nodeEnv: process.env.NODE_ENV,
+      hasCSRFHeader: !!headers['x-csrf-token'],
+      hasSessionCookie: !!cookie.session_id?.value,
+    });
+
+    // Skip CSRF check for safe methods
+    if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+      logger.info('✅ CSRF Skip: Safe method');
+      return;
+    }
+
+    // Skip CSRF check for health endpoint
+    if (pathname === '/health') {
+      logger.info('✅ CSRF Skip: Health endpoint');
+      return;
+    }
+
+    // Skip CSRF check for CSRF token endpoint itself
+    if (pathname === '/api/v1/csrf-token') {
+      logger.info('✅ CSRF Skip: CSRF token endpoint');
+      return;
+    }
+
+    // Skip CSRF only in development/local environment
+    // Railway and Vercel deployments MUST use CSRF protection
+    const nodeEnv = process.env.NODE_ENV?.toLowerCase();
+    const isLocal = nodeEnv === 'development' || nodeEnv === 'local';
+
+    logger.info('🔍 CSRF Check:', { nodeEnv, isLocal });
+
+    if (isLocal) {
+      logger.info('✅ CSRF Skip: Local development');
+      return;
+    }
+
+    // For Railway and Vercel (production/uat/undefined), require CSRF
+    logger.info('🔒 CSRF Required for production/deployment');
+
+    const csrfToken = headers['x-csrf-token'];
+    const sessionId = cookie.session_id?.value as string | undefined;
+
+    if (!csrfToken || !sessionId) {
+      throw new Error('CSRF token required');
+    }
+
+    // Check token from csrf middleware storage
+    const storedToken = csrfTokens.get(sessionId);
+
+    if (!storedToken) {
+      throw new Error('Invalid or expired CSRF token');
+    }
+
+    if (storedToken.expiresAt < Date.now()) {
+      csrfTokens.delete(sessionId);
+      throw new Error('CSRF token expired');
+    }
+
+    if (storedToken.token !== csrfToken) {
+      throw new Error('Invalid CSRF token');
+    }
+
+    // Token is valid, continue
+    logger.info('✅ CSRF token validated successfully');
+    return;
+  })
 
   // Route Registration
   // Public routes (no authentication required)
