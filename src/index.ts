@@ -258,5 +258,3 @@ logger.info(`
 📖 API Documentation:
   OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi
 `);
-
-export default app;
