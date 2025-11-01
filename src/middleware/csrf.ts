@@ -18,19 +18,6 @@ declare const setInterval: (
   ms: number
 ) => unknown;
 
-// Type for Elysia cookie
-type Cookie<T> = {
-  value: T;
-  httpOnly?: boolean;
-  secure?: boolean;
-  sameSite?: 'strict' | 'lax' | 'none';
-  maxAge?: number;
-};
-
-interface CsrfCookies {
-  session_id?: Cookie<string>;
-}
-
 // Generate a random CSRF token
 export const generateCsrfToken = (): string => {
   return crypto.randomBytes(32).toString('hex');
@@ -54,24 +41,27 @@ setInterval(
 
 export const csrfPlugin = new Elysia({ name: 'csrf' })
   // Endpoint to generate CSRF token
-  .get('/api/v1/csrf-token', ({ cookie }: { cookie: CsrfCookies }) => {
+  .get('/api/v1/csrf-token', ({ cookie }) => {
     const token = generateCsrfToken();
-    const sessionId = (cookie.session_id?.value as string) || generateCsrfToken();
+    const sessionId = cookie.session_id?.value || generateCsrfToken();
 
     // Store token with 1 hour expiration
-    csrfTokens.set(sessionId, {
+    csrfTokens.set(sessionId as string, {
       token,
       expiresAt: Date.now() + 60 * 60 * 1000, // 1 hour
     });
 
-    // Set session cookie
-    if (cookie.session_id) {
-      cookie.session_id.value = sessionId;
-      cookie.session_id.httpOnly = true;
-      cookie.session_id.secure = process.env.NODE_ENV === 'production';
-      cookie.session_id.sameSite = 'strict';
-      cookie.session_id.maxAge = 60 * 60; // 1 hour
-    }
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Set session cookie using Elysia cookie API
+    cookie.session_id.set({
+      value: sessionId,
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 60 * 60, // 1 hour
+      path: '/',
+    });
 
     return {
       success: true,
@@ -81,65 +71,55 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
   })
 
   // Middleware to verify CSRF token for state-changing methods
-  .derive(
-    ({
-      request,
-      cookie,
-      headers,
-    }: {
-      request: Request;
-      cookie: CsrfCookies;
-      headers: Record<string, string | undefined>;
-    }) => {
-      const method = request.method;
+  .derive(({ request, cookie, headers }) => {
+    const method = request.method;
 
-      // Skip CSRF check for safe methods
-      if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-        return {};
-      }
-
-      const url = new globalThis.URL(request.url);
-      const pathname = url.pathname;
-
-      // Skip CSRF check for health endpoint
-      if (pathname === '/health') {
-        return {};
-      }
-
-      // Skip CSRF only when NOT in production or UAT
-      // Only local/dev environments skip CSRF, production/UAT must use CSRF
-      const nodeEnv = process.env.NODE_ENV?.toLowerCase();
-      const skipCsrf = nodeEnv !== 'production' && nodeEnv !== 'uat';
-
-      if (skipCsrf) {
-        return {};
-      }
-
-      const csrfToken = headers['x-csrf-token'];
-      const sessionId = cookie.session_id?.value as string | undefined;
-
-      if (!csrfToken || !sessionId) {
-        throw new Error('CSRF token required');
-      }
-
-      const storedToken = csrfTokens.get(sessionId);
-
-      if (!storedToken) {
-        throw new Error('Invalid or expired CSRF token');
-      }
-
-      if (storedToken.expiresAt < Date.now()) {
-        csrfTokens.delete(sessionId);
-        throw new Error('CSRF token expired');
-      }
-
-      if (storedToken.token !== csrfToken) {
-        throw new Error('Invalid CSRF token');
-      }
-
+    // Skip CSRF check for safe methods
+    if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
       return {};
     }
-  )
+
+    const url = new globalThis.URL(request.url);
+    const pathname = url.pathname;
+
+    // Skip CSRF check for health endpoint
+    if (pathname === '/health') {
+      return {};
+    }
+
+    // Skip CSRF only when NOT in production or UAT
+    // Only local/dev environments skip CSRF, production/UAT must use CSRF
+    const nodeEnv = process.env.NODE_ENV?.toLowerCase();
+    const isProduction = nodeEnv === 'production' || nodeEnv === 'uat';
+
+    if (!isProduction) {
+      return {};
+    }
+
+    const csrfToken = headers['x-csrf-token'];
+    const sessionId = cookie.session_id?.value as string | undefined;
+
+    if (!csrfToken || !sessionId) {
+      throw new Error('CSRF token required');
+    }
+
+    const storedToken = csrfTokens.get(sessionId);
+
+    if (!storedToken) {
+      throw new Error('Invalid or expired CSRF token');
+    }
+
+    if (storedToken.expiresAt < Date.now()) {
+      csrfTokens.delete(sessionId);
+      throw new Error('CSRF token expired');
+    }
+
+    if (storedToken.token !== csrfToken) {
+      throw new Error('Invalid CSRF token');
+    }
+
+    return {};
+  })
 
   .onError(({ error, set }) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
