@@ -1,0 +1,16 @@
+node_modules
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+dist
+api
+server
+*.log
+.DS_Store
+README.md
+.vscode
+.idea
+coverage
+.husky
