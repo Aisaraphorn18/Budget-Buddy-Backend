@@ -105,7 +105,9 @@ const app = new Elysia()
   // CORS Configuration - Enables cross-origin requests for frontend integration
   .use(
     cors({
-      origin: true, // Allow all origins (configure specific domains in production)
+      origin: process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(',') // Multiple origins from env: "http://localhost:3000,https://yourdomain.com"
+        : true, // Development: allow all origins
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true, // Allow cookies and authentication headers
