@@ -198,11 +198,8 @@ const app = new Elysia()
     };
   });
 
-// Export for Vercel deployment
-export default app;
-
-// Start the server locally (not needed on Vercel)
-if (process.env.NODE_ENV !== 'production') {
+// Start the server locally (skip on Vercel)
+if (typeof Bun !== 'undefined') {
   app.listen(process.env.PORT ?? 3000);
 
   // API Endpoint Documentation - Provides a comprehensive list of all available endpoints
@@ -260,3 +257,6 @@ if (process.env.NODE_ENV !== 'production') {
   OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi
   `);
 }
+
+// Export default for Vercel
+export default app;
