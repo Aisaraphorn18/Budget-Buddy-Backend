@@ -196,13 +196,17 @@ const app = new Elysia()
       message: 'Internal server error',
       data: null,
     };
-  })
+  });
 
-  // Start the server on port 3000
-  .listen(process.env.PORT ?? 3000);
+// Export for Vercel deployment
+export default app;
 
-// API Endpoint Documentation - Provides a comprehensive list of all available endpoints
-logger.info(`
+// Start the server locally (not needed on Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(process.env.PORT ?? 3000);
+
+  // API Endpoint Documentation - Provides a comprehensive list of all available endpoints
+  logger.info(`
 🦊 Budget Buddy Backend is running at ${app.server?.hostname}:${app.server?.port}
 
 📚 Available API Endpoints:
@@ -243,15 +247,16 @@ logger.info(`
   GET    /protected/api/v1/reports/expenses-by-category - Get expenses by category
   GET    /protected/api/v1/reports/monthly-close     - Get monthly close report
 
-� Admin Only Routes:
+👑 Admin Only Routes:
   GET    /protected/api/v1/transactions/user/:user_id - Get transactions by user ID (admin)
   GET    /protected/api/v1/budgets/user/:user_id      - Get budgets by user ID (admin)
 
-�👥 User Management (Admin Only):
+👥 User Management (Admin Only):
   GET    /protected/api/v1/users           - Get all users (with search & pagination)
   GET    /protected/api/v1/users/:id       - Get user by ID (with stats)
   DELETE /protected/api/v1/users/:id       - Delete user account
 
 📖 API Documentation:
   OpenAPI JSON: http://${app.server?.hostname}:${app.server?.port}/openapi
-`);
+  `);
+}

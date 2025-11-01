@@ -1,0 +1,32 @@
+# Development files
+node_modules
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist
+server
+*.log
+
+# Test files
+tests
+*.test.ts
+*.test.js
+
+# Documentation
+docs
+README.md
+*.md
+!VERCEL_DEPLOYMENT.md
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# Misc
+.DS_Store
