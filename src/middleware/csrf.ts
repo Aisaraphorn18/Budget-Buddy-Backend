@@ -9,7 +9,6 @@
 
 import { Elysia } from 'elysia';
 import crypto from 'crypto';
-import logger from '../utils/logger';
 
 // Use Bun's global timer
 declare const setInterval: (
@@ -88,30 +87,18 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
     const url = new globalThis.URL(request.url);
     const pathname = url.pathname;
 
-    // Debug log
-    logger.info('🛡️ CSRF Middleware:', {
-      method,
-      pathname,
-      nodeEnv: process.env.NODE_ENV,
-      hasCSRFHeader: !!headers['x-csrf-token'],
-      hasSessionCookie: !!cookie.session_id?.value,
-    });
-
     // Skip CSRF check for safe methods
     if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-      logger.info('✅ CSRF Skip: Safe method');
-      return; // Return void to continue
+      return;
     }
 
     // Skip CSRF check for health endpoint
     if (pathname === '/health') {
-      logger.info('✅ CSRF Skip: Health endpoint');
       return;
     }
 
     // Skip CSRF check for CSRF token endpoint itself
     if (pathname === '/api/v1/csrf-token') {
-      logger.info('✅ CSRF Skip: CSRF token endpoint');
       return;
     }
 
@@ -120,16 +107,11 @@ export const csrfPlugin = new Elysia({ name: 'csrf' })
     const nodeEnv = process.env.NODE_ENV?.toLowerCase();
     const isLocal = nodeEnv === 'development' || nodeEnv === 'local';
 
-    logger.info('🔍 CSRF Check:', { nodeEnv, isLocal });
-
     if (isLocal) {
-      logger.info('✅ CSRF Skip: Local development');
       return; // Only skip CSRF in local development
     }
 
     // For Railway and Vercel (production/uat/undefined), require CSRF
-    logger.info('🔒 CSRF Required for production/deployment');
-
     const csrfToken = headers['x-csrf-token'];
     const sessionId = cookie.session_id?.value as string | undefined;
 
