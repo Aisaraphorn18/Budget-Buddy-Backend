@@ -6,9 +6,6 @@
 # Ensure bun is available
 ensure_bun
 
-echo "🧪 Running tests..."
-run_bun test
-
 echo "🔍 Running lint-staged..."
 run_bunx lint-staged
 

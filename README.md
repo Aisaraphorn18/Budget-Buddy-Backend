@@ -7,7 +7,7 @@
 [![ElysiaJS](https://img.shields.io/badge/ElysiaJS-Latest-ff6b9d.svg)](https://elysiajs.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.io/)
 [![Bun](https://img.shields.io/badge/Bun-1.0+-yellow.svg)](https://bun.sh/)
-[![Tests](https://img.shields.io/badge/Tests-323%20Passing-brightgreen.svg)](tests/)
+
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## 📋 Table of Contents
@@ -19,7 +19,6 @@
 | [⚙️ Configuration](#️-configuration)         | [⚙️ การกำหนดค่า](#️-การกำหนดค่า)                  |
 | [🌐 API Overview](#-api-overview)            | [🌐 ภาพรวม API](#-ภาพรวม-api)                     |
 | [📝 API Examples](#-api-examples)            | [📝 ตัวอย่าง API](#-ตัวอย่าง-api)                 |
-| [🧪 Testing](#-testing)                      | [🧪 การทดสอบ](#-การทดสอบ)                         |
 | [🏗️ Project Structure](#️-project-structure) | [🏗️ โครงสร้างโปรเจค](#️-โครงสร้างโปรเจค)          |
 | [🔒 Security](#-security)                    | [🔒 ความปลอดภัย](#-ความปลอดภัย)                   |
 | [🚀 Deployment](#-deployment)                | [🚀 การ Deploy](#-การ-deploy)                     |
@@ -39,7 +38,6 @@
 - 📈 **Financial Reports** - Comprehensive analytics and reporting
 - 🏷️ **Category Management** - Organize transactions with custom categories
 - 👥 **User Management** - Admin features for user administration
-- 🧪 **Comprehensive Testing** - 323 tests with 100% endpoint coverage
 - ⚡ **High Performance** - Built with Bun and ElysiaJS for speed
 - 🛡️ **Type Safety** - Full TypeScript implementation
 - 🔒 **Security First** - Input validation, CORS, and secure practices
@@ -564,38 +562,6 @@ curl -X GET "http://localhost:3000/api/v1/reports/income-vs-expense?year=2024" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-## 🧪 Testing
-
-### Comprehensive Test Suite
-
-- **323 Total Tests** (174 Unit + 146 Integration + 3 Setup)
-- **100% API Coverage** - All endpoints tested
-- **Zero Database Dependencies** - Mock-based testing
-- **Lightning Fast** - Complete suite runs in ~149ms
-
-```bash
-# Run all tests
-bun test
-
-# Run by category
-bun test tests/unit/              # 174 unit tests
-bun test tests/integration/       # 138 integration tests
-
-# Run specific service tests
-bun test tests/unit/auth.service.bun.test.ts        # 34 tests
-bun test tests/unit/transaction.service.bun.test.ts # 36 tests
-
-# Test with timeout
-bun test --timeout 15000
-```
-
-### Test Features
-
-- 🎭 **Mock HTTP Clients** - Realistic API simulation
-- 🌐 **Thai Descriptions** - Integration tests with Thai language support
-- 📋 **Emoji Organization** - Tests grouped by functionality
-- ⚡ **Fast Execution** - No real database operations
-
 ## 🏗️ Project Structure
 
 ```
@@ -635,32 +601,10 @@ Budget-Buddy-Backend/
 │   │   └── 📄 user.schema.ts        # User validation schemas
 │   ├── 📁 config/                   # Configuration files
 │   │   └── 📄 supabase.ts           # Supabase client configuration
-│   ├── � types/                    # TypeScript type definitions
+│   ├──  types/                    # TypeScript type definitions
 │   │   └── 📄 elysia.types.ts       # Elysia framework types
 │   └── 📁 utils/                    # Utility functions
 │       └── 📄 logger.ts             # Logging utilities
-├── 📁 tests/                        # Test files
-│   ├── 📄 README.md                # Testing documentation
-│   ├── � setup.test.ts            # Test setup configuration
-│   ├── 📄 package.json             # Test-specific dependencies
-│   ├── �📁 unit/                    # Unit tests (174 tests)
-│   │   ├── 📄 auth.service.bun.test.ts
-│   │   ├── 📄 budget.service.bun.test.ts
-│   │   ├── 📄 category.service.bun.test.ts
-│   │   ├── 📄 transaction.service.bun.test.ts
-│   │   └── 📄 user.service.bun.test.ts
-│   ├── 📁 integration/              # Integration tests (138 tests)
-│   │   ├── 📄 auth.api.bun.test.ts
-│   │   ├── 📄 budget.api.bun.test.ts
-│   │   ├── 📄 category.api.bun.test.ts
-│   │   ├── 📄 reports.api.bun.test.ts
-│   │   ├── 📄 transaction.api.bun.test.ts
-│   │   └── 📄 user.api.bun.test.ts
-│   ├── 📁 mocks/                   # Mock implementations
-│   │   ├── 📄 supabase.mock.ts     # Full Supabase mock
-│   │   └── 📄 supabase-simple.mock.ts # Simple Supabase mock
-│   └── 📁 utils/                   # Test utilities
-│       └── 📄 test-utils.ts        # Test helper functions
 ├── 📁 docs/                         # Documentation
 │   ├── 📄 api-documentation.md     # Complete API reference
 │   ├── 📄 architecture.md          # Architecture guide
@@ -682,7 +626,6 @@ Budget-Buddy-Backend/
 ├── 📄 .commitlintrc.js             # Commit lint rules
 ├── 📄 .gitignore                   # Git ignore patterns
 ├── 📄 .env.example                 # Environment template
-├── 📄 test-runner.ts               # Test runner configuration
 └── 📄 README.md                    # Project overview
 ```
 
@@ -823,12 +766,6 @@ bun run dev          # Start development server with hot reload
 bun run start        # Start production server
 bun run build        # Build for production
 
-# Testing
-bun test             # Run all tests
-bun test:unit        # Run unit tests only
-bun test:integration # Run integration tests only
-bun test:watch       # Run tests in watch mode
-bun test:coverage    # Run tests with coverage report
 
 # Code Quality
 bun run lint         # Run ESLint
@@ -848,7 +785,6 @@ bun run db:reset     # Reset database to initial state
 2. **Environment**: Copy `.env.example` to `.env` and configure
 3. **Database**: Set up Supabase project and run migrations
 4. **Development**: Use `bun run dev` for hot reload development
-5. **Testing**: Write and run tests with `bun test`
 6. **Code Quality**: Use `bun run lint` and `bun run format`
 7. **Commit**: Follow conventional commit format
 
@@ -858,7 +794,6 @@ The project uses Husky for Git hooks:
 
 ```bash
 # Pre-commit: Runs linting and formatting
-# Pre-push: Runs all tests
 # Commit-msg: Validates commit message format
 ```
 
@@ -882,9 +817,6 @@ The project uses Husky for Git hooks:
 ### Performance Monitoring
 
 ```bash
-# Load testing with autocannon
-bunx autocannon -c 100 -d 30 http://localhost:3000/health
-
 # Memory profiling
 bun --inspect src/index.ts
 
@@ -961,14 +893,11 @@ curl http://localhost:3000/api/v1/health/dependencies
 - 📖 **[API Documentation](docs/api-documentation.md)** - Complete API reference with examples
 - 🏗️ **[Architecture Guide](docs/architecture.md)** - Project structure and design patterns
 - 🚀 **[Deployment Guide](docs/deployment.md)** - Production deployment instructions
-- 🧪 **[Testing Guide](tests/README.md)** - Comprehensive testing documentation
 
 ### Language-Specific Documentation
 
 - 🇺🇸 **[English Documentation](docs/EN/README.md)** - Complete API documentation in English
 - 🇹🇭 **[Thai Documentation](docs/TH/README.md)** - เอกสาร API ภาษาไทยฉบับสมบูรณ์
-- 🧪 **[Testing Guide (EN)](docs/EN/testing.md)** - Detailed testing documentation in English
-- 🧪 **[Testing Guide (TH)](docs/TH/testing.md)** - คู่มือการทดสอบแบบละเอียดภาษาไทย
 
 ### Route-Specific Documentation (English)
 
@@ -995,7 +924,6 @@ curl http://localhost:3000/api/v1/health/dependencies
 - **API Endpoints**: See [API Documentation](docs/api-documentation.md)
 - **Project Structure**: See [Architecture Guide](docs/architecture.md)
 - **Deployment**: See [Deployment Guide](docs/deployment.md)
-- **Testing Details**: See [Testing Guide](tests/README.md)
 - **English Docs**: See [EN Documentation](docs/EN/README.md)
 - **Thai Docs**: See [TH Documentation](docs/TH/README.md)
 
@@ -1007,7 +935,6 @@ curl http://localhost:3000/api/v1/health/dependencies
 | **Framework**      | [ElysiaJS](https://elysiajs.com/) - Type-safe web framework  |
 | **Language**       | [TypeScript](https://www.typescriptlang.org/) - Type safety  |
 | **Database**       | [Supabase](https://supabase.io/) - PostgreSQL with real-time |
-| **Testing**        | Bun built-in test framework                                  |
 | **Authentication** | JWT with middleware                                          |
 
 ## 🤝 Contributing
@@ -1024,8 +951,7 @@ cd Budget-Buddy-Backend
 # 2. Create feature branch
 git checkout -b feature/your-feature-name
 
-# 3. Make changes and test
-bun test
+# 3. Make changes
 
 # 4. Commit and push
 git commit -m "feat: add your feature"
@@ -1245,7 +1171,6 @@ curl -X GET "http://localhost:3000/api/v1/reports/income-vs-expense?year=2024" \
 - 📈 **รายงานการเงิน** - การวิเคราะห์และการรายงานที่ครอบคลุม
 - 🏷️ **จัดการหมวดหมู่** - จัดระเบียบธุรกรรมด้วยหมวดหมู่ที่กำหนดเอง
 - 👥 **จัดการผู้ใช้** - คุณสมบัติสำหรับผู้ดูแลระบบ
-- 🧪 **การทดสอบครบถ้วน** - 315 การทดสอบครอบคลุม endpoint ทั้งหมด
 - ⚡ **ประสิทธิภาพสูง** - สร้างด้วย Bun และ ElysiaJS เพื่อความเร็ว
 - 🛡️ **ความปลอดภัยของ Type** - การใช้งาน TypeScript แบบเต็มรูปแบบ
 - 🔒 **ความปลอดภัยเป็นหลัก** - การตรวจสอบอินพุต, CORS และแนวปฏิบัติที่ปลอดภัย
@@ -1500,38 +1425,6 @@ curl -X GET "http://localhost:3000/api/v1/reports/by-category?start_date=2024-01
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-## 🧪 การทดสอบ
-
-### ชุดทดสอบที่ครบถ้วน
-
-- **323 การทดสอบทั้งหมด** (174 Unit + 146 Integration + 3 Setup)
-- **ครอบคลุม API 100%** - ทดสอบ endpoints ทั้งหมด
-- **ไม่ต้องพึ่งฐานข้อมูล** - การทดสอบแบบ Mock
-- **เร็วมาก** - ชุดทดสอบทั้งหมดรันใน ~149ms
-
-```bash
-# รันการทดสอบทั้งหมด
-bun test
-
-# รันแยกตามประเภท
-bun test tests/unit/              # 174 unit tests
-bun test tests/integration/       # 138 integration tests
-
-# รันการทดสอบ service เฉพาะ
-bun test tests/unit/auth.service.bun.test.ts        # 34 การทดสอบ
-bun test tests/unit/transaction.service.bun.test.ts # 36 การทดสอบ
-
-# ทดสอบด้วย timeout
-bun test --timeout 15000
-```
-
-### คุณสมบัติการทดสอบ
-
-- 🎭 **Mock HTTP Clients** - การจำลอง API แบบสมจริง
-- 🌐 **คำอธิบายภาษาไทย** - Integration tests พร้อมภาษาไทย
-- 📋 **การจัดระเบียบด้วย Emoji** - การทดสอบที่จัดกลุ่มตามฟังก์ชัน
-- ⚡ **การดำเนินการที่รวดเร็ว** - ไม่มีการทำงานกับฐานข้อมูลจริง
-
 ## 🏗️ โครงสร้างโปรเจค
 
 ```
@@ -1577,28 +1470,6 @@ Budget-Buddy-Backend/
 │   │   └── 📄 elysia.types.ts       # Elysia framework types
 │   └── 📁 utils/                    # ฟังก์ชันเครื่องมือ
 │       └── 📄 logger.ts             # เครื่องมือ Logging
-├── 📁 tests/                        # ไฟล์ทดสอบ
-│   ├── 📄 README.md                # เอกสารการทดสอบ
-│   ├── 📄 setup.test.ts            # การตั้งค่าทดสอบ
-│   ├── 📄 package.json             # Dependencies เฉพาะการทดสอบ
-│   ├── 📁 unit/                    # Unit tests (174 การทดสอบ)
-│   │   ├── 📄 auth.service.bun.test.ts
-│   │   ├── 📄 budget.service.bun.test.ts
-│   │   ├── 📄 category.service.bun.test.ts
-│   │   ├── 📄 transaction.service.bun.test.ts
-│   │   └── 📄 user.service.bun.test.ts
-│   ├── 📁 integration/              # Integration tests (138 การทดสอบ)
-│   │   ├── 📄 auth.api.bun.test.ts
-│   │   ├── 📄 budget.api.bun.test.ts
-│   │   ├── 📄 category.api.bun.test.ts
-│   │   ├── 📄 reports.api.bun.test.ts
-│   │   ├── 📄 transaction.api.bun.test.ts
-│   │   └── 📄 user.api.bun.test.ts
-│   ├── 📁 mocks/                   # Mock implementations
-│   │   ├── 📄 supabase.mock.ts     # Full Supabase mock
-│   │   └── 📄 supabase-simple.mock.ts # Simple Supabase mock
-│   └── 📁 utils/                   # เครื่องมือทดสอบ
-│       └── 📄 test-utils.ts        # ฟังก์ชันช่วยการทดสอบ
 ├── 📁 docs/                         # เอกสาร
 │   ├── 📄 api-documentation.md     # คู่มืออ้างอิง API ที่สมบูรณ์
 │   ├── 📄 architecture.md          # คู่มือสถาปัตยกรรม
@@ -1620,7 +1491,6 @@ Budget-Buddy-Backend/
 ├── 📄 .commitlintrc.js             # กฎ Commit lint
 ├── 📄 .gitignore                   # รูปแบบที่ Git ไม่สนใจ
 ├── 📄 .env.example                 # เทมเพลต Environment
-├── 📄 test-runner.ts               # การกำหนดค่า Test runner
 └── 📄 README.md                    # ภาพรวมโปรเจค
 ```
 
@@ -1728,12 +1598,6 @@ bun run dev          # เริ่ม development server พร้อม hot re
 bun run build        # สร้าง production build
 bun run start        # เริ่ม production server
 
-# Testing
-bun test             # รันการทดสอบทั้งหมด
-bun run test:unit    # รัน unit tests เท่านั้น
-bun run test:int     # รัน integration tests เท่านั้น
-bun run test:watch   # รันการทดสอบใน watch mode
-
 # Code Quality
 bun run lint         # ตรวจสอบโค้ดด้วย ESLint
 bun run lint:fix     # แก้ไขปัญหา linting อัตโนมัติ
@@ -1799,7 +1663,6 @@ git branch -d feature/new-feature
 - **Startup Time**: ~50ms ด้วย Bun runtime
 - **Response Time**: เฉลี่ย <10ms สำหรับ API calls
 - **Memory Usage**: ~30MB baseline memory footprint
-- **Test Execution**: 323 tests ใน ~185ms
 
 ### การปรับปรุงประสิทธิภาพ
 
@@ -1812,11 +1675,6 @@ git branch -d feature/new-feature
 ### การตรวจสอบประสิทธิภาพ
 
 ```bash
-# ทดสอบ Load
-bun run test:load
-
-# ตรวจสอบ Memory usage
-bun run test:memory
 
 # Profile performance
 bun run profile
@@ -1851,15 +1709,6 @@ curl -H "apikey: $SUPABASE_ANON_KEY" $SUPABASE_URL/rest/v1/
 CORS_ORIGIN=http://localhost:3000,https://yourdomain.com
 ```
 
-#### 4. การทดสอบล้มเหลว
-
-```bash
-# รันการทดสอบแยกเป็นรายบุคคล
-bun test tests/unit/auth.service.bun.test.ts
-
-# ตรวจสอบ mock implementations
-bun test tests/mocks/
-```
 
 ### การ Debug
 
@@ -1996,12 +1845,6 @@ bun run dev          # เริ่มเซิร์ฟเวอร์พัฒ
 bun run start        # เริ่มเซิร์ฟเวอร์ production
 bun run build        # สร้างสำหรับ production
 
-# การทดสอบ
-bun test             # รันการทดสอบทั้งหมด
-bun test:unit        # รัน unit tests เท่านั้น
-bun test:integration # รัน integration tests เท่านั้น
-bun test:watch       # รันการทดสอบในโหมด watch
-bun test:coverage    # รันการทดสอบพร้อมรายงาน coverage
 
 # คุณภาพโค้ด
 bun run lint         # รัน ESLint
@@ -2021,9 +1864,8 @@ bun run db:reset     # รีเซ็ตฐานข้อมูลกลับ
 2. **Environment**: คัดลอก `.env.example` เป็น `.env` และกำหนดค่า
 3. **ฐานข้อมูล**: ตั้งค่าโปรเจค Supabase และรัน migrations
 4. **การพัฒนา**: ใช้ `bun run dev` สำหรับการพัฒนาแบบ hot reload
-5. **การทดสอบ**: เขียนและรันการทดสอบด้วย `bun test`
-6. **คุณภาพโค้ด**: ใช้ `bun run lint` และ `bun run format`
-7. **Commit**: ปฏิบัติตามรูปแบบ conventional commit
+5. **คุณภาพโค้ด**: ใช้ `bun run lint` และ `bun run format`
+6. **Commit**: ปฏิบัติตามรูปแบบ conventional commit
 
 ### Git Hooks
 
@@ -2031,7 +1873,6 @@ bun run db:reset     # รีเซ็ตฐานข้อมูลกลับ
 
 ```bash
 # Pre-commit: รัน linting และ formatting
-# Pre-push: รันการทดสอบทั้งหมด
 # Commit-msg: ตรวจสอบรูปแบบข้อความ commit
 ```
 
@@ -2135,7 +1976,6 @@ curl http://localhost:3000/api/v1/health/dependencies
 - 📈 **รายงานการเงิน** - การวิเคราะห์และการรายงานที่ครอบคลุม
 - 🏷️ **จัดการหมวดหมู่** - จัดระเบียบธุรกรรมด้วยหมวดหมู่ที่กำหนดเอง
 - 👥 **จัดการผู้ใช้** - คุณสมบัติสำหรับผู้ดูแลระบบ
-- 🧪 **การทดสอบครบถ้วน** - 315 การทดสอบครอบคลุม endpoint ทั้งหมด
 - ⚡ **ประสิทธิภาพสูง** - สร้างด้วย Bun และ ElysiaJS เพื่อความเร็ว
 - 🛡️ **ความปลอดภัยของ Type** - การใช้งาน TypeScript แบบเต็มรูปแบบ
 - 🔒 **ความปลอดภัยเป็นหลัก** - การตรวจสอบอินพุต, CORS และแนวปฏิบัติที่ปลอดภัย
@@ -2147,14 +1987,11 @@ curl http://localhost:3000/api/v1/health/dependencies
 - 📖 **[เอกสาร API](docs/api-documentation.md)** - คู่มืออ้างอิง API พร้อมตัวอย่าง
 - 🏗️ **[คู่มือสถาปัตยกรรม](docs/architecture.md)** - โครงสร้างโปรเจคและรูปแบบการออกแบบ
 - 🚀 **[คู่มือการ Deploy](docs/deployment.md)** - คำแนะนำการ deploy ใน production
-- 🧪 **[คู่มือการทดสอบ](tests/README.md)** - เอกสารการทดสอบที่ครอบคลุม
 
 ### เอกสารแยกตามภาษา
 
 - 🇺🇸 **[เอกสารภาษาอังกฤษ](docs/EN/README.md)** - เอกสาร API ภาษาอังกฤษฉบับสมบูรณ์
 - 🇹🇭 **[เอกสารภาษาไทย](docs/TH/README.md)** - เอกสาร API ภาษาไทยฉบับสมบูรณ์
-- 🧪 **[คู่มือการทดสอบ (EN)](docs/EN/testing.md)** - คู่มือการทดสอบแบบละเอียดภาษาอังกฤษ
-- 🧪 **[คู่มือการทดสอบ (TH)](docs/TH/testing.md)** - คู่มือการทดสอบแบบละเอียดภาษาไทย
 
 ### เอกสารเฉพาะ Route (ภาษาอังกฤษ)
 
@@ -2181,7 +2018,6 @@ curl http://localhost:3000/api/v1/health/dependencies
 - **API Endpoints**: ดู [เอกสาร API](docs/api-documentation.md)
 - **โครงสร้างโปรเจค**: ดู [คู่มือสถาปัตยกรรม](docs/architecture.md)
 - **การ Deploy**: ดู [คู่มือการ Deploy](docs/deployment.md)
-- **รายละเอียดการทดสอบ**: ดู [คู่มือการทดสอบ](tests/README.md)
 - **เอกสารภาษาอังกฤษ**: ดู [เอกสาร EN](docs/EN/README.md)
 - **เอกสารภาษาไทย**: ดู [เอกสาร TH](docs/TH/README.md)
 
@@ -2193,7 +2029,6 @@ curl http://localhost:3000/api/v1/health/dependencies
 | **Framework**      | [ElysiaJS](https://elysiajs.com/) - Web framework ที่ปลอดภัยด้วย type |
 | **ภาษา**           | [TypeScript](https://www.typescriptlang.org/) - ความปลอดภัยของ type   |
 | **ฐานข้อมูล**      | [Supabase](https://supabase.io/) - PostgreSQL พร้อม real-time         |
-| **การทดสอบ**       | Bun built-in test framework                                           |
 | **การยืนยันตัวตน** | JWT พร้อม middleware                                                  |
 
 ## 🤝 การมีส่วนร่วม
@@ -2210,8 +2045,7 @@ cd Budget-Buddy-Backend
 # 2. สร้าง feature branch
 git checkout -b feature/ชื่อ-feature-ของคุณ
 
-# 3. ทำการเปลี่ยนแปลงและทดสอบ
-bun test
+# 3. ทำการเปลี่ยนแปลง
 
 # 4. Commit และ push
 git commit -m "feat: เพิ่ม feature ของคุณ"

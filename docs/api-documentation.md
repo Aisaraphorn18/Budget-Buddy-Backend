@@ -287,4 +287,3 @@ curl -X GET http://localhost:3000/protected/api/v1/reports/summary \
 - `409` - Conflict (Duplicate resources)
 - `500` - Internal Server Error
 
-For more detailed API testing information, see [Testing Documentation](../tests/README.md).
